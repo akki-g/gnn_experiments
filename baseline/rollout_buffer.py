@@ -2,6 +2,14 @@ import torch
 
 
 class IPPORolloutBuffer:
+    """
+    Multi-environment rollout buffer for IPPO.
+
+    Stores tensors of shape (E, N, ...) per timestep, where E = num_envs
+    and N = n_defenders. Mirrors GNNRolloutBuffer exactly, minus the
+    adjacency matrix field.
+    """
+
     def __init__(self, gamma, gae_lambda, device):
         self.gamma = gamma
         self.gae_lambda = gae_lambda
@@ -16,6 +24,7 @@ class IPPORolloutBuffer:
         self.returns = None
 
     def add_timestep(self, obs, actions, rewards, dones, log_probs, values):
+        """All inputs expected as (E, N, ...) tensors already on the correct device."""
         self.obs.append(obs.to(self.device))
         self.actions.append(actions.to(self.device))
         self.rewards.append(rewards.to(self.device))
@@ -24,41 +33,69 @@ class IPPORolloutBuffer:
         self.values.append(values.to(self.device))
 
     def compute_advantages(self, last_values):
-        n_agents = self.obs[0].shape[0]
-        buffer_size = len(self.obs)
-        rewards = torch.stack(self.rewards).to(device=self.device, dtype=torch.float32)
-        values = torch.stack(self.values).to(device=self.device, dtype=torch.float32)
-        dones = torch.stack(self.dones).to(device=self.device, dtype=torch.float32)
+        """
+        GAE computation over the full (T, E, N) buffer.
+        last_values: (E, N) critic estimates for the state after the last step.
+        """
+        rewards = torch.stack(self.rewards).to(dtype=torch.float32)  # (T, E, N)
+        values  = torch.stack(self.values).to(dtype=torch.float32)   # (T, E, N)
+        dones   = torch.stack(self.dones).to(dtype=torch.float32)    # (T, E, N)
 
-        advantages = torch.zeros((buffer_size, n_agents), dtype=torch.float32, device=self.device)
-        last_gae = torch.zeros(n_agents, dtype=torch.float32, device=self.device)
+        T, E, N = rewards.shape
 
-        for t in reversed(range(buffer_size)):
-            if t == buffer_size - 1:
-                if torch.is_tensor(last_values):
-                    next_value = last_values.to(device=self.device, dtype=torch.float32)
-                else:
-                    next_value = torch.as_tensor(last_values, dtype=torch.float32, device=self.device)
-            else:
-                next_value = values[t + 1]
-            deltas = rewards[t] + self.gamma * (1 - dones[t]) * next_value - values[t]
-            advantages[t] = deltas + self.gamma * self.gae_lambda * (1 - dones[t]) * last_gae
+        # Flatten E and N together for the GAE recurrence
+        rewards_flat    = rewards.reshape(T, E * N)
+        values_flat     = values.reshape(T, E * N)
+        dones_flat      = dones.reshape(T, E * N)
+        last_values_flat = last_values.reshape(E * N).to(device=self.device, dtype=torch.float32)
+
+        advantages = torch.zeros((T, E * N), dtype=torch.float32, device=self.device)
+        last_gae   = torch.zeros(E * N,       dtype=torch.float32, device=self.device)
+
+        for t in reversed(range(T)):
+            next_value = last_values_flat if t == T - 1 else values_flat[t + 1]
+            deltas = (
+                rewards_flat[t]
+                + self.gamma * (1 - dones_flat[t]) * next_value
+                - values_flat[t]
+            )
+            advantages[t] = deltas + self.gamma * self.gae_lambda * (1 - dones_flat[t]) * last_gae
             last_gae = advantages[t]
 
-        self.returns = advantages + values
-        self.advantages = advantages
+        returns = advantages + values_flat
 
-    def get_batches(self, batch_size):
-        perm = torch.randperm(len(self.obs), device=self.device)
-        batches = perm.split(batch_size)
+        # Reshape back to (T, E, N)
+        self.advantages = advantages.reshape(T, E, N)
+        self.returns    = returns.reshape(T, E, N)
 
-        obs = torch.stack(self.obs).to(device=self.device, dtype=torch.float32)
-        actions = torch.stack(self.actions).to(device=self.device, dtype=torch.float32)
-        log_probs = torch.stack(self.log_probs).to(device=self.device, dtype=torch.float32)
+    def get_batches(self, B):
+        """
+        Yield mini-batches of size B, shuffled over the T*E dimension.
+        Each batch yields: obs, actions, log_probs, advantages, returns
+        with shapes (B, N, ...).
+        """
+        T = len(self.obs)
+        E = self.obs[0].shape[0]
+        N = self.obs[0].shape[1]
 
-        adv_mean = self.advantages.mean()
-        adv_std = self.advantages.std() + 1e-8
-        advantages = (self.advantages - adv_mean) / adv_std
+        obs       = torch.stack(self.obs).to(device=self.device, dtype=torch.float32)       # (T, E, N, obs_dim)
+        actions   = torch.stack(self.actions).to(device=self.device, dtype=torch.float32)   # (T, E, N, act_dim)
+        log_probs = torch.stack(self.log_probs).to(device=self.device, dtype=torch.float32) # (T, E, N)
+
+        # Merge T and E into one shuffleable batch dimension
+        obs       = obs.reshape(T * E, N, -1)
+        actions   = actions.reshape(T * E, N, -1)
+        log_probs = log_probs.reshape(T * E, N)
+        advantages = self.advantages.reshape(T * E, N)
+        returns    = self.returns.reshape(T * E, N)
+
+        # Normalize advantages across the whole buffer
+        adv_mean = advantages.mean()
+        adv_std  = advantages.std() + 1e-8
+        advantages = (advantages - adv_mean) / adv_std
+
+        perm    = torch.randperm(T * E, device=self.device)
+        batches = perm.split(B)
 
         for idx in batches:
             yield (
@@ -66,15 +103,15 @@ class IPPORolloutBuffer:
                 actions[idx],
                 log_probs[idx],
                 advantages[idx],
-                self.returns[idx],
+                returns[idx],
             )
 
     def clear(self):
-        self.obs = []
-        self.actions = []
-        self.rewards = []
-        self.dones = []
-        self.log_probs = []
-        self.values = []
+        self.obs        = []
+        self.actions    = []
+        self.rewards    = []
+        self.dones      = []
+        self.log_probs  = []
+        self.values     = []
         self.advantages = None
-        self.returns = None
+        self.returns    = None

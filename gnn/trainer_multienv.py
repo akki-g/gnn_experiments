@@ -142,11 +142,11 @@ class GNNTrainerMultiEnv:
                 step_mean_inter_rew.append(interceptor_rew)
 
                 # Track per-env episode returns
-                self._running_episode_returns += rewards.mean(dim=-1)  # (E,)
-                for e in range(E):
-                    if dones[e].item():
+                completed_mask = dones
+                if completed_mask.any():
+                    for e in completed_mask.nonzero(as_tuple=True)[0].tolist():
                         completed_episode_returns.append(self._running_episode_returns[e].item())
-                        self._running_episode_returns[e] = 0.0
+                    self._running_episode_returns[completed_mask] = 0.0
 
                 # VMAS auto-resets done envs, so next_obs already has fresh obs for those envs
                 obs_tensor = next_obs

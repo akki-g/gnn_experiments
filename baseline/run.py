@@ -23,15 +23,16 @@ clip_eps = 0.2
 value_coef = 0.5
 entropy_coef = 0.01
 
-TOTAL_TIMESTEPS = 1003520
-ROLLOUT_LENGTH = 2048
+ITERATIONS = 1000
+ROLLOUT_LENGTH = 512
+TOTAL_TIMESTEPS = ITERATIONS * ROLLOUT_LENGTH
 BATCH_SIZE = 64
 NUM_EPOCHS = 10
 SEED = 42
 LOG_EVERY = 5
 
 # Environment config
-NUM_ENVS = 1
+NUM_ENVS = 256
 MAX_STEPS = 200
 N_SCOUTS = 3
 N_INTERCEPTORS = 3
@@ -115,8 +116,8 @@ def main():
     steps_done = 0
     iteration = 0
 
-    while steps_done < TOTAL_TIMESTEPS:
-        rollout_steps = min(ROLLOUT_LENGTH, TOTAL_TIMESTEPS - steps_done)
+    while iteration < ITERATIONS:
+        rollout_steps = min(ROLLOUT_LENGTH, ROLLOUT_LENGTH * ITERATIONS - steps_done)
         last_obs, rollout_metrics = trainer.collect_rollouts(num_steps=rollout_steps)
         update_metrics = trainer.update(
             last_obs,
@@ -128,14 +129,14 @@ def main():
         steps_done += rollout_steps
         iteration += 1
 
-        progress = steps_done / TOTAL_TIMESTEPS
-        new_skill = min(1.0, progress)
+        progress = iteration / ITERATIONS
+        new_skill = min(1.0, progress / 0.6)
         trainer.adapter.env.scenario.intruder_skill = new_skill
 
-        if iteration == 1 or iteration % LOG_EVERY == 0 or steps_done >= TOTAL_TIMESTEPS:
+        if iteration == 1 or iteration % LOG_EVERY == 0 or steps_done >= ITERATIONS * ROLLOUT_LENGTH:
             print(
-                f"[IPPO] Iter {iteration} | "
-                f"steps={steps_done}/{TOTAL_TIMESTEPS} | "
+                f"[IPPO] Iter {iteration}/{ITERATIONS} | "
+                f"steps={steps_done}/{ITERATIONS * ROLLOUT_LENGTH} | "
                 f"skill={new_skill:.2f} | "
                 f"pi_loss={update_metrics['policy_loss']:.4f} | "
                 f"v_loss={update_metrics['value_loss']:.4f} | "

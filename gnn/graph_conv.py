@@ -8,16 +8,21 @@ class GraphConv(nn.Module):
         self.G = G_out
         self.K = K
 
-        self.weights = nn.ParameterList(
-            [nn.Parameter(torch.empty(F_in, G_out)) for _ in range(K)]
-        )
-        for p in self.weights:
-            nn.init.xavier_uniform_(p)
+        self.weight = nn.Parameter(torch.empty(K, F_in, G_out))
+        nn.init.xavier_uniform_(self.weight.reshape(K*F_in, G_out))
+        self.weight.data = self.weight.data(K, F_in, G_out)
+        
 
     def forward(self, X, S):
         Z = X
-        accum = X.new_zeros(*X.shape[:-1], self.G)
-        for k in range(self.K):
-            accum += torch.matmul(Z, self.weights[k])
+        Z_hops = [Z]
+        for k in range(1, self.K):
             Z = torch.matmul(S, Z)
+            Z_hops.append(Z)
+
+        Z_stack = torch.stack(Z_hops, dim=0)
+        accum = torch.einsum(
+            'k...nf,kfg->...ng', Z_stack, self.weight
+        )
         return accum
+        
