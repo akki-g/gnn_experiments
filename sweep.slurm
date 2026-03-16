@@ -2,7 +2,7 @@
 #SBATCH --job-name=marl_thesis
 #SBATCH --output=logs/job_%A_%a.out      # %A = array job ID, %a = task index
 #SBATCH --error=logs/job_%A_%a.err
-#SBATCH --partition=gpu
+#SBATCH --partition=normal
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
@@ -30,8 +30,8 @@ TASK=${SLURM_ARRAY_TASK_ID}
 # ── Environment ───────────────────────────────────────────────────────
 # Adjust module names to whatever `module avail python` and
 # `module avail cuda` show on Newton.
-module load python/3.11
-module load cuda/12.1
+module load python/python-3.11.4-gcc-12.2.0
+module load cuda/cuda-12.1.0
 
 source ~/marl_env/bin/activate
 

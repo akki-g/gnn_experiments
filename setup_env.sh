@@ -1,7 +1,7 @@
 #!/bin/bash
 
-module load python/3.11
-module load cuda/12.1
+module load python/python-3.11.4-gcc-12.2.0
+module load cuda/cuda-12.1.0
 
 python -m venv ~/expenv
 source ~/expenv/bin/activate
