@@ -55,6 +55,10 @@ class GNNTrainerMultiEnv:
         self.critic = CriticNetwork(obs_dim=obs_dim, hidden_dim=hidden_dim, device=self.device)
         self.critic_optim = Adam(self.critic.parameters(), lr=lr*3)
 
+        if torch.__version__ >= "2.0":
+            self.comm_policy = torch.compile(self.comm_policy)
+            self.critic = torch.compile(self.critic)
+
         # lr annealing
         total_iter = total_timesteps // rollout_length
         self.policy_scheduler = torch.optim.lr_scheduler.LambdaLR(
@@ -92,79 +96,76 @@ class GNNTrainerMultiEnv:
 
         n_s = self.adapter.n_scouts
 
+        with torch.no_grad():
+            for _ in range(num_steps):  
+                # build adj: (E, N, N)
+                S = self.adapter.build_adj(positions, r_comm=self.r_comm)
 
-        for _ in range(num_steps):  
-            # build adj: (E, N, N)
-            S = self.adapter.build_adj(positions, r_comm=self.r_comm)
+                # policy forward: (E, N, obs_dim), (E, N, N) -> (E, N, 2)
+                actions, log_probs, entropy = self.comm_policy.get_actions(obs=obs_tensor, S=S)
 
-            # policy forward: (E, N, obs_dim), (E, N, N) -> (E, N, 2)
-            actions, log_probs, entropy = self.comm_policy.get_actions(obs=obs_tensor, S=S)
-
-            # critic (E, N, obs_dim) -> (E, N)
-            E, N, obs_d = obs_tensor.shape
-            flat_obs = obs_tensor.reshape(E*N, obs_d)
-            values = self.critic(flat_obs).detach().squeeze(-1).reshape(E,N)
+                # critic (E, N, obs_dim) -> (E, N)
+                E, N, obs_d = obs_tensor.shape
+                flat_obs = obs_tensor.reshape(E*N, obs_d)
+                values = self.critic(flat_obs).squeeze(-1).reshape(E,N)
 
 
-            # step env (E, N, 2)
-            next_obs, rewards, dones, info, next_positions = self.adapter.step(actions)
+                # step env (E, N, 2)
+                next_obs, rewards, dones, info, next_positions = self.adapter.step(actions)
 
-            # per type rewards average 
-            scout_rew = rewards[:, :n_s].mean().item()
-            interceptor_rew = rewards[:, n_s:].mean().item()
+                # per type rewards average 
+                scout_rew = rewards[:, :n_s].mean().item()
+                interceptor_rew = rewards[:, n_s:].mean().item()
 
-            # Truncation vs true done — per-env
-            dones_for_gae = torch.zeros(E, N, dtype=torch.float32, device=self.device)
-            for e in range(E):
-                if dones[e].item():
-                    n_tagged = info.get("n_tagged", torch.zeros(E, device=self.device))
-                    n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
-                    true_done = (n_tagged[e].item() >= self.adapter.n_intruders) or \
-                                (n_breached[e].item() >= self.adapter.n_zones)
-                    if true_done:
-                        dones_for_gae[e, :] = 1.0
+                # Truncation vs true done — per-env
+                n_tagged = info.get("n_tagged", torch.zeros(E, device=self.device))
+                n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
+                true_done_mask = (
+                    dones &
+                    ((n_tagged >= self.adapter.n_intruders) | (n_breached >= self.adapter.n_zones))
+                )
+                dones_for_gae = true_done_mask.float().unsqueeze(-1).expand(E,N)
+                # Buffer: store (E, N, ...) tensors
+                self.buffer.add_timestep(
+                    obs=obs_tensor,
+                    actions=actions,
+                    rewards=rewards,
+                    dones=dones_for_gae,
+                    log_probs=log_probs,
+                    values=values,
+                    A=S,
+                )
 
-            # Buffer: store (E, N, ...) tensors
-            self.buffer.add_timestep(
-                obs=obs_tensor.detach(),
-                actions=actions.detach(),
-                rewards=rewards,
-                dones=dones_for_gae,
-                log_probs=log_probs.detach(),
-                values=values,
-                A=S.detach(),
-            )
+                # Metrics
+                step_mean_rewards.append(rewards.mean().item())
+                step_mean_scout_rew.append(scout_rew)
+                step_mean_inter_rew.append(interceptor_rew)
 
-            # Metrics
-            step_mean_rewards.append(rewards.mean().item())
-            step_mean_scout_rew.append(scout_rew)
-            step_mean_inter_rew.append(interceptor_rew)
+                # Track per-env episode returns
+                self._running_episode_returns += rewards.mean(dim=-1)  # (E,)
+                for e in range(E):
+                    if dones[e].item():
+                        completed_episode_returns.append(self._running_episode_returns[e].item())
+                        self._running_episode_returns[e] = 0.0
 
-            # Track per-env episode returns
-            self._running_episode_returns += rewards.mean(dim=-1)  # (E,)
-            for e in range(E):
-                if dones[e].item():
-                    completed_episode_returns.append(self._running_episode_returns[e].item())
-                    self._running_episode_returns[e] = 0.0
+                # VMAS auto-resets done envs, so next_obs already has fresh obs for those envs
+                obs_tensor = next_obs
+                positions = next_positions
 
-            # VMAS auto-resets done envs, so next_obs already has fresh obs for those envs
-            obs_tensor = next_obs
-            positions = next_positions
+            self.current_obs = obs_tensor
+            self.current_positions = positions
 
-        self.current_obs = obs_tensor
-        self.current_positions = positions
-
-        rollout_metrics = {
-            "mean_episode_return": self._safe_mean(completed_episode_returns)
-                if completed_episode_returns else float(self._running_episode_returns.mean().item()),
-            "mean_episode_rewards": self._safe_mean(step_mean_rewards),
-            "mean_scout_rewards": self._safe_mean(step_mean_scout_rew),
-            "mean_inter_rewards": self._safe_mean(step_mean_inter_rew),
-        }
-        self.metrics_history["mean_episode_return"].append(rollout_metrics["mean_episode_return"])
-        self.metrics_history["mean_episode_rewards"].append(rollout_metrics["mean_episode_rewards"])
-        self.metrics_history["scout_reward"].append(rollout_metrics["mean_scout_rewards"])
-        self.metrics_history["interceptor_reward"].append(rollout_metrics["mean_inter_rewards"])
+            rollout_metrics = {
+                "mean_episode_return": self._safe_mean(completed_episode_returns)
+                    if completed_episode_returns else float(self._running_episode_returns.mean().item()),
+                "mean_episode_rewards": self._safe_mean(step_mean_rewards),
+                "mean_scout_rewards": self._safe_mean(step_mean_scout_rew),
+                "mean_inter_rewards": self._safe_mean(step_mean_inter_rew),
+            }
+            self.metrics_history["mean_episode_return"].append(rollout_metrics["mean_episode_return"])
+            self.metrics_history["mean_episode_rewards"].append(rollout_metrics["mean_episode_rewards"])
+            self.metrics_history["scout_reward"].append(rollout_metrics["mean_scout_rewards"])
+            self.metrics_history["interceptor_reward"].append(rollout_metrics["mean_inter_rewards"])
         return obs_tensor, rollout_metrics
     
 

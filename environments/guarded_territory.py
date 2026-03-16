@@ -128,6 +128,11 @@ class Scenario(BaseScenario):
         self._zone_breached = None
         self._tag_count = None
 
+
+        # cache constant tensors 
+        self._scout_type_oh = torch.tensor([1.0, 0.0], device=device).unsqueeze(0) # (1,2)
+        self._interceptor_type_oh = torch.tensor([0.0, 1.0], device=device).unsqueeze(0) # (1,2)
+
         return world
 
     def reset_world_at(self, env_index: typing.Optional[int] = None):
@@ -212,15 +217,17 @@ class Scenario(BaseScenario):
       dir_target = to_target / dist_to_target
 
       evasion_radius = 0.6
-      evade_dir = torch.zeros(b, 2, device=d)
-      min_ic_dist = torch.full((b, 1), float("inf"), device=d)
 
-      for interceptor in self.interceptors:
-          away = intruder.state.pos - interceptor.state.pos
-          ic_dist = torch.linalg.vector_norm(away, dim=-1, keepdim=True) + 1e-6
-          closer = ic_dist < min_ic_dist
-          min_ic_dist = torch.where(closer, ic_dist, min_ic_dist)
-          evade_dir = torch.where(closer.expand_as(away), away / ic_dist, evade_dir)
+      interc_pos = torch.stack([i.state.pos for i in self.interceptors], dim=0) 
+      away = intruder.state.pos - interc_pos
+      ic_dists = torch.linalg.vector_norm(away, dim=-1, keepdim=True) + 1e-6
+
+      min_idx = ic_dists.squeeze(-1).argmin(dim=0)
+      min_ic_dist = ic_dists.squeeze(-1).min(dim=0, keepdim=True).values.T
+
+      # gather evasion dir for closes interc
+      min_idx_exp = min_idx.unsqueeze(0).unsqueeze(-1).expand(1,-1,2)
+      evade_dir = away.gather(0, min_idx_exp).squeeze(0) / min_ic_dist
 
       evade_weight = torch.clamp(1.0 - min_ic_dist / evasion_radius, min=0.0, max=0.8)
       goal_weight = 1.0 - evade_weight
@@ -252,10 +259,10 @@ class Scenario(BaseScenario):
 
         if hasattr(agent, "agent_type") and agent.agent_type == SCOUT:
             fov = self.scout_fov
-            type_oh = torch.tensor([1.0, 0.0], device=device).expand(batch, 2)
+            type_oh = self._scout_type_oh.expand(batch, 2)
         elif hasattr(agent, "agent_type") and agent.agent_type == INTERCEPTOR:
             fov = self.interceptor_fov
-            type_oh = torch.tensor([0.0, 1.0], device=device).expand(batch, 2)
+            type_oh = self._interceptor_type_oh.expand(batch,2)
         else:
             return torch.zeros(batch, 2, device=device)
 
@@ -264,23 +271,25 @@ class Scenario(BaseScenario):
         obs_parts.append(agent.state.pos)
         obs_parts.append(type_oh)
 
-        for zone in self.zones:
-            obs_parts.append(zone.state.pos - agent.state.pos)
+        zone_pos = torch.stack([z.state.pos for z in self.zones], dim=1)
+        zone_rel = zone_pos - agent.state.pos.unsqueeze(1)
+        obs_parts.append(zone_rel.reshape(batch, -1))
 
-        for intruder in self.intruders:
-            rel_pos = intruder.state.pos - agent.state.pos
-            dist = torch.linalg.vector_norm(rel_pos, dim=-1, keepdim=True)
-            visible = (dist <= fov).float()
-            obs_parts.append(rel_pos * visible)
-            obs_parts.append(intruder.state.vel * visible)
-
-        for other in self.defenders:
-            if other is agent:
-                continue
-            rel_pos = other.state.pos - agent.state.pos
-            dist = torch.linalg.vector_norm(rel_pos, dim=-1, keepdim=True)
-            visible = (dist <= fov).float()
-            obs_parts.append(rel_pos * visible)
+        intrud_pos = torch.stack([i.state.pos for i in self.intruders], dim=1)
+        intrud_vel = torch.stack([i.state.vel for i in self.intruders], dim=1)
+        intrud_rel = intrud_pos - agent.state.pos.unsqueeze(1)
+        intrud_dist = torch.linalg.vector_norm(intrud_rel, dim=-1, keepdim=True)
+        visible = (intrud_dist <= fov).float()
+        obs_parts.append((intrud_rel * visible).reshape(batch, -1))
+        obs_parts.append((intrud_vel*visible).reshape(batch, -1))
+        
+        other_pos = torch.stack(
+            [d.state.pos for d in self.defenders if d is not agent], dim=1
+        )
+        other_rel = other_pos - agent.state.pos.unsqueeze(1)
+        other_dist = torch.linalg.vector_norm(other_rel, dim=-1, keepdim=True)
+        other_vis = (other_dist <= fov).float()
+        obs_parts.append((other_rel * visible).reshape(batch, -1))
 
         return torch.cat(obs_parts, dim=-1)
 
@@ -291,26 +300,33 @@ class Scenario(BaseScenario):
         self._prev_intruder_tagged = self._intruder_tagged.clone()
         self._prev_zone_breached = self._zone_breached.clone()
 
-        for j, intruder in enumerate(self.intruders):
-            already_tagged = self._intruder_tagged[:, j]
+        # stack all pos
+        interc_pos = torch.stack([i.state.pos for i in self.interceptors], dim=0) # (I, B, 2)
+        intrud_pos = torch.stack([i.state.pos for i in self.intruders], dim=0) # (J, B, 2)
 
-            for interceptor in self.interceptors:  # [FIX: consistent spelling]
-                dist = torch.linalg.vector_norm(
-                    interceptor.state.pos - intruder.state.pos, dim=-1
-                )
-                just_tagged = (~already_tagged) & (dist < self.tag_radius)
-                self._intruder_tagged[:, j] = self._intruder_tagged[:, j] | just_tagged
-                self._tag_count += just_tagged.float()
-        # Compute zone breach events
-        for k, zone in enumerate(self.zones):
-            for j, intruder in enumerate(self.intruders):
-                tagged = self._intruder_tagged[:, j]
-                dist_to_zone = torch.linalg.vector_norm(
-                    intruder.state.pos - zone.state.pos, dim=-1
-                )
-                breached = (~tagged) & (dist_to_zone < 0.15)
-                new_breached = breached & (~self._zone_breached[:, k])
-                self._zone_breached[:, k] = self._zone_breached[:, k] | breached
+        dists = torch.linalg.vector_norm(
+            interc_pos.unsqueeze(1) - intrud_pos.unsqueeze(0), dim=-1
+        ) # (I, J, B)
+
+        tagged_now = (dists < self.tag_radius).any(dim=0)
+        tagged_now = tagged_now.permute(1,0) # (J,B) -> (B,J)
+
+        new_tags = tagged_now & (~self._intruder_tagged)
+        self._intruder_tagged = self._intruder_tagged | tagged_now
+        self._tag_count += new_tags.float().sum(dim=-1)
+
+        # zone breach: stack zone pos (K,B,2) intruder positions (J,B,2)
+        zone_pos = torch.stack([z.state.pos for z in self.zones], dim=0)
+        zone_dists = torch.linalg.vector_norm(
+            zone_pos.unsqueeze(1) - intrud_pos.unsqueeze(0), dim=-1
+        )
+
+        # reduce over j
+        not_tagged = (~self._intruder_tagged).permute(1,0)
+        breached_any = ((zone_dists <0.15) & not_tagged.unsqueeze(0)).any(dim=1)
+        breached_any = breached_any.permute(1,0)
+        self._zone_breached = self._zone_breached | breached_any
+
 
 
     def reward(self, agent: Agent) -> torch.Tensor:
@@ -426,7 +442,7 @@ class GuardedTerritoryAdapter:
         self.n_intruders = n_intruders
         self.n_defenders = n_scouts + n_interceptors
         self.n_zones = n_zones
-
+        
         self.env = vmas.make_env(
             scenario=Scenario(),
             num_envs=num_envs,
@@ -451,6 +467,11 @@ class GuardedTerritoryAdapter:
                 elif agent.agent_type == INTRUDER:
                     self.intruder_indices.append(i)
 
+        self._defender_idx = torch.tensor(self.defender_indices, device=device)
+        self._intruder_idx = torch.tensor(self.intruder_indices, device=device)
+        self._n_agents_total = len(self.env.agents)
+        self._action_dim = 2
+        
         assert len(self.defender_indices) == self.n_defenders
 
         self.agent_types = []
@@ -470,13 +491,16 @@ class GuardedTerritoryAdapter:
         Args: defender_actions (num_envs, n_defenders, 2)
         Returns: obs, rewards, dones, info, positions
         """
-        all_actions = []
-        for i in range(len(self.env.agents)):
-            if i in self.defender_indices:
-                local_idx = self.defender_indices.index(i)
-                all_actions.append(defender_actions[:, local_idx])
-            else:
-                all_actions.append(torch.zeros(self.num_envs, 2, device=self.device))
+        # pre allocate full action tensor on device
+        all_actions_tensor = torch.zeros(
+            self.num_envs, self._n_agents_total, self._action_dim,
+            device=self.device
+        )
+
+        # scatter defender actions to right agent slots
+        all_actions_tensor[:, self._defender_idx] = defender_actions
+
+        all_actions = [all_actions_tensor[:, i] for i in range(self._n_agents_total)]
 
         all_obs, all_rewards, dones, all_infos = self.env.step(all_actions)
 
@@ -489,7 +513,7 @@ class GuardedTerritoryAdapter:
             first_info = all_infos[self.defender_indices[0]]
             if isinstance(first_info, dict):
                 info = first_info
-
+        
         return defender_obs, defender_rewards, dones, info, positions
 
     def build_adj(self, positions: torch.Tensor, r_comm: float) -> torch.Tensor:

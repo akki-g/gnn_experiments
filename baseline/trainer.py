@@ -74,59 +74,51 @@ class IPPOTrainer:
         step_mean_scout_rew = []
         step_mean_inter_rew = []
 
-        for _ in range(num_steps):
-            actions, log_probs, entropy = self.policy.get_actions(obs=obs_tensor)
-            values = self.critic(obs_tensor).detach().squeeze(-1)
+        with torch.no_grad():
+            for _ in range(num_steps):
+                actions, log_probs, entropy = self.policy.get_actions(obs=obs_tensor)
+                values = self.critic(obs_tensor).squeeze(-1)
 
-            act_for_env = actions.unsqueeze(0)
-            next_obs_b, rewards_b, dones_b, info, next_pos_b = self.adapter.step(act_for_env)
+                act_for_env = actions.unsqueeze(0)
+                next_obs_b, rewards_b, dones_b, info, next_pos_b = self.adapter.step(act_for_env)
 
-            next_obs = next_obs_b.squeeze(0)
-            rewards_tensor = rewards_b.squeeze(0)
-            next_positions = next_pos_b.squeeze(0)
-            done_flag = dones_b.squeeze(0).item()
-
-            n_s = self.adapter.n_scouts
-            scout_rew = rewards_tensor[:n_s].mean().item()
-            interceptor_rew = rewards_tensor[n_s:].mean().item()
-
-            if done_flag:
-                all_tagged = info.get("n_tagged", torch.tensor(0.0)).item() >= self.adapter.n_intruders
-                all_breached = info.get("n_breached", torch.tensor(0.0)).item() >= self.adapter.n_zones
-                true_done = all_tagged or all_breached
-            else:
-                true_done = False
-
-            dones_for_gae = torch.full(
-                (self.num_agents,),
-                float(true_done),
-                dtype=torch.float32,
-                device=self.device,
-            )
-
-            self.buffer.add_timestep(
-                obs=obs_tensor.detach(),
-                actions=actions.detach(),
-                rewards=rewards_tensor,
-                dones=dones_for_gae,
-                log_probs=log_probs.detach(),
-                values=values,
-            )
-
-            step_mean_rewards.append(rewards_tensor.mean().item())
-            step_mean_scout_rew.append(scout_rew)
-            step_mean_inter_rew.append(interceptor_rew)
-            self._running_episode_return += rewards_tensor.mean().item()
-
-            if done_flag:
-                completed_episode_returns.append(self._running_episode_return)
-                self._running_episode_return = 0.0
-                next_obs_b, next_pos_b = self.adapter.reset_env()
                 next_obs = next_obs_b.squeeze(0)
+                rewards_tensor = rewards_b.squeeze(0)
                 next_positions = next_pos_b.squeeze(0)
+                dones = dones_b.squeeze(0)
 
-            obs_tensor = next_obs
-            positions = next_positions
+                n_s = self.adapter.n_scouts
+                scout_rew = rewards_tensor[:n_s].mean().item()
+                interceptor_rew = rewards_tensor[n_s:].mean().item()
+
+                n_tagged = info.get("n_tagged", torch.zeros(1, device=self.device))
+                n_breached = info.get("n_breached", torch.zeros(1, device=self.device))
+                true_done_mask = dones & ((n_tagged >= self.adapter.n_intruders) | (n_breached >= self.adapter.n_zones))
+                dones_for_gae = true_done_mask.float().expand(self.num_agents)
+
+                self.buffer.add_timestep(
+                    obs=obs_tensor,
+                    actions=actions,
+                    rewards=rewards_tensor,
+                    dones=dones_for_gae,
+                    log_probs=log_probs,
+                    values=values,
+                )
+
+                step_mean_rewards.append(rewards_tensor.mean().item())
+                step_mean_scout_rew.append(scout_rew)
+                step_mean_inter_rew.append(interceptor_rew)
+                self._running_episode_return += rewards_tensor.mean().item()
+
+                if true_done_mask.item():
+                    completed_episode_returns.append(self._running_episode_return)
+                    self._running_episode_return = 0.0
+                    next_obs_b, next_pos_b = self.adapter.reset_env()
+                    next_obs = next_obs_b.squeeze(0)
+                    next_positions = next_pos_b.squeeze(0)
+
+                obs_tensor = next_obs
+                positions = next_positions
 
         self.current_obs = obs_tensor
         self.current_positions = positions

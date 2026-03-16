@@ -16,12 +16,12 @@ class IPPORolloutBuffer:
         self.returns = None
 
     def add_timestep(self, obs, actions, rewards, dones, log_probs, values):
-        self.obs.append(obs)
-        self.actions.append(actions)
-        self.rewards.append(rewards)
-        self.dones.append(dones)
-        self.log_probs.append(log_probs)
-        self.values.append(values)
+        self.obs.append(obs.to(self.device))
+        self.actions.append(actions.to(self.device))
+        self.rewards.append(rewards.to(self.device))
+        self.dones.append(dones.to(self.device))
+        self.log_probs.append(log_probs.to(self.device))
+        self.values.append(values.to(self.device))
 
     def compute_advantages(self, last_values):
         n_agents = self.obs[0].shape[0]
