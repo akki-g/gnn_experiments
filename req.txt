@@ -1,0 +1,12 @@
+torch
+numpy
+torch_geometric
+pandas
+networkx 
+matplotlib
+scipy
+pyvis
+jax
+pettingzoo
+pygame
+vmas
