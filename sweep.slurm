@@ -36,7 +36,7 @@ module load cuda/12.1
 source ~/marl_env/bin/activate
 
 # ── Paths ─────────────────────────────────────────────────────────────
-REPO_DIR=$HOME/gnn_marl          # ← change to your actual repo folder name
+REPO_DIR=$HOME/gnn_experiments        # ← change to your actual repo folder name
 OUTPUT_DIR=$REPO_DIR/outputs/cluster_results
 LOG_DIR=$REPO_DIR/logs
 
