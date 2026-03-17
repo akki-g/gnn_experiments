@@ -55,7 +55,7 @@ class IPPOTrainer:
 
         self.buffer = IPPORolloutBuffer(gamma=gamma, gae_lambda=gae_lambda, device=self.device)
 
-        # Per-env running return tracker — shape (E,)
+        # Per-env running return tracker - shape (E,)
         self._running_episode_returns = torch.zeros(adapter.num_envs, device=self.device)
 
         self.metrics_history = {
@@ -69,16 +69,16 @@ class IPPOTrainer:
             "interceptor_reward":   [],
         }
 
-        # Reset returns (E, N, obs_dim) — keep env dim, no squeeze
+        # Reset returns (E, N, obs_dim) - keep env dim, no squeeze
         obs_batched, pos_batched = self.adapter.reset()
         self.current_obs       = obs_batched   # (E, N, obs_dim)
         self.current_positions = pos_batched   # (E, N, 2)
 
-    # ─────────────────────────────────────────────────────────────
+    # -------------------------------------------------------------
     def _safe_mean(self, values):
         return float(sum(values) / len(values)) if values else 0.0
 
-    # ─────────────────────────────────────────────────────────────
+    # -------------------------------------------------------------
     def collect_rollouts(self, num_steps):
         obs_tensor = self.current_obs       # (E, N, obs_dim)
         positions  = self.current_positions # (E, N, 2)
@@ -94,21 +94,21 @@ class IPPOTrainer:
             for _ in range(num_steps):
                 E, N, obs_d = obs_tensor.shape
 
-                # ── Policy forward: (E, N, obs_dim) → (E, N, act_dim) ──
+                # -- Policy forward: (E, N, obs_dim) -> (E, N, act_dim) --
                 actions, log_probs, entropy = self.policy.get_actions(obs=obs_tensor)
 
-                # ── Critic: flatten → (E*N, obs_dim) → reshape → (E, N) ──
+                # -- Critic: flatten -> (E*N, obs_dim) -> reshape -> (E, N) --
                 flat_obs = obs_tensor.reshape(E * N, obs_d)
                 values   = self.critic(flat_obs).squeeze(-1).reshape(E, N)
 
-                # ── Env step: actions (E, N, 2) passed directly ──
+                # -- Env step: actions (E, N, 2) passed directly --
                 next_obs, rewards, dones, info, next_positions = self.adapter.step(actions)
                 # rewards: (E, N),  dones: (E,) bool
 
                 scout_rew      = rewards[:, :n_s].mean().item()
                 interceptor_rew = rewards[:, n_s:].mean().item()
 
-                # ── Vectorized done detection — no CPU syncs ──
+                # -- Vectorized done detection - no CPU syncs --
                 n_tagged   = info.get("n_tagged",   torch.zeros(E, device=self.device))
                 n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
                 true_done_mask = (
@@ -120,7 +120,7 @@ class IPPOTrainer:
                 # Broadcast to (E, N) for GAE
                 dones_for_gae = true_done_mask.float().unsqueeze(-1).expand(E, N)
 
-                # ── Buffer store ──
+                # -- Buffer store --
                 self.buffer.add_timestep(
                     obs=obs_tensor,
                     actions=actions,
@@ -130,12 +130,12 @@ class IPPOTrainer:
                     values=values,
                 )
 
-                # ── Metrics ──
+                # -- Metrics --
                 step_mean_rewards.append(rewards.mean().item())
                 step_mean_scout_rew.append(scout_rew)
                 step_mean_inter_rew.append(interceptor_rew)
 
-                # ── Episode return tracking (vectorized, minimal syncs) ──
+                # -- Episode return tracking (vectorized, minimal syncs) --
                 self._running_episode_returns += rewards.mean(dim=-1)  # (E,)
                 if true_done_mask.any():
                     for e in true_done_mask.nonzero(as_tuple=True)[0].tolist():
@@ -168,7 +168,7 @@ class IPPOTrainer:
 
         return obs_tensor, rollout_metrics
 
-    # ─────────────────────────────────────────────────────────────
+    # -------------------------------------------------------------
     def update(self, last_obs, num_actor_epochs=10, num_critic_epochs=5, B=64):
         # Compute last values for GAE bootstrap
         with torch.no_grad():
@@ -184,7 +184,7 @@ class IPPOTrainer:
         bellman_errors = []
         explained_vars = []
 
-        # ── Actor update ──────────────────────────────────────────
+        # -- Actor update ----------------------------------------------
         for _ in range(num_actor_epochs):
             for obs, actions, old_log_probs, advantages, returns in self.buffer.get_batches(B):
                 # obs: (B, N, obs_dim), actions: (B, N, act_dim)
@@ -206,7 +206,7 @@ class IPPOTrainer:
                 policy_losses.append(policy_loss.item())
                 entropies.append(entropy_loss.item())
 
-        # ── Critic update ─────────────────────────────────────────
+        # -- Critic update ---------------------------------------------
         for _ in range(num_critic_epochs):
             for obs, actions, old_log_probs, advantages, returns in self.buffer.get_batches(B):
                 batch_size, n_agents, obs_d = obs.shape

@@ -51,7 +51,7 @@ class Scenario(BaseScenario):
             device=device,
             dt=0.1,
             drag=0.25,
-            dim_c=0,  # no built-in comms — GNN handles this
+            dim_c=0,  # no built-in comms - GNN handles this
             x_semidim=self.world_size,
             y_semidim=self.world_size,
         )
@@ -91,7 +91,7 @@ class Scenario(BaseScenario):
             self.interceptors.append(agent)
 
         # Create Intruders (scripted via process_action)
-        # [FIX: removed action_script parameter — process_action handles everything]
+        # [FIX: removed action_script parameter - process_action handles everything]
         self.intruders = []
         for i in range(self.n_intruders):
             intruder = Agent(
@@ -209,7 +209,7 @@ class Scenario(BaseScenario):
 
       d, b = self.world.device, self.world.batch_dim
 
-      # ── Skilled component (existing goal-seeking + evasion) ──
+      # -- Skilled component (existing goal-seeking + evasion) --
       intruder_idx = self.intruders.index(intruder)
       target_zone = self.zones[intruder_idx % self.n_zones]
       to_target = target_zone.state.pos - intruder.state.pos
@@ -235,11 +235,11 @@ class Scenario(BaseScenario):
       skilled_dir = goal_weight * dir_target + evade_weight * evade_dir
       skilled_dir = skilled_dir / (torch.linalg.vector_norm(skilled_dir, dim=-1, keepdim=True) + 1e-6)
 
-      # ── Random component ──
+      # -- Random component --
       random_dir = torch.randn(b, 2, device=d)
       random_dir = random_dir / (torch.linalg.vector_norm(random_dir, dim=-1, keepdim=True) + 1e-6)
 
-      # ── Blend by skill level ──
+      # -- Blend by skill level --
       skill = self.intruder_skill
       direction = skill * skilled_dir + (1 - skill) * random_dir
       direction = direction / (torch.linalg.vector_norm(direction, dim=-1, keepdim=True) + 1e-6)
@@ -525,7 +525,7 @@ class GuardedTerritoryAdapter:
         adj = adj / deg
         return adj
     def reset_env(self):
-      """Full manual reset — returns obs (num_envs, n_def, obs_dim), positions."""
+      """Full manual reset - returns obs (num_envs, n_def, obs_dim), positions."""
       all_obs = self.env.reset()
       defender_obs = torch.stack([all_obs[i] for i in self.defender_indices], dim=1)
       positions = defender_obs[:, :, 2:4].clone()

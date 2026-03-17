@@ -6,7 +6,7 @@ import numpy as np
 from gnn.trainer_multienv import GNNTrainerMultiEnv
 from environments.guarded_territory import GuardedTerritoryAdapter
 
-# ── Hyperparameters ──────────────────────────────────────────
+# -- Hyperparameters ----------------------------------------------
 F_dim = 64
 G_dim = 64
 hidden_dim = 64
@@ -29,7 +29,7 @@ R_COMM_VALUES = [1.0, 1.5, 2.0]
 SEED = 42
 LOG_EVERY = 5
 
-# ── Environment config ────────────────────────────────────────
+# -- Environment config --------------------------------------------
 NUM_ENVS = 256      
 MAX_STEPS = 200
 N_SCOUTS = 3
@@ -38,7 +38,7 @@ N_INTRUDERS = 3
 N_ZONES = 2
 WORLD_SIZE = 2.0
 
-# ── Agent Congfig ──────────
+# -- Agent Congfig -------------
 SCOUT_FOV = 0.9
 INTERCEPTOR_FOV = 0.6
 INTRUDER_SPEED = 0.3
@@ -53,7 +53,7 @@ print(f"Using device: {device}")
 print(f"Sweep: K={K_VALUES}, r_comm={R_COMM_VALUES}")
 print(f"TOTAL_TIMESTEPS={TOTAL_TIMESTEPS}, ROLLOUT_LENGTH={ROLLOUT_LENGTH}")
 
-# ── Plotting helper ───────────────────────────────────────────
+# -- Plotting helper -----------------------------------------------
 metrics_to_plot = [
     "policy_loss", "value_loss", "entropy",
     "mean_bellman_error", "mean_episode_return", "mean_episode_rewards",
@@ -75,7 +75,7 @@ def plot_metrics(metrics_history, title, save_path):
     fig.savefig(save_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
-# ── Sweep ─────────────────────────────────────────────────────
+# -- Sweep ---------------------------------------------------------
 results = {}
 summary_rows = []
 

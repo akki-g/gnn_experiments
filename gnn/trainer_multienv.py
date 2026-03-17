@@ -117,7 +117,7 @@ class GNNTrainerMultiEnv:
                 scout_rew = rewards[:, :n_s].mean().item()
                 interceptor_rew = rewards[:, n_s:].mean().item()
 
-                # Truncation vs true done — per-env
+                # Truncation vs true done - per-env
                 n_tagged = info.get("n_tagged", torch.zeros(E, device=self.device))
                 n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
                 true_done_mask = (

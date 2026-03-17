@@ -26,7 +26,7 @@ class GNNRolloutBuffer:
 
 
     def compute_advantages(self, last_values):
-        # Each stored tensor is (E, N, ...) — we flatten E*N for GAE
+        # Each stored tensor is (E, N, ...) - we flatten E*N for GAE
         buffer_size = len(self.obs)
         # Stack: (T, E, N, ...) for rewards, values, dones
         rewards = torch.stack(self.rewards).to(device=self.device, dtype=torch.float32)  # (T, E, N)

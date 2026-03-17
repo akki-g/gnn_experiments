@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Unified entry point for single-config training runs.
-Used by the SLURM job array — each job calls this with its own args.
+Used by the SLURM job array - each job calls this with its own args.
 
 Usage:
   python train.py --algo gnn --k 2 --r_comm 1.0
@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 import matplotlib
-matplotlib.use("Agg")  # non-interactive backend — required on cluster nodes
+matplotlib.use("Agg")  # non-interactive backend - required on cluster nodes
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -24,7 +24,7 @@ if str(repo_root) not in sys.path:
 
 from environments.guarded_territory import GuardedTerritoryAdapter
 
-# ── Shared hyperparameters ────────────────────────────────────
+# -- Shared hyperparameters -------------------------------------
 hidden_dim   = 64
 F_dim        = 64
 G_dim        = 64
@@ -97,7 +97,7 @@ def make_adapter(device):
     )
 
 
-# ─────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------
 def run_gnn(k, r_comm, device, output_dir):
     from gnn.trainer_multienv import GNNTrainerMultiEnv
 
@@ -166,7 +166,7 @@ def run_gnn(k, r_comm, device, output_dir):
     )
 
 
-# ─────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------
 def run_ippo(device, output_dir):
     from baseline.trainer import IPPOTrainer
 
@@ -232,7 +232,7 @@ def run_ippo(device, output_dir):
     )
 
 
-# ─────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--algo", choices=["gnn", "ippo"], required=True)

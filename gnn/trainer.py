@@ -66,7 +66,7 @@ class GNNTrainer:
             "interceptor_reward": []
         }
 
-        # Initial reset — squeeze out num_envs=1 dim to get (N, obs_dim)
+        # Initial reset - squeeze out num_envs=1 dim to get (N, obs_dim)
         obs_batched, pos_batched = self.adapter.reset()
         self.current_obs = obs_batched.squeeze(0)       # (N, obs_dim)
         self.current_positions = pos_batched.squeeze(0)  # (N, 2)
@@ -90,12 +90,12 @@ class GNNTrainer:
                 positions.unsqueeze(0), r_comm=self.r_comm
             ).squeeze(0)  # (N, N)
 
-            # Policy forward: (N, obs_dim), (N, N) → actions (N, 2)
+            # Policy forward: (N, obs_dim), (N, N) -> actions (N, 2)
             actions, log_probs, entropy = self.comm_policy.get_actions(
                 obs=obs_tensor, S=S
             )
 
-            # Critic: (N, obs_dim) → (N,)
+            # Critic: (N, obs_dim) -> (N,)
             values = self.critic(obs_tensor).detach().squeeze(-1)
 
             # Step env: adapter expects (num_envs, N, 2)
