@@ -289,7 +289,7 @@ class Scenario(BaseScenario):
         other_rel = other_pos - agent.state.pos.unsqueeze(1)
         other_dist = torch.linalg.vector_norm(other_rel, dim=-1, keepdim=True)
         other_vis = (other_dist <= fov).float()
-        obs_parts.append((other_rel * visible).reshape(batch, -1))
+        obs_parts.append((other_rel * other_vis).reshape(batch, -1))
 
         return torch.cat(obs_parts, dim=-1)
 
