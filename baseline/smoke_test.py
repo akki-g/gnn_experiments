@@ -109,26 +109,28 @@ def test_critic() -> None:
 
 def test_rollout_buffer() -> None:
     buffer = IPPORolloutBuffer(gamma=0.99, gae_lambda=0.95, device="cpu")
+    E, N = 2, 3  # 2 envs, 3 agents
     for _ in range(5):
         buffer.add_timestep(
-            obs=torch.randn(3, 10),
-            actions=torch.randn(3, 2).clamp(-1, 1),
-            rewards=torch.randn(3),
-            dones=torch.zeros(3),
-            log_probs=torch.randn(3),
-            values=torch.randn(3),
+            obs=torch.randn(E, N, 10),
+            actions=torch.randn(E, N, 2).clamp(-1, 1),
+            rewards=torch.randn(E, N),
+            dones=torch.zeros(E, N),
+            log_probs=torch.randn(E, N),
+            values=torch.randn(E, N),
         )
-    buffer.compute_advantages(last_values=torch.randn(3))
-    assert buffer.advantages.shape == (5, 3)
-    assert buffer.returns.shape == (5, 3)
+    buffer.compute_advantages(last_values=torch.randn(E, N))
+    assert buffer.advantages.shape == (5, E, N)
+    assert buffer.returns.shape == (5, E, N)
     saw_batch = False
-    for obs, actions, log_probs, advantages, returns in buffer.get_batches(2):
+    for obs, actions, log_probs, advantages, returns, old_values in buffer.get_batches(2):
         saw_batch = True
-        assert obs.shape[1:] == (3, 10)
-        assert actions.shape[1:] == (3, 2)
-        assert log_probs.shape[1:] == (3,)
-        assert advantages.shape[1:] == (3,)
-        assert returns.shape[1:] == (3,)
+        assert obs.shape[1:] == (N, 10)
+        assert actions.shape[1:] == (N, 2)
+        assert log_probs.shape[1:] == (N,)
+        assert advantages.shape[1:] == (N,)
+        assert returns.shape[1:] == (N,)
+        assert old_values.shape[1:] == (N,)
     assert saw_batch
     buffer.clear()
     assert buffer.advantages is None
@@ -149,7 +151,7 @@ def test_trainer() -> None:
     )
     last_obs, rollout_metrics = trainer.collect_rollouts(num_steps=4)
     update_metrics = trainer.update(last_obs, num_actor_epochs=1, num_critic_epochs=1, B=2)
-    assert last_obs.shape == (adapter.n_defenders, adapter.obs_dim)
+    assert last_obs.shape == (adapter.num_envs, adapter.n_defenders, adapter.obs_dim)
     assert "mean_episode_rewards" in rollout_metrics
     assert "policy_loss" in update_metrics
     assert "explained_var" in update_metrics

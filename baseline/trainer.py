@@ -187,7 +187,7 @@ class IPPOTrainer:
 
         # -- Actor update ----------------------------------------------
         for _ in range(num_actor_epochs):
-            for obs, actions, old_log_probs, advantages, returns in self.buffer.get_batches(B):
+            for obs, actions, old_log_probs, advantages, returns, _ in self.buffer.get_batches(B):
                 # obs: (B, N, obs_dim), actions: (B, N, act_dim)
                 new_lp, entropy = self.policy.evaluate_actions(obs, actions)
 

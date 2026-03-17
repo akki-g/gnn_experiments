@@ -184,7 +184,7 @@ class GNNTrainer:
 
         #  actor update
         for _ in range(num_actor_epochs):
-            for (obs, actions, old_log_probs, advantages, returns, A) in self.buffer.get_batches(B):
+            for (obs, actions, old_log_probs, advantages, returns, A, _) in self.buffer.get_batches(B):
                 new_lp, entropy, _ = self.comm_policy.evaluate_actions(obs, A, actions)
 
                 ratio = torch.exp(new_lp - old_log_probs)
@@ -205,7 +205,7 @@ class GNNTrainer:
 
         # critic update (fewer epochs)
         for _ in range(num_critic_epochs):
-            for (obs, actions, old_log_probs, advantages, returns, A) in self.buffer.get_batches(B):
+            for (obs, actions, old_log_probs, advantages, returns, A, old_values) in self.buffer.get_batches(B):
                 B_size, N, obs_d = obs.shape
                 flat_obs = obs.reshape(B_size * N, obs_d)
                 flat_returns = returns.reshape(B_size * N)

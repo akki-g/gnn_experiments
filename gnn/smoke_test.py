@@ -194,7 +194,7 @@ def test_rollout_buffer() -> None:
     assert buffer.returns.shape == (t, e, n)
 
     saw_batch = False
-    for obs, actions, log_probs, adv, ret, adj in buffer.get_batches(B=2):
+    for obs, actions, log_probs, adv, ret, adj, old_values in buffer.get_batches(B=2):
         saw_batch = True
         assert obs.shape[1:] == (n, obs_dim)
         assert actions.shape[1:] == (n, act_dim)
@@ -202,6 +202,7 @@ def test_rollout_buffer() -> None:
         assert adv.shape[1:] == (n,)
         assert ret.shape[1:] == (n,)
         assert adj.shape[1:] == (n, n)
+        assert old_values.shape[1:] == (n,)
     assert saw_batch
 
     buffer.clear()
