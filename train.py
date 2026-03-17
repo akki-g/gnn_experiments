@@ -58,10 +58,10 @@ TAG_RADIUS      = 0.15
 
 def plot_and_save(metrics_history, title, output_dir, filename):
     metrics_to_plot = [
-        "policy_loss", "value_loss", "entropy", "mean_bellman_error",
+        "policy_loss", "value_loss", "entropy", "mean_bellman_error", "explained_var",
         "mean_episode_return", "mean_episode_rewards", "scout_reward", "interceptor_reward",
     ]
-    fig, axes = plt.subplots(4, 2, figsize=(14, 16))
+    fig, axes = plt.subplots(5, 2, figsize=(14, 20))
     axes = axes.flatten()
     for i, name in enumerate(metrics_to_plot):
         vals = metrics_history.get(name, [])

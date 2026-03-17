@@ -235,6 +235,7 @@ def test_trainer_single_env() -> None:
     assert "mean_episode_rewards" in rollout_metrics
     assert "policy_loss" in update_metrics
     assert "value_loss" in update_metrics
+    assert "explained_var" in update_metrics
 
 
 def test_trainer_multi_env() -> None:

@@ -60,6 +60,7 @@ class GNNTrainer:
             "value_loss": [],
             "entropy": [],
             "mean_bellman_error": [],
+            "explained_var": [],
             "mean_episode_return": [],
             "mean_episode_rewards": [],
             "scout_reward": [],
@@ -179,6 +180,7 @@ class GNNTrainer:
         entropies = []
         value_losses = []
         bellman_errors = []
+        explained_vars = []
 
         #  actor update
         for _ in range(num_actor_epochs):
@@ -213,6 +215,9 @@ class GNNTrainer:
                 value_loss = F.mse_loss(pred_values, flat_returns)
                 mean_bellman_error = td_error.abs().mean()
 
+                # Explained variance diagnostic
+                ev = 1 - (flat_returns - pred_values).var() / (flat_returns.var() + 1e-8)
+
                 self.critic_optim.zero_grad()
                 value_loss.backward()
                 nn.utils.clip_grad_norm_(self.critic.parameters(), max_norm=0.5)
@@ -220,6 +225,7 @@ class GNNTrainer:
 
                 value_losses.append(value_loss.item())
                 bellman_errors.append(mean_bellman_error.item())
+                explained_vars.append(ev.item())
 
         self.buffer.clear()
         update_metrics = {
@@ -227,10 +233,12 @@ class GNNTrainer:
             "value_loss": self._safe_mean(value_losses),
             "entropy": self._safe_mean(entropies),
             "mean_bellman_error": self._safe_mean(bellman_errors),
+            "explained_var": self._safe_mean(explained_vars),
         }
         self.metrics_history["policy_loss"].append(update_metrics["policy_loss"])
         self.metrics_history["value_loss"].append(update_metrics["value_loss"])
         self.metrics_history["entropy"].append(update_metrics["entropy"])
         self.metrics_history["mean_bellman_error"].append(update_metrics["mean_bellman_error"])
+        self.metrics_history["explained_var"].append(update_metrics["explained_var"])
 
         return update_metrics

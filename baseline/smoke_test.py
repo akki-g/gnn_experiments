@@ -152,6 +152,7 @@ def test_trainer() -> None:
     assert last_obs.shape == (adapter.n_defenders, adapter.obs_dim)
     assert "mean_episode_rewards" in rollout_metrics
     assert "policy_loss" in update_metrics
+    assert "explained_var" in update_metrics
 
 
 def main() -> int:

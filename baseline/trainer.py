@@ -63,6 +63,7 @@ class IPPOTrainer:
             "value_loss":         [],
             "entropy":            [],
             "mean_bellman_error": [],
+            "explained_var":      [],
             "mean_episode_return":  [],
             "mean_episode_rewards": [],
             "scout_reward":         [],
@@ -240,7 +241,7 @@ class IPPOTrainer:
             "mean_bellman_error": self._safe_mean(bellman_errors),
             "explained_var":      self._safe_mean(explained_vars),
         }
-        for key in ["policy_loss", "value_loss", "entropy", "mean_bellman_error"]:
+        for key in ["policy_loss", "value_loss", "entropy", "mean_bellman_error", "explained_var"]:
             self.metrics_history[key].append(update_metrics[key])
 
         return update_metrics
