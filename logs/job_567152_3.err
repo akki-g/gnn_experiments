@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train.py", line 262, in <module>
+    main()
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train.py", line 256, in main
+    run_gnn(args.k, args.r_comm, device, args.output_dir)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train.py", line 112, in run_gnn
+    trainer = GNNTrainerMultiEnv(
+              ^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/gnn/trainer_multienv.py", line 49, in __init__
+    self.comm_policy = CommPolicy(
+                       ^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/gnn/comm.py", line 13, in __init__
+    self.graphConv = GraphConv(F_feat, G_feat, K)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/gnn/graph_conv.py", line 13, in __init__
+    self.weight.data = self.weight.data(K, F_in, G_out)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'Tensor' object is not callable

@@ -1,0 +1,15 @@
+=============================
+Job ID:       567155
+Array Task:   2
+Node:         evc3
+GPU:          0
+Start time:   Mon Mar 16 21:21:53 EDT 2026
+=============================
+Running: GNN K=2 r_comm=1.5
+Device: cuda
+GPU: Tesla V100-PCIE-16GB
+
+=== GNN | K=2, r_comm=1.5 | device=cuda ===
+=============================
+End time: Mon Mar 16 21:21:59 EDT 2026
+=============================
