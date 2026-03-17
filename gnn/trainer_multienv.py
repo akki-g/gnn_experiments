@@ -112,7 +112,8 @@ class GNNTrainerMultiEnv:
 
                 # step env (E, N, 2)
                 next_obs, rewards, dones, info, next_positions = self.adapter.step(actions)
-
+                
+                self._running_episode_returns += rewards.sum(dim=-1)
                 # per type rewards average 
                 scout_rew = rewards[:, :n_s].mean().item()
                 interceptor_rew = rewards[:, n_s:].mean().item()
