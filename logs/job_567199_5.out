@@ -1,0 +1,31 @@
+=============================
+Job ID:       567205
+Array Task:   5
+Node:         evc6
+GPU:          0
+Start time:   Mon Mar 16 22:34:18 EDT 2026
+=============================
+Running: GNN K=3 r_comm=1.5
+Device: cuda
+GPU: Tesla V100-PCIE-16GB
+
+=== GNN | K=3, r_comm=1.5 | device=cuda ===
+[K3_r1.5] iter=1/2000 steps=256 | pi=-0.0012 v=0.4558 ent=2.8268 ret=-4.987 exp_var=0.939
+[K3_r1.5] iter=20/2000 steps=5120 | pi=-0.0030 v=70.7359 ent=2.7817 ret=-1.930 exp_var=0.950
+[K3_r1.5] iter=40/2000 steps=10240 | pi=-0.0032 v=18.4113 ent=2.7860 ret=-3.571 exp_var=0.898
+[K3_r1.5] iter=60/2000 steps=15360 | pi=-0.0023 v=4.5334 ent=2.8273 ret=-4.923 exp_var=0.876
+[K3_r1.5] iter=80/2000 steps=20480 | pi=-0.0031 v=1.5457 ent=2.8540 ret=-4.214 exp_var=0.923
+[K3_r1.5] iter=100/2000 steps=25600 | pi=-0.0031 v=0.4660 ent=2.8791 ret=-3.516 exp_var=0.937
+[K3_r1.5] iter=120/2000 steps=30720 | pi=-0.0029 v=0.1571 ent=2.9309 ret=-3.415 exp_var=0.965
+[K3_r1.5] iter=140/2000 steps=35840 | pi=0.0118 v=0.1603 ent=2.9689 ret=-1.663 exp_var=0.972
+[K3_r1.5] iter=160/2000 steps=40960 | pi=-0.0020 v=0.1333 ent=2.8966 ret=-2.030 exp_var=0.988
+[K3_r1.5] iter=180/2000 steps=46080 | pi=-0.0039 v=0.0167 ent=2.7927 ret=-2.412 exp_var=0.996
+[K3_r1.5] iter=200/2000 steps=51200 | pi=-0.0049 v=0.0101 ent=2.6713 ret=-2.553 exp_var=0.998
+[K3_r1.5] iter=220/2000 steps=56320 | pi=-0.0037 v=0.0032 ent=2.7853 ret=-2.827 exp_var=0.999
+[K3_r1.5] iter=240/2000 steps=61440 | pi=-0.0043 v=0.0027 ent=2.8232 ret=-2.913 exp_var=0.999
+[K3_r1.5] iter=260/2000 steps=66560 | pi=-0.0046 v=0.0023 ent=2.7779 ret=-2.933 exp_var=0.999
+[K3_r1.5] iter=280/2000 steps=71680 | pi=-0.0053 v=0.0031 ent=2.6335 ret=-2.988 exp_var=0.999
+[K3_r1.5] iter=300/2000 steps=76800 | pi=-0.0020 v=0.0033 ent=2.7885 ret=-2.991 exp_var=0.999
+[K3_r1.5] iter=320/2000 steps=81920 | pi=-0.0026 v=0.0053 ent=2.6582 ret=-2.808 exp_var=0.999
+[K3_r1.5] iter=340/2000 steps=87040 | pi=0.0017 v=0.0023 ent=2.9415 ret=-3.188 exp_var=0.999
+[K3_r1.5] iter=360/2000 steps=92160 | pi=-0.0027 v=0.0023 ent=2.8734 ret=-3.252 exp_var=0.999

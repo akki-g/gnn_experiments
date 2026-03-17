@@ -1,0 +1,32 @@
+=============================
+Job ID:       567199
+Array Task:   9
+Node:         evc9
+GPU:          0
+Start time:   Mon Mar 16 22:34:18 EDT 2026
+=============================
+Running: GNN K=5 r_comm=2.0
+Device: cuda
+GPU: Tesla V100-PCIE-16GB
+
+=== GNN | K=5, r_comm=2.0 | device=cuda ===
+[K5_r2.0] iter=1/2000 steps=256 | pi=-0.0011 v=0.4798 ent=2.8266 ret=-4.929 exp_var=0.930
+[K5_r2.0] iter=20/2000 steps=5120 | pi=-0.0029 v=31.3906 ent=2.8131 ret=-3.837 exp_var=0.822
+[K5_r2.0] iter=40/2000 steps=10240 | pi=-0.0032 v=7.5044 ent=2.8057 ret=-4.705 exp_var=0.867
+[K5_r2.0] iter=60/2000 steps=15360 | pi=-0.0031 v=1.7888 ent=2.7848 ret=-4.059 exp_var=0.901
+[K5_r2.0] iter=80/2000 steps=20480 | pi=-0.0029 v=0.3044 ent=2.8479 ret=-5.125 exp_var=0.947
+[K5_r2.0] iter=100/2000 steps=25600 | pi=-0.0021 v=0.0843 ent=2.9855 ret=-6.071 exp_var=0.979
+[K5_r2.0] iter=120/2000 steps=30720 | pi=-0.0014 v=0.0388 ent=2.9708 ret=-3.311 exp_var=0.996
+[K5_r2.0] iter=140/2000 steps=35840 | pi=-0.0006 v=0.0457 ent=2.9344 ret=-3.327 exp_var=0.995
+[K5_r2.0] iter=160/2000 steps=40960 | pi=-0.0019 v=0.0186 ent=3.0237 ret=-3.856 exp_var=0.995
+[K5_r2.0] iter=180/2000 steps=46080 | pi=-0.0036 v=0.0086 ent=2.8421 ret=-3.606 exp_var=0.998
+[K5_r2.0] iter=200/2000 steps=51200 | pi=-0.0016 v=0.0032 ent=2.7640 ret=-3.613 exp_var=0.999
+[K5_r2.0] iter=220/2000 steps=56320 | pi=-0.0008 v=0.0026 ent=2.6387 ret=-3.269 exp_var=0.999
+[K5_r2.0] iter=240/2000 steps=61440 | pi=-0.0047 v=0.0039 ent=2.4831 ret=-3.035 exp_var=0.999
+[K5_r2.0] iter=260/2000 steps=66560 | pi=-0.0035 v=0.0025 ent=2.5012 ret=-3.125 exp_var=0.999
+[K5_r2.0] iter=280/2000 steps=71680 | pi=-0.0024 v=0.0018 ent=2.5643 ret=-3.048 exp_var=1.000
+[K5_r2.0] iter=300/2000 steps=76800 | pi=-0.0008 v=0.0010 ent=2.6527 ret=-2.967 exp_var=1.000
+[K5_r2.0] iter=320/2000 steps=81920 | pi=-0.0022 v=0.0034 ent=2.5717 ret=-3.080 exp_var=0.999
+[K5_r2.0] iter=340/2000 steps=87040 | pi=-0.0007 v=0.0007 ent=2.5203 ret=-3.128 exp_var=1.000
+[K5_r2.0] iter=360/2000 steps=92160 | pi=-0.0014 v=0.0006 ent=2.5551 ret=-3.114 exp_var=1.000
+[K5_r2.0] iter=380/2000 steps=97280 | pi=-0.0016 v=0.0002 ent=2.4762 ret=-3.101 exp_var=1.000

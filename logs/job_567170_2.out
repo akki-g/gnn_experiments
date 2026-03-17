@@ -1,0 +1,21 @@
+=============================
+Job ID:       567173
+Array Task:   2
+Node:         evc5
+GPU:          0
+Start time:   Mon Mar 16 21:39:42 EDT 2026
+=============================
+Running: GNN K=2 r_comm=1.5
+Device: cuda
+GPU: Tesla V100-PCIE-16GB
+
+=== GNN | K=2, r_comm=1.5 | device=cuda ===
+[K2_r1.5] iter=1/2000 steps=256 | pi=-0.0012 v=0.4336 ent=2.8219 ret=0.000 exp_var=0.938
+[K2_r1.5] iter=20/2000 steps=5120 | pi=-0.0028 v=38.0611 ent=2.7840 ret=0.000 exp_var=0.918
+[K2_r1.5] iter=40/2000 steps=10240 | pi=-0.0023 v=14.9911 ent=2.7464 ret=0.000 exp_var=0.934
+[K2_r1.5] iter=60/2000 steps=15360 | pi=0.0220 v=4.4896 ent=2.7695 ret=0.000 exp_var=0.897
+[K2_r1.5] iter=80/2000 steps=20480 | pi=-0.0035 v=1.3473 ent=2.8183 ret=0.000 exp_var=0.908
+[K2_r1.5] iter=100/2000 steps=25600 | pi=-0.0022 v=0.8696 ent=2.8964 ret=0.000 exp_var=0.912
+[K2_r1.5] iter=120/2000 steps=30720 | pi=0.0058 v=0.6857 ent=2.9716 ret=0.000 exp_var=0.899
+[K2_r1.5] iter=140/2000 steps=35840 | pi=-0.0018 v=0.1668 ent=2.9915 ret=0.000 exp_var=0.973
+[K2_r1.5] iter=160/2000 steps=40960 | pi=-0.0031 v=0.0392 ent=2.8283 ret=0.000 exp_var=0.993

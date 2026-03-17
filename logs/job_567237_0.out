@@ -1,0 +1,119 @@
+=============================
+Job ID:       567238
+Array Task:   0
+Node:         evc2
+GPU:          0
+Start time:   Tue Mar 17 00:45:09 EDT 2026
+=============================
+Running: IPPO baseline
+Device: cuda
+GPU: Tesla V100-PCIE-16GB
+
+=== IPPO baseline | 256 envs | device=cuda ===
+[IPPO] iter=1 steps=256/512000 | pi=-0.0011 v=7.2375 ent=2.8227 ret=-46.952 exp_var=0.196
+[IPPO] iter=20 steps=5120/512000 | pi=-0.0010 v=21.9031 ent=2.7716 ret=-1.280 exp_var=0.596
+[IPPO] iter=40 steps=10240/512000 | pi=-0.0017 v=15.1418 ent=2.8008 ret=-1.280 exp_var=0.522
+[IPPO] iter=60 steps=15360/512000 | pi=-0.0014 v=4.8383 ent=2.8884 ret=-1.035 exp_var=0.548
+[IPPO] iter=80 steps=20480/512000 | pi=-0.0010 v=2.5752 ent=2.8834 ret=-0.858 exp_var=0.671
+[IPPO] iter=100 steps=25600/512000 | pi=-0.0015 v=2.4479 ent=2.8563 ret=-0.640 exp_var=0.692
+[IPPO] iter=120 steps=30720/512000 | pi=-0.0011 v=1.8603 ent=2.8270 ret=-0.501 exp_var=0.739
+[IPPO] iter=140 steps=35840/512000 | pi=-0.0016 v=1.6596 ent=2.7747 ret=-0.494 exp_var=0.761
+[IPPO] iter=160 steps=40960/512000 | pi=-0.0021 v=1.7331 ent=2.6806 ret=-0.493 exp_var=0.759
+[IPPO] iter=180 steps=46080/512000 | pi=-0.0021 v=1.4378 ent=2.5686 ret=-0.473 exp_var=0.795
+[IPPO] iter=200 steps=51200/512000 | pi=-0.0018 v=1.4962 ent=2.5400 ret=-0.468 exp_var=0.789
+[IPPO] iter=220 steps=56320/512000 | pi=-0.0019 v=1.1852 ent=2.4444 ret=-0.478 exp_var=0.820
+[IPPO] iter=240 steps=61440/512000 | pi=-0.0002 v=1.1855 ent=2.3270 ret=-0.482 exp_var=0.831
+[IPPO] iter=260 steps=66560/512000 | pi=-0.0016 v=1.1668 ent=2.2301 ret=-0.484 exp_var=0.851
+[IPPO] iter=280 steps=71680/512000 | pi=-0.0012 v=1.1491 ent=2.2024 ret=-0.496 exp_var=0.868
+[IPPO] iter=300 steps=76800/512000 | pi=-0.0018 v=1.2456 ent=2.1493 ret=-0.508 exp_var=0.878
+[IPPO] iter=320 steps=81920/512000 | pi=-0.0017 v=1.1485 ent=2.1277 ret=-0.528 exp_var=0.847
+[IPPO] iter=340 steps=87040/512000 | pi=-0.0013 v=1.1561 ent=2.1094 ret=-0.552 exp_var=0.870
+[IPPO] iter=360 steps=92160/512000 | pi=-0.0016 v=1.3648 ent=2.0992 ret=-0.558 exp_var=0.875
+[IPPO] iter=380 steps=97280/512000 | pi=-0.0019 v=1.5180 ent=2.2678 ret=-0.566 exp_var=0.861
+[IPPO] iter=400 steps=102400/512000 | pi=-0.0014 v=1.2651 ent=2.3223 ret=-0.576 exp_var=0.877
+[IPPO] iter=420 steps=107520/512000 | pi=-0.0016 v=1.1670 ent=2.3422 ret=-0.601 exp_var=0.912
+[IPPO] iter=440 steps=112640/512000 | pi=-0.0017 v=1.0377 ent=2.3597 ret=-0.613 exp_var=0.909
+[IPPO] iter=460 steps=117760/512000 | pi=-0.0016 v=0.9894 ent=2.4431 ret=-0.652 exp_var=0.924
+[IPPO] iter=480 steps=122880/512000 | pi=-0.0020 v=0.8205 ent=2.4878 ret=-0.826 exp_var=0.945
+[IPPO] iter=500 steps=128000/512000 | pi=0.0028 v=3.0721 ent=2.5504 ret=-0.853 exp_var=0.811
+[IPPO] iter=520 steps=133120/512000 | pi=-0.0018 v=0.8169 ent=2.5588 ret=-0.903 exp_var=0.911
+[IPPO] iter=540 steps=138240/512000 | pi=-0.0016 v=0.8297 ent=2.5313 ret=-0.915 exp_var=0.929
+[IPPO] iter=560 steps=143360/512000 | pi=0.0006 v=0.8581 ent=2.5177 ret=-0.946 exp_var=0.933
+[IPPO] iter=580 steps=148480/512000 | pi=-0.0012 v=1.3512 ent=2.5009 ret=-0.967 exp_var=0.904
+[IPPO] iter=600 steps=153600/512000 | pi=0.0014 v=323.9562 ent=3.1553 ret=-1.000 exp_var=-35.638
+[IPPO] iter=620 steps=158720/512000 | pi=0.0004 v=274.4580 ent=3.2509 ret=-1.107 exp_var=-28.346
+[IPPO] iter=640 steps=163840/512000 | pi=-0.0019 v=11.0241 ent=3.0578 ret=-1.022 exp_var=0.258
+[IPPO] iter=660 steps=168960/512000 | pi=0.0277 v=0.8209 ent=3.0442 ret=-0.882 exp_var=0.907
+[IPPO] iter=680 steps=174080/512000 | pi=0.0084 v=0.6441 ent=3.0242 ret=-0.831 exp_var=0.944
+[IPPO] iter=700 steps=179200/512000 | pi=0.0010 v=0.9605 ent=3.0485 ret=-0.563 exp_var=0.929
+[IPPO] iter=720 steps=184320/512000 | pi=-0.0003 v=0.7859 ent=2.9975 ret=-0.494 exp_var=0.965
+[IPPO] iter=740 steps=189440/512000 | pi=-0.0008 v=0.6710 ent=2.9189 ret=-0.500 exp_var=0.973
+[IPPO] iter=760 steps=194560/512000 | pi=-0.0015 v=0.9870 ent=2.8269 ret=-0.450 exp_var=0.951
+[IPPO] iter=780 steps=199680/512000 | pi=0.0000 v=6.6851 ent=3.0154 ret=-0.431 exp_var=0.171
+[IPPO] iter=800 steps=204800/512000 | pi=-0.0023 v=0.4231 ent=2.9905 ret=-0.403 exp_var=0.954
+[IPPO] iter=820 steps=209920/512000 | pi=0.0036 v=0.0921 ent=3.2268 ret=-0.402 exp_var=0.991
+[IPPO] iter=840 steps=215040/512000 | pi=-0.0023 v=0.0072 ent=2.9028 ret=-0.414 exp_var=0.998
+[IPPO] iter=860 steps=220160/512000 | pi=-0.0020 v=0.0033 ent=2.8414 ret=-0.472 exp_var=0.999
+[IPPO] iter=880 steps=225280/512000 | pi=-0.0003 v=0.0008 ent=2.8851 ret=-0.494 exp_var=1.000
+[IPPO] iter=900 steps=230400/512000 | pi=0.0000 v=0.0008 ent=2.7815 ret=-0.495 exp_var=1.000
+[IPPO] iter=920 steps=235520/512000 | pi=0.0003 v=0.0005 ent=2.7125 ret=-0.494 exp_var=1.000
+[IPPO] iter=940 steps=240640/512000 | pi=0.0006 v=0.0003 ent=2.6550 ret=-0.494 exp_var=1.000
+[IPPO] iter=960 steps=245760/512000 | pi=0.0025 v=0.0002 ent=2.6201 ret=-0.494 exp_var=1.000
+[IPPO] iter=980 steps=250880/512000 | pi=0.0009 v=0.0007 ent=2.7204 ret=-0.499 exp_var=1.000
+[IPPO] iter=1000 steps=256000/512000 | pi=0.0337 v=0.0007 ent=2.8637 ret=-0.501 exp_var=1.000
+[IPPO] iter=1020 steps=261120/512000 | pi=0.0014 v=0.0029 ent=2.8553 ret=-0.508 exp_var=0.999
+[IPPO] iter=1040 steps=266240/512000 | pi=-0.0021 v=0.0017 ent=2.7560 ret=-0.535 exp_var=1.000
+[IPPO] iter=1060 steps=271360/512000 | pi=0.0035 v=0.0018 ent=2.7696 ret=-0.532 exp_var=1.000
+[IPPO] iter=1080 steps=276480/512000 | pi=0.0035 v=0.0024 ent=2.7349 ret=-0.510 exp_var=0.999
+[IPPO] iter=1100 steps=281600/512000 | pi=-0.0015 v=0.0073 ent=2.7154 ret=-0.465 exp_var=0.998
+[IPPO] iter=1120 steps=286720/512000 | pi=-0.0005 v=0.0003 ent=2.7382 ret=-0.513 exp_var=1.000
+[IPPO] iter=1140 steps=291840/512000 | pi=-0.0014 v=0.0012 ent=2.6081 ret=-0.501 exp_var=1.000
+[IPPO] iter=1160 steps=296960/512000 | pi=-0.0013 v=0.0009 ent=2.6371 ret=-0.496 exp_var=1.000
+[IPPO] iter=1180 steps=302080/512000 | pi=0.0021 v=0.0001 ent=2.6428 ret=-0.498 exp_var=1.000
+[IPPO] iter=1200 steps=307200/512000 | pi=-0.0001 v=0.0001 ent=2.6483 ret=-0.498 exp_var=1.000
+[IPPO] iter=1220 steps=312320/512000 | pi=-0.0005 v=0.0002 ent=2.7410 ret=-0.497 exp_var=1.000
+[IPPO] iter=1240 steps=317440/512000 | pi=0.0013 v=0.0002 ent=2.8524 ret=-0.499 exp_var=1.000
+[IPPO] iter=1260 steps=322560/512000 | pi=-0.0021 v=0.0001 ent=2.8443 ret=-0.508 exp_var=1.000
+[IPPO] iter=1280 steps=327680/512000 | pi=-0.0009 v=0.0003 ent=3.0381 ret=-0.516 exp_var=1.000
+[IPPO] iter=1300 steps=332800/512000 | pi=0.0033 v=0.0010 ent=2.8535 ret=-0.613 exp_var=1.000
+[IPPO] iter=1320 steps=337920/512000 | pi=0.0019 v=0.0009 ent=2.8276 ret=-0.501 exp_var=1.000
+[IPPO] iter=1340 steps=343040/512000 | pi=0.0003 v=0.0003 ent=2.7414 ret=-0.502 exp_var=1.000
+[IPPO] iter=1360 steps=348160/512000 | pi=-0.0019 v=0.0006 ent=2.8186 ret=-0.493 exp_var=1.000
+[IPPO] iter=1380 steps=353280/512000 | pi=-0.0008 v=0.0021 ent=2.7158 ret=-0.488 exp_var=0.999
+[IPPO] iter=1400 steps=358400/512000 | pi=0.0037 v=0.0009 ent=2.6846 ret=-0.509 exp_var=1.000
+[IPPO] iter=1420 steps=363520/512000 | pi=0.0088 v=0.0001 ent=2.6673 ret=-0.509 exp_var=1.000
+[IPPO] iter=1440 steps=368640/512000 | pi=-0.0004 v=0.0004 ent=2.6739 ret=-0.504 exp_var=1.000
+[IPPO] iter=1460 steps=373760/512000 | pi=-0.0014 v=0.0007 ent=2.7334 ret=-0.507 exp_var=1.000
+[IPPO] iter=1480 steps=378880/512000 | pi=-0.0011 v=0.0016 ent=2.7575 ret=-0.499 exp_var=1.000
+[IPPO] iter=1500 steps=384000/512000 | pi=0.0011 v=0.0007 ent=2.9219 ret=-0.521 exp_var=1.000
+[IPPO] iter=1520 steps=389120/512000 | pi=-0.0010 v=0.0020 ent=2.8549 ret=-0.514 exp_var=0.999
+[IPPO] iter=1540 steps=394240/512000 | pi=-0.0005 v=0.0078 ent=2.6857 ret=-0.500 exp_var=0.998
+[IPPO] iter=1560 steps=399360/512000 | pi=-0.0028 v=0.0071 ent=2.5797 ret=-0.516 exp_var=0.998
+[IPPO] iter=1580 steps=404480/512000 | pi=0.0099 v=0.0081 ent=2.5163 ret=-0.519 exp_var=0.998
+[IPPO] iter=1600 steps=409600/512000 | pi=-0.0007 v=0.0056 ent=2.4663 ret=-0.544 exp_var=0.999
+[IPPO] iter=1620 steps=414720/512000 | pi=-0.0000 v=0.0015 ent=2.5138 ret=-0.549 exp_var=1.000
+[IPPO] iter=1640 steps=419840/512000 | pi=0.0078 v=0.0009 ent=2.6336 ret=-0.554 exp_var=1.000
+[IPPO] iter=1660 steps=424960/512000 | pi=0.0016 v=0.0005 ent=2.6249 ret=-0.548 exp_var=1.000
+[IPPO] iter=1680 steps=430080/512000 | pi=0.0008 v=0.0032 ent=2.7343 ret=-0.528 exp_var=0.999
+[IPPO] iter=1700 steps=435200/512000 | pi=0.0041 v=0.0008 ent=2.7311 ret=-0.527 exp_var=1.000
+[IPPO] iter=1720 steps=440320/512000 | pi=0.0008 v=0.0002 ent=2.7032 ret=-0.532 exp_var=1.000
+[IPPO] iter=1740 steps=445440/512000 | pi=0.0033 v=0.0006 ent=2.7315 ret=-0.519 exp_var=1.000
+[IPPO] iter=1760 steps=450560/512000 | pi=-0.0018 v=0.0003 ent=2.7156 ret=-0.525 exp_var=1.000
+[IPPO] iter=1780 steps=455680/512000 | pi=0.0011 v=0.0004 ent=2.6682 ret=-0.523 exp_var=1.000
+[IPPO] iter=1800 steps=460800/512000 | pi=0.0035 v=0.0004 ent=2.8277 ret=-0.519 exp_var=1.000
+[IPPO] iter=1820 steps=465920/512000 | pi=0.0069 v=0.0026 ent=2.7258 ret=-0.509 exp_var=0.999
+[IPPO] iter=1840 steps=471040/512000 | pi=0.0004 v=0.0026 ent=2.6252 ret=-0.510 exp_var=0.999
+[IPPO] iter=1860 steps=476160/512000 | pi=0.0068 v=0.0112 ent=2.5172 ret=-0.479 exp_var=0.997
+[IPPO] iter=1880 steps=481280/512000 | pi=0.0041 v=0.0284 ent=2.3864 ret=-0.399 exp_var=0.994
+[IPPO] iter=1900 steps=486400/512000 | pi=0.0018 v=0.0387 ent=2.2807 ret=-0.344 exp_var=0.992
+[IPPO] iter=1920 steps=491520/512000 | pi=0.0037 v=0.0389 ent=2.1256 ret=-0.309 exp_var=0.992
+[IPPO] iter=1940 steps=496640/512000 | pi=0.0016 v=0.0414 ent=1.9601 ret=-0.256 exp_var=0.992
+[IPPO] iter=1960 steps=501760/512000 | pi=-0.0004 v=0.0168 ent=1.8962 ret=-0.486 exp_var=0.996
+[IPPO] iter=1980 steps=506880/512000 | pi=0.0001 v=0.0052 ent=1.9611 ret=-0.512 exp_var=0.999
+[IPPO] iter=2000 steps=512000/512000 | pi=0.0001 v=0.0027 ent=1.9098 ret=-0.524 exp_var=0.999
+Saved plot: /home/ak565492/gnn_experiments/outputs/cluster_results/ippo_baseline.png
+
+[IPPO] Final return: -0.524
+=============================
+End time: Tue Mar 17 08:17:17 EDT 2026
+=============================

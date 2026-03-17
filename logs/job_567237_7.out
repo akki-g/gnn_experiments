@@ -1,0 +1,119 @@
+=============================
+Job ID:       567245
+Array Task:   7
+Node:         evc7
+GPU:          0
+Start time:   Tue Mar 17 00:45:09 EDT 2026
+=============================
+Running: GNN K=5 r_comm=1.0
+Device: cuda
+GPU: Tesla V100-PCIE-16GB
+
+=== GNN | K=5, r_comm=1.0 | device=cuda ===
+[K5_r1.0] iter=1/2000 steps=256 | pi=-0.0015 v=7.6876 ent=2.8295 ret=-4.878 exp_var=0.169
+[K5_r1.0] iter=20/2000 steps=5120 | pi=-0.0020 v=29.8623 ent=2.7552 ret=-3.285 exp_var=0.672
+[K5_r1.0] iter=40/2000 steps=10240 | pi=-0.0022 v=30.6130 ent=2.6814 ret=-3.292 exp_var=0.613
+[K5_r1.0] iter=60/2000 steps=15360 | pi=-0.0023 v=24.2449 ent=2.7474 ret=-2.682 exp_var=0.497
+[K5_r1.0] iter=80/2000 steps=20480 | pi=-0.0022 v=14.0361 ent=2.7923 ret=-2.056 exp_var=0.454
+[K5_r1.0] iter=100/2000 steps=25600 | pi=-0.0026 v=6.9523 ent=2.7000 ret=-1.818 exp_var=0.546
+[K5_r1.0] iter=120/2000 steps=30720 | pi=-0.0013 v=4.6905 ent=2.5356 ret=-1.715 exp_var=0.588
+[K5_r1.0] iter=140/2000 steps=35840 | pi=-0.0018 v=4.7724 ent=2.3824 ret=-1.788 exp_var=0.607
+[K5_r1.0] iter=160/2000 steps=40960 | pi=-0.0018 v=4.6554 ent=2.2340 ret=-2.002 exp_var=0.658
+[K5_r1.0] iter=180/2000 steps=46080 | pi=-0.0018 v=3.5046 ent=2.1279 ret=-2.095 exp_var=0.698
+[K5_r1.0] iter=200/2000 steps=51200 | pi=-0.0014 v=3.1350 ent=2.0132 ret=-2.206 exp_var=0.719
+[K5_r1.0] iter=220/2000 steps=56320 | pi=-0.0015 v=3.1420 ent=1.8352 ret=-2.291 exp_var=0.792
+[K5_r1.0] iter=240/2000 steps=61440 | pi=-0.0019 v=3.0426 ent=1.7393 ret=-2.288 exp_var=0.781
+[K5_r1.0] iter=260/2000 steps=66560 | pi=-0.0021 v=2.6451 ent=1.7503 ret=-2.333 exp_var=0.762
+[K5_r1.0] iter=280/2000 steps=71680 | pi=-0.0014 v=1.9297 ent=1.7541 ret=-2.596 exp_var=0.801
+[K5_r1.0] iter=300/2000 steps=76800 | pi=-0.0026 v=1.7669 ent=1.8085 ret=-2.730 exp_var=0.805
+[K5_r1.0] iter=320/2000 steps=81920 | pi=-0.0020 v=2.2766 ent=1.8315 ret=-2.766 exp_var=0.770
+[K5_r1.0] iter=340/2000 steps=87040 | pi=-0.0016 v=1.1141 ent=1.9043 ret=-2.728 exp_var=0.902
+[K5_r1.0] iter=360/2000 steps=92160 | pi=-0.0024 v=1.5520 ent=1.9843 ret=-2.699 exp_var=0.881
+[K5_r1.0] iter=380/2000 steps=97280 | pi=-0.0022 v=1.1949 ent=2.1354 ret=-2.552 exp_var=0.911
+[K5_r1.0] iter=400/2000 steps=102400 | pi=-0.0021 v=1.1548 ent=2.2076 ret=-2.590 exp_var=0.931
+[K5_r1.0] iter=420/2000 steps=107520 | pi=-0.0019 v=1.1388 ent=2.1781 ret=-2.860 exp_var=0.940
+[K5_r1.0] iter=440/2000 steps=112640 | pi=-0.0026 v=1.1878 ent=2.1231 ret=-2.962 exp_var=0.940
+[K5_r1.0] iter=460/2000 steps=117760 | pi=-0.0022 v=1.0341 ent=2.1170 ret=-3.302 exp_var=0.954
+[K5_r1.0] iter=480/2000 steps=122880 | pi=-0.0023 v=0.9796 ent=2.2281 ret=-3.647 exp_var=0.943
+[K5_r1.0] iter=500/2000 steps=128000 | pi=-0.0011 v=1.5117 ent=2.4669 ret=-3.766 exp_var=0.909
+[K5_r1.0] iter=520/2000 steps=133120 | pi=-0.0020 v=1.3065 ent=2.5803 ret=-3.531 exp_var=0.944
+[K5_r1.0] iter=540/2000 steps=138240 | pi=-0.0018 v=0.8227 ent=2.6242 ret=-3.463 exp_var=0.963
+[K5_r1.0] iter=560/2000 steps=143360 | pi=-0.0011 v=0.6243 ent=2.7405 ret=-3.471 exp_var=0.973
+[K5_r1.0] iter=580/2000 steps=148480 | pi=-0.0015 v=1.8869 ent=2.8712 ret=-3.372 exp_var=0.833
+[K5_r1.0] iter=600/2000 steps=153600 | pi=0.0011 v=0.6144 ent=2.8870 ret=-3.404 exp_var=0.950
+[K5_r1.0] iter=620/2000 steps=158720 | pi=-0.0003 v=0.5683 ent=2.9160 ret=-3.496 exp_var=0.971
+[K5_r1.0] iter=640/2000 steps=163840 | pi=-0.0003 v=0.5644 ent=3.0026 ret=-3.633 exp_var=0.976
+[K5_r1.0] iter=660/2000 steps=168960 | pi=-0.0011 v=0.7296 ent=3.0171 ret=-4.212 exp_var=0.966
+[K5_r1.0] iter=680/2000 steps=174080 | pi=0.0035 v=0.6219 ent=3.0009 ret=-3.906 exp_var=0.977
+[K5_r1.0] iter=700/2000 steps=179200 | pi=0.0005 v=0.4270 ent=3.0322 ret=-3.860 exp_var=0.987
+[K5_r1.0] iter=720/2000 steps=184320 | pi=0.0001 v=0.4203 ent=3.0657 ret=-3.671 exp_var=0.986
+[K5_r1.0] iter=740/2000 steps=189440 | pi=0.0006 v=0.2684 ent=3.0731 ret=-3.544 exp_var=0.991
+[K5_r1.0] iter=760/2000 steps=194560 | pi=0.0004 v=0.3601 ent=3.1201 ret=-3.447 exp_var=0.992
+[K5_r1.0] iter=780/2000 steps=199680 | pi=0.0003 v=0.2547 ent=3.1082 ret=-3.430 exp_var=0.994
+[K5_r1.0] iter=800/2000 steps=204800 | pi=-0.0000 v=0.2870 ent=3.1001 ret=-3.291 exp_var=0.993
+[K5_r1.0] iter=820/2000 steps=209920 | pi=0.0031 v=0.2462 ent=3.1030 ret=-3.174 exp_var=0.994
+[K5_r1.0] iter=840/2000 steps=215040 | pi=0.0026 v=0.2752 ent=3.1605 ret=-3.192 exp_var=0.994
+[K5_r1.0] iter=860/2000 steps=220160 | pi=0.0003 v=1.4127 ent=3.1802 ret=-3.045 exp_var=0.962
+[K5_r1.0] iter=880/2000 steps=225280 | pi=0.0050 v=23.6962 ent=3.8632 ret=-4.014 exp_var=-2.514
+[K5_r1.0] iter=900/2000 steps=230400 | pi=0.0011 v=11.6495 ent=3.6664 ret=-4.321 exp_var=-0.530
+[K5_r1.0] iter=920/2000 steps=235520 | pi=0.0030 v=1.5698 ent=3.2427 ret=-3.965 exp_var=0.855
+[K5_r1.0] iter=940/2000 steps=240640 | pi=0.0008 v=0.0626 ent=3.0920 ret=-4.164 exp_var=0.979
+[K5_r1.0] iter=960/2000 steps=245760 | pi=0.0006 v=0.0498 ent=2.9207 ret=-4.266 exp_var=0.983
+[K5_r1.0] iter=980/2000 steps=250880 | pi=-0.0003 v=0.0336 ent=2.9041 ret=-4.438 exp_var=0.988
+[K5_r1.0] iter=1000/2000 steps=256000 | pi=0.0010 v=0.0277 ent=2.7924 ret=-4.677 exp_var=0.990
+[K5_r1.0] iter=1020/2000 steps=261120 | pi=0.0015 v=0.0203 ent=2.6601 ret=-4.842 exp_var=0.992
+[K5_r1.0] iter=1040/2000 steps=266240 | pi=0.0024 v=0.0147 ent=2.5473 ret=-5.008 exp_var=0.994
+[K5_r1.0] iter=1060/2000 steps=271360 | pi=-0.0000 v=0.9150 ent=2.5100 ret=-5.205 exp_var=0.692
+[K5_r1.0] iter=1080/2000 steps=276480 | pi=0.0018 v=0.0187 ent=2.7444 ret=-5.474 exp_var=0.992
+[K5_r1.0] iter=1100/2000 steps=281600 | pi=0.0035 v=0.0137 ent=2.4992 ret=-5.669 exp_var=0.994
+[K5_r1.0] iter=1120/2000 steps=286720 | pi=-0.0012 v=0.0160 ent=2.4133 ret=-5.674 exp_var=0.993
+[K5_r1.0] iter=1140/2000 steps=291840 | pi=-0.0007 v=0.0134 ent=2.3947 ret=-5.868 exp_var=0.994
+[K5_r1.0] iter=1160/2000 steps=296960 | pi=0.0012 v=0.0139 ent=2.3932 ret=-6.044 exp_var=0.993
+[K5_r1.0] iter=1180/2000 steps=302080 | pi=0.0006 v=0.0099 ent=2.3358 ret=-6.184 exp_var=0.995
+[K5_r1.0] iter=1200/2000 steps=307200 | pi=0.0019 v=0.0083 ent=2.2772 ret=-6.288 exp_var=0.995
+[K5_r1.0] iter=1220/2000 steps=312320 | pi=0.0025 v=0.0099 ent=2.2941 ret=-6.490 exp_var=0.994
+[K5_r1.0] iter=1240/2000 steps=317440 | pi=0.0024 v=0.0079 ent=2.2796 ret=-6.588 exp_var=0.995
+[K5_r1.0] iter=1260/2000 steps=322560 | pi=0.0052 v=0.0110 ent=2.2723 ret=-6.796 exp_var=0.993
+[K5_r1.0] iter=1280/2000 steps=327680 | pi=0.0014 v=0.0076 ent=2.2063 ret=-6.808 exp_var=0.995
+[K5_r1.0] iter=1300/2000 steps=332800 | pi=0.0010 v=0.0065 ent=2.1614 ret=-6.812 exp_var=0.996
+[K5_r1.0] iter=1320/2000 steps=337920 | pi=0.0018 v=0.0057 ent=2.1387 ret=-6.812 exp_var=0.996
+[K5_r1.0] iter=1340/2000 steps=343040 | pi=-0.0005 v=0.0081 ent=2.1789 ret=-6.811 exp_var=0.994
+[K5_r1.0] iter=1360/2000 steps=348160 | pi=0.0003 v=0.0096 ent=2.1511 ret=-6.811 exp_var=0.993
+[K5_r1.0] iter=1380/2000 steps=353280 | pi=0.0012 v=0.0102 ent=2.2026 ret=-6.813 exp_var=0.993
+[K5_r1.0] iter=1400/2000 steps=358400 | pi=0.0010 v=0.0079 ent=2.2068 ret=-6.813 exp_var=0.994
+[K5_r1.0] iter=1420/2000 steps=363520 | pi=0.0003 v=0.0080 ent=2.2331 ret=-6.814 exp_var=0.994
+[K5_r1.0] iter=1440/2000 steps=368640 | pi=0.0030 v=0.0079 ent=2.2153 ret=-6.812 exp_var=0.994
+[K5_r1.0] iter=1460/2000 steps=373760 | pi=0.0023 v=0.0119 ent=2.3155 ret=-6.815 exp_var=0.992
+[K5_r1.0] iter=1480/2000 steps=378880 | pi=0.0001 v=0.0086 ent=2.2467 ret=-6.813 exp_var=0.994
+[K5_r1.0] iter=1500/2000 steps=384000 | pi=0.0003 v=0.0123 ent=2.2196 ret=-6.812 exp_var=0.991
+[K5_r1.0] iter=1520/2000 steps=389120 | pi=0.0010 v=0.0105 ent=2.2057 ret=-6.810 exp_var=0.993
+[K5_r1.0] iter=1540/2000 steps=394240 | pi=-0.0006 v=0.0146 ent=2.2310 ret=-6.810 exp_var=0.990
+[K5_r1.0] iter=1560/2000 steps=399360 | pi=0.0018 v=0.0118 ent=2.2870 ret=-6.812 exp_var=0.992
+[K5_r1.0] iter=1580/2000 steps=404480 | pi=0.0032 v=0.0142 ent=2.2873 ret=-6.827 exp_var=0.990
+[K5_r1.0] iter=1600/2000 steps=409600 | pi=0.0015 v=0.0109 ent=2.3049 ret=-6.829 exp_var=0.992
+[K5_r1.0] iter=1620/2000 steps=414720 | pi=0.0010 v=0.0098 ent=2.3043 ret=-6.823 exp_var=0.993
+[K5_r1.0] iter=1640/2000 steps=419840 | pi=-0.0028 v=0.0238 ent=2.4092 ret=-6.814 exp_var=0.984
+[K5_r1.0] iter=1660/2000 steps=424960 | pi=0.0051 v=0.0219 ent=2.3086 ret=-6.790 exp_var=0.985
+[K5_r1.0] iter=1680/2000 steps=430080 | pi=0.0003 v=0.0112 ent=2.2461 ret=-6.822 exp_var=0.992
+[K5_r1.0] iter=1700/2000 steps=435200 | pi=0.0015 v=0.0103 ent=2.2351 ret=-6.829 exp_var=0.993
+[K5_r1.0] iter=1720/2000 steps=440320 | pi=0.0011 v=0.0088 ent=2.1882 ret=-6.827 exp_var=0.994
+[K5_r1.0] iter=1740/2000 steps=445440 | pi=-0.0002 v=0.0077 ent=2.1981 ret=-6.829 exp_var=0.995
+[K5_r1.0] iter=1760/2000 steps=450560 | pi=-0.0004 v=0.0104 ent=2.1727 ret=-6.841 exp_var=0.993
+[K5_r1.0] iter=1780/2000 steps=455680 | pi=-0.0005 v=0.0084 ent=2.2144 ret=-6.841 exp_var=0.994
+[K5_r1.0] iter=1800/2000 steps=460800 | pi=0.0031 v=0.0089 ent=2.1903 ret=-6.840 exp_var=0.994
+[K5_r1.0] iter=1820/2000 steps=465920 | pi=0.0009 v=0.0099 ent=2.1593 ret=-6.840 exp_var=0.993
+[K5_r1.0] iter=1840/2000 steps=471040 | pi=0.0012 v=0.0065 ent=2.1736 ret=-6.839 exp_var=0.995
+[K5_r1.0] iter=1860/2000 steps=476160 | pi=0.0015 v=0.0058 ent=2.1772 ret=-6.834 exp_var=0.996
+[K5_r1.0] iter=1880/2000 steps=481280 | pi=0.0004 v=0.0056 ent=2.1626 ret=-6.839 exp_var=0.996
+[K5_r1.0] iter=1900/2000 steps=486400 | pi=0.0173 v=0.0056 ent=2.1723 ret=-6.842 exp_var=0.996
+[K5_r1.0] iter=1920/2000 steps=491520 | pi=0.0013 v=0.0092 ent=2.1578 ret=-6.841 exp_var=0.993
+[K5_r1.0] iter=1940/2000 steps=496640 | pi=0.0039 v=0.0089 ent=2.1730 ret=-6.841 exp_var=0.994
+[K5_r1.0] iter=1960/2000 steps=501760 | pi=0.0005 v=0.0085 ent=2.2037 ret=-6.838 exp_var=0.994
+[K5_r1.0] iter=1980/2000 steps=506880 | pi=0.0012 v=0.0082 ent=2.2153 ret=-6.836 exp_var=0.994
+[K5_r1.0] iter=2000/2000 steps=512000 | pi=0.0012 v=0.0069 ent=2.2029 ret=-6.830 exp_var=0.995
+Saved plot: /home/ak565492/gnn_experiments/outputs/cluster_results/gnn_K5_r1.0.png
+
+[K5_r1.0] Final return: -6.830
+=============================
+End time: Tue Mar 17 09:52:42 EDT 2026
+=============================

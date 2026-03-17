@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train.py", line 264, in <module>
+    main()
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train.py", line 260, in main
+    run_ippo(device, args.output_dir)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train.py", line 201, in run_ippo
+    update_metrics = trainer.update(
+                     ^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/baseline/trainer.py", line 190, in update
+    for obs, actions, old_log_probs, advantages, returns in self.buffer.get_batches(B):
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 5)
