@@ -10,7 +10,7 @@ class GraphConv(nn.Module):
 
         self.weight = nn.Parameter(torch.empty(K, F_in, G_out))
         nn.init.xavier_uniform_(self.weight.reshape(K*F_in, G_out))
-        self.weight.data = self.weight.data(K, F_in, G_out)
+        self.weight.data = self.weight.data.reshape(K, F_in, G_out)
         
 
     def forward(self, X, S):
