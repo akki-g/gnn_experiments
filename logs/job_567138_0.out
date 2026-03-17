@@ -1,0 +1,15 @@
+=============================
+Job ID:       567139
+Array Task:   0
+Node:         evc2
+GPU:          0
+Start time:   Mon Mar 16 21:13:07 EDT 2026
+=============================
+Running: IPPO baseline
+Device: cuda
+GPU: Tesla V100-PCIE-16GB
+
+=== IPPO baseline | 256 envs | device=cuda ===
+=============================
+End time: Mon Mar 16 21:14:14 EDT 2026
+=============================
