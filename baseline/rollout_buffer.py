@@ -71,7 +71,7 @@ class IPPORolloutBuffer:
     def get_batches(self, B):
         """
         Yield mini-batches of size B, shuffled over the T*E dimension.
-        Each batch yields: obs, actions, log_probs, advantages, returns
+        Each batch yields: obs, actions, log_probs, advantages, returns, old_values
         with shapes (B, N, ...).
         """
         T = len(self.obs)
@@ -81,11 +81,13 @@ class IPPORolloutBuffer:
         obs       = torch.stack(self.obs).to(device=self.device, dtype=torch.float32)       # (T, E, N, obs_dim)
         actions   = torch.stack(self.actions).to(device=self.device, dtype=torch.float32)   # (T, E, N, act_dim)
         log_probs = torch.stack(self.log_probs).to(device=self.device, dtype=torch.float32) # (T, E, N)
+        values    = torch.stack(self.values).to(device=self.device, dtype=torch.float32)    # (T, E, N)
 
         # Merge T and E into one shuffleable batch dimension
         obs       = obs.reshape(T * E, N, -1)
         actions   = actions.reshape(T * E, N, -1)
         log_probs = log_probs.reshape(T * E, N)
+        values    = values.reshape(T * E, N)
         advantages = self.advantages.reshape(T * E, N)
         returns    = self.returns.reshape(T * E, N)
 
@@ -104,6 +106,7 @@ class IPPORolloutBuffer:
                 log_probs[idx],
                 advantages[idx],
                 returns[idx],
+                values[idx],
             )
 
     def clear(self):

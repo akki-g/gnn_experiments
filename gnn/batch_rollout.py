@@ -57,19 +57,21 @@ class GNNRolloutBuffer:
         self.advantages = advantages.reshape(T, E, N)
         self.returns = returns.reshape(T, E, N)
 
-    def get_batches(self, B):
+    def get_batches(self, B, connectivity_bias=False):
         T = len(self.obs)
         E, N = self.obs[0].shape[0], self.obs[0].shape[1]
 
         obs = torch.stack(self.obs).to(device=self.device, dtype=torch.float32)       # (T, E, N, obs_dim)
         actions = torch.stack(self.actions).to(device=self.device, dtype=torch.float32) # (T, E, N, act_dim)
         log_probs = torch.stack(self.log_probs).to(device=self.device, dtype=torch.float32) # (T, E, N)
+        values = torch.stack(self.values).to(device=self.device, dtype=torch.float32)   # (T, E, N)
         adj = torch.stack(self.adj).to(device=self.device, dtype=torch.float32)         # (T, E, N, N)
 
         # Merge T and E into one batch dimension: (T*E, N, ...)
         obs = obs.reshape(T * E, N, -1)
         actions = actions.reshape(T * E, N, -1)
         log_probs = log_probs.reshape(T * E, N)
+        values = values.reshape(T * E, N)
         adj = adj.reshape(T * E, N, N)
         advantages = self.advantages.reshape(T * E, N)
         returns = self.returns.reshape(T * E, N)
@@ -79,13 +81,21 @@ class GNNRolloutBuffer:
         adv_std = advantages.std() + 1e-8
         advantages = (advantages - adv_mean) / adv_std
 
-        perm = torch.randperm(T * E, device=self.device)
+        if connectivity_bias:
+            # compute edge counts from adjacency matrices
+            edge_counts = adj.sum(dim=(-2, -1)) - N  # subtract self-loops
+            edge_counts = edge_counts + 1.0  # numerical stability
+            edge_probs = edge_counts / edge_counts.sum()
+            perm = torch.multinomial(edge_probs, T * E, replacement=False)
+        else:
+            perm = torch.randperm(T * E, device=self.device)
+
         batches = perm.split(B)
 
         for idx in batches:
             yield (
                 obs[idx], actions[idx], log_probs[idx],
-                advantages[idx], returns[idx], adj[idx],
+                advantages[idx], returns[idx], adj[idx], values[idx],
             )
 
     def clear(self):

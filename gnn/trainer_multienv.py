@@ -53,7 +53,7 @@ class GNNTrainerMultiEnv:
         self.comm_optim = Adam(self.comm_policy.parameters(), lr=lr)
 
         self.critic = CriticNetwork(obs_dim=obs_dim, hidden_dim=hidden_dim, device=self.device)
-        self.critic_optim = Adam(self.critic.parameters(), lr=lr*3)
+        self.critic_optim = Adam(self.critic.parameters(), lr=lr)
 
         if torch.__version__ >= "2.0":
             self.comm_policy = torch.compile(self.comm_policy)
@@ -75,7 +75,7 @@ class GNNTrainerMultiEnv:
             "policy_loss": [], "value_loss": [], "entropy":[],
             "mean_bellman_error":[], "mean_episode_return": [],
             "mean_episode_rewards": [], "scout_reward":[], "interceptor_reward":[],
-            "explained_var":[]
+            "explained_var":[], "comm_saliency": []
         }
 
         obs_batched, pos_batched = self.adapter.reset()
@@ -93,16 +93,24 @@ class GNNTrainerMultiEnv:
         completed_episode_returns = []
         step_mean_scout_rew = []
         step_mean_inter_rew = []
+        comm_saliency_accum = []
 
         n_s = self.adapter.n_scouts
 
         with torch.no_grad():
-            for _ in range(num_steps):  
+            for _ in range(num_steps):
                 # build adj: (E, N, N)
                 S = self.adapter.build_adj(positions, r_comm=self.r_comm)
 
                 # policy forward: (E, N, obs_dim), (E, N, N) -> (E, N, 2)
                 actions, log_probs, entropy = self.comm_policy.get_actions(obs=obs_tensor, S=S)
+
+                # counterfactual communication saliency
+                E, N = S.shape[0], S.shape[1]
+                S_isolated = torch.eye(N, device=self.device).unsqueeze(0).expand(E, -1, -1)
+                actions_nocm, _, _ = self.comm_policy.get_actions(obs=obs_tensor, S=S_isolated)
+                comm_saliency = (actions - actions_nocm).norm(dim=-1).mean(dim=-1)
+                comm_saliency_accum.append(comm_saliency.mean().item())
 
                 # critic (E, N, obs_dim) -> (E, N)
                 E, N, obs_d = obs_tensor.shape
@@ -162,11 +170,13 @@ class GNNTrainerMultiEnv:
                 "mean_episode_rewards": self._safe_mean(step_mean_rewards),
                 "mean_scout_rewards": self._safe_mean(step_mean_scout_rew),
                 "mean_inter_rewards": self._safe_mean(step_mean_inter_rew),
+                "comm_saliency": self._safe_mean(comm_saliency_accum),
             }
             self.metrics_history["mean_episode_return"].append(rollout_metrics["mean_episode_return"])
             self.metrics_history["mean_episode_rewards"].append(rollout_metrics["mean_episode_rewards"])
             self.metrics_history["scout_reward"].append(rollout_metrics["mean_scout_rewards"])
             self.metrics_history["interceptor_reward"].append(rollout_metrics["mean_inter_rewards"])
+            self.metrics_history["comm_saliency"].append(rollout_metrics["comm_saliency"])
         return obs_tensor, rollout_metrics
     
 
@@ -181,8 +191,8 @@ class GNNTrainerMultiEnv:
 
         # Actor update
         for _ in range(num_actor_epochs):
-            for batch in self.buffer.get_batches(B):
-                obs, actions, old_log_probs, advantages, returns, A = batch
+            for batch in self.buffer.get_batches(B, connectivity_bias=True):
+                obs, actions, old_log_probs, advantages, returns, A, old_values = batch
                 new_lp, entropy, _ = self.comm_policy.evaluate_actions(obs, A, actions)
 
                 ratio = torch.exp(new_lp - old_log_probs)
@@ -203,15 +213,22 @@ class GNNTrainerMultiEnv:
 
         # Critic update
         for _ in range(num_critic_epochs):
-            for batch in self.buffer.get_batches(B):
-                obs, actions, old_log_probs, advantages, returns, A = batch
+            for batch in self.buffer.get_batches(B, connectivity_bias=True):
+                obs, actions, old_log_probs, advantages, returns, A, old_values = batch
                 B_size, N, obs_d = obs.shape
                 flat_obs = obs.reshape(B_size * N, obs_d)
                 flat_returns = returns.reshape(B_size * N)
+                flat_old_values = old_values.reshape(B_size * N)
 
                 pred_values = self.critic(flat_obs).squeeze(-1)
+
+                # value loss clipping
+                values_clipped = flat_old_values + torch.clamp(pred_values - flat_old_values, -self.clip_eps, self.clip_eps)
+                value_loss_unclipped = F.mse_loss(pred_values, flat_returns, reduction='none')
+                value_loss_clipped = F.mse_loss(values_clipped, flat_returns, reduction='none')
+                value_loss = torch.max(value_loss_unclipped, value_loss_clipped).mean()
+
                 td_error = flat_returns - pred_values
-                value_loss = F.mse_loss(pred_values, flat_returns)
                 mean_bellman_error = td_error.abs().mean()
 
                 with torch.no_grad():

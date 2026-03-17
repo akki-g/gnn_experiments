@@ -51,7 +51,7 @@ class IPPOTrainer:
         self.policy_optim = Adam(self.policy.parameters(), lr=lr)
 
         self.critic       = CriticNetwork(obs_dim, hidden_dim, device=self.device)
-        self.critic_optim = Adam(self.critic.parameters(), lr=lr * 3)
+        self.critic_optim = Adam(self.critic.parameters(), lr=lr)
 
         self.buffer = IPPORolloutBuffer(gamma=gamma, gae_lambda=gae_lambda, device=self.device)
 
@@ -209,14 +209,21 @@ class IPPOTrainer:
 
         # -- Critic update ---------------------------------------------
         for _ in range(num_critic_epochs):
-            for obs, actions, old_log_probs, advantages, returns in self.buffer.get_batches(B):
+            for obs, actions, old_log_probs, advantages, returns, old_values in self.buffer.get_batches(B):
                 batch_size, n_agents, obs_d = obs.shape
                 flat_obs_c    = obs.reshape(batch_size * n_agents, obs_d)
                 flat_returns  = returns.reshape(batch_size * n_agents)
+                flat_old_values = old_values.reshape(batch_size * n_agents)
 
                 pred_values = self.critic(flat_obs_c).squeeze(-1)
+
+                # value loss clipping
+                values_clipped = flat_old_values + torch.clamp(pred_values - flat_old_values, -self.clip_eps, self.clip_eps)
+                value_loss_unclipped = F.mse_loss(pred_values, flat_returns, reduction='none')
+                value_loss_clipped = F.mse_loss(values_clipped, flat_returns, reduction='none')
+                value_loss = torch.max(value_loss_unclipped, value_loss_clipped).mean()
+
                 td_error    = flat_returns - pred_values
-                value_loss  = F.mse_loss(pred_values, flat_returns)
                 mean_bellman_error = td_error.abs().mean()
 
                 # Explained variance diagnostic

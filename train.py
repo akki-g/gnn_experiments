@@ -60,15 +60,17 @@ def plot_and_save(metrics_history, title, output_dir, filename):
     metrics_to_plot = [
         "policy_loss", "value_loss", "entropy", "mean_bellman_error", "explained_var",
         "mean_episode_return", "mean_episode_rewards", "scout_reward", "interceptor_reward",
+        "comm_saliency",
     ]
     fig, axes = plt.subplots(5, 2, figsize=(14, 20))
     axes = axes.flatten()
     for i, name in enumerate(metrics_to_plot):
         vals = metrics_history.get(name, [])
-        axes[i].plot(range(1, len(vals) + 1), vals, linewidth=1.5)
-        axes[i].set_title(name)
-        axes[i].set_xlabel("Iteration")
-        axes[i].grid(True, alpha=0.3)
+        if len(vals) > 0:
+            axes[i].plot(range(1, len(vals) + 1), vals, linewidth=1.5)
+            axes[i].set_title(name)
+            axes[i].set_xlabel("Iteration")
+            axes[i].grid(True, alpha=0.3)
     fig.suptitle(title)
     plt.tight_layout()
     path = os.path.join(output_dir, filename)
@@ -134,7 +136,7 @@ def run_gnn(k, r_comm, device, output_dir):
         update_metrics = trainer.update(
             last_obs,
             num_actor_epochs=NUM_EPOCHS,
-            num_critic_epochs=NUM_EPOCHS,
+            num_critic_epochs=3,
             B=BATCH_SIZE,
         )
         steps_done += rollout_steps
@@ -199,7 +201,7 @@ def run_ippo(device, output_dir):
         update_metrics = trainer.update(
             last_obs,
             num_actor_epochs=NUM_EPOCHS,
-            num_critic_epochs=NUM_EPOCHS,
+            num_critic_epochs=3,
             B=BATCH_SIZE,
         )
         steps_done += rollout_steps
