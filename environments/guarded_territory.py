@@ -5,6 +5,8 @@ from vmas.simulator.core import Agent, World, Landmark, Sphere
 from vmas.simulator.scenario import BaseScenario
 from vmas.simulator.utils import Color, ScenarioUtils
 
+from typing import Dict
+
 # Agent Type definitions
 SCOUT = "scout"
 INTERCEPTOR = "interceptor"
@@ -44,6 +46,8 @@ class Scenario(BaseScenario):
         self.n_defenders = self.n_scouts + self.n_interceptors
 
         self.intruder_skill = kwargs.get("intruder_skill", 0.0)
+
+        self.state_obs = kwargs.get("state_obs", False)
 
         # Create World
         world = World(
@@ -253,7 +257,7 @@ class Scenario(BaseScenario):
         if hasattr(agent, "agent_type") and agent.agent_type == INTRUDER:
             agent.action.u = self._get_intruder_actions(agent)
 
-    def observation(self, agent: Agent) -> torch.Tensor:
+    def observation(self, agent: Agent) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         batch = self.world.batch_dim
         device = self.world.device
 
@@ -266,22 +270,24 @@ class Scenario(BaseScenario):
         else:
             return torch.zeros(batch, 2, device=device)
 
-        obs_parts = []
-        obs_parts.append(agent.state.vel)
-        obs_parts.append(agent.state.pos)
-        obs_parts.append(type_oh)
+        state = []
+        state.append(agent.state.vel)
+        state.append(agent.state.pos)
+        state.append(type_oh)
+
+        obs = []
 
         zone_pos = torch.stack([z.state.pos for z in self.zones], dim=1)
         zone_rel = zone_pos - agent.state.pos.unsqueeze(1)
-        obs_parts.append(zone_rel.reshape(batch, -1))
+        obs.append(zone_rel.reshape(batch, -1))
 
         intrud_pos = torch.stack([i.state.pos for i in self.intruders], dim=1)
         intrud_vel = torch.stack([i.state.vel for i in self.intruders], dim=1)
         intrud_rel = intrud_pos - agent.state.pos.unsqueeze(1)
         intrud_dist = torch.linalg.vector_norm(intrud_rel, dim=-1, keepdim=True)
         visible = (intrud_dist <= fov).float()
-        obs_parts.append((intrud_rel * visible).reshape(batch, -1))
-        obs_parts.append((intrud_vel*visible).reshape(batch, -1))
+        obs.append((intrud_rel * visible).reshape(batch, -1))
+        obs.append((intrud_vel*visible).reshape(batch, -1))
         
         other_pos = torch.stack(
             [d.state.pos for d in self.defenders if d is not agent], dim=1
@@ -289,7 +295,14 @@ class Scenario(BaseScenario):
         other_rel = other_pos - agent.state.pos.unsqueeze(1)
         other_dist = torch.linalg.vector_norm(other_rel, dim=-1, keepdim=True)
         other_vis = (other_dist <= fov).float()
-        obs_parts.append((other_rel * other_vis).reshape(batch, -1))
+        obs.append((other_rel * other_vis).reshape(batch, -1))
+
+        if self.state_obs:
+            state = torch.cat(state, dim=-1)
+            obs = torch.cat(obs, dim=-1)
+            return state, obs
+
+        obs_parts = state + obs 
 
         return torch.cat(obs_parts, dim=-1)
 
@@ -524,6 +537,43 @@ class GuardedTerritoryAdapter:
         deg = adj.sum(dim=-1, keepdim=True).clamp(min=1)
         adj = adj / deg
         return adj
+
+    def build_hetero_adj(self, positions: torch.Tensor, r_comm: float) -> Dict[str, torch.Tensor]:
+        """builds per-edge-type binary adj matrix for HetGAT style architectures 
+            returns dict w keys like scout to scout , scout to intercept etc.
+            each val is a binary mask of shape (batch, n_src, n_dst)
+            convention: mask[b, src, dst] = 1 means src sent to dst in env b
+            no row norm - attention handles weighting
+        """
+        n_s = self.n_scouts
+        n_i = self.n_interceptors
+        
+        #calculate dist 
+        diff = positions.unsqueeze(2) - positions.unsqueeze(1)
+        dist = torch.linalg.vector_norm(diff, dim=1)
+
+        connected = (dist <= r_comm).float()
+
+        #zero out self loops 
+        eye = torch.eye(n_s + n_i, device=positions.device).unsqueeze(0)
+        connected = connected * (1.0 - eye)
+
+        #slice in to quadrants by agent type 
+        #rows = source, col = dest
+        adj = {
+            'scout_to_scout': connected[:, :n_s, :n_s],
+            'scout_to_inter': connected[:, :n_s, n_s:], 
+            'inter_to_scout': connected[:, n_s:, :n_s],
+            'inter_to_inter': connected[:, n_s:, n_s:]
+        }
+
+        # ssn edges -> all agents connected duting training 
+        batch = positions.shape[0]
+        adj['scout_to_ssn'] = torch.ones(batch, n_s, 1, device=positions.device)
+        adj['inter_to_ssn'] = torch.ones(batch, n_i, 1, device=self.device)
+
+        return adj
+
     def reset_env(self):
       """Full manual reset - returns obs (num_envs, n_def, obs_dim), positions."""
       all_obs = self.env.reset()
@@ -538,3 +588,75 @@ class GuardedTerritoryAdapter:
     @property
     def n_agents(self) -> int:
         return self.n_defenders
+
+    # HetNet compatable components
+    @property
+    def state_dim(self) -> int:
+        # ego state: vel(2) + pos(2) + type_oh(2)
+        return 6
+    
+    @property
+    def obs_portion_dim(self) -> float:
+        # sensory obs portion
+        return self.obs_dim - self.state_dim
+    
+    @property
+    def world_size(self) -> float:
+        return self.env.scenario.world_size
+    
+    def hetnet_reset(self):
+        """
+        reset env and cache obs for get_obs()
+        returns: obs_s, state_s, obs_i, state_i, positions
+        """
+        all_obs = self.env.reset()
+
+        defender_obs = torch.stack(
+            [all_obs[i] for i in self.defender_indices], dim=1
+        )
+
+        self._cached_obs = defender_obs
+        self._cached_pos = defender_obs[:, :, 2:4].clone()
+        return self.get_obs()
+    
+    def get_obs(self):
+        """
+        slit cached obs bt class and into obs/state tensors
+        """
+        obs = self._cached_obs
+        n_s = self.n_scouts
+        sd = self.state_dim
+
+        state_all = obs[:, :, :sd]
+        obs_all = obs[:, :, sd:]
+
+        state_s = state_all[:, :n_s, :]
+        state_i = state_all[:, n_s:, :]
+        obs_s = obs_all[:, :n_s, :]
+        obs_i = obs_all[:, n_s:, :]
+
+        return obs_s, state_s, obs_i, state_i, self._cached_pos
+
+
+    def hetnet_step(self, defender_actions: torch.Tensor):
+        """
+        step env with defender actoins, cache new obs, return (rew, done, info)
+
+        args: 
+            defender_actions: (B, n_def, 2) stacked actions_s + actions+i
+        returns:
+            rew: (B,) shared team rew (mean over def)
+            done: (B, ) ep term
+            info: dict
+        """
+        # preallocate full action tensors 
+        all_actions_tensor = torch.zeros(
+            self.num_envs, self._n_agents_total, self._action_dim,
+            device=self.device
+        )
+        all_actions_tensor[:, self._defender_idx] = defender_actions
+        all_actions = [all_actions_tensor[:, i] for i in range(self._n_agents_total)]
+
+        all_obs, all_rew, dones, all_infos = self.env.env(all_actions)
+        
+    
