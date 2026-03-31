@@ -142,9 +142,9 @@ class MAHAC:
                     buffer.n_s, buffer.n_i
                 )
 
-                # get fresh log probs
-                new_log_prob_s = scout_dist.log_prob(buffer.scout_actions[t]).sum(dim=-1)
-                new_log_prob_i = interc_dist.log_prob(buffer.interc_actions[t]).sum(dim=-1)
+                # get fresh log probs (buffer stores pre-tanh raw actions)
+                _, new_log_prob_s, _ = self.policy.squash_action(scout_dist, raw_action=buffer.scout_actions[t])
+                _, new_log_prob_i, _ = self.policy.squash_action(interc_dist, raw_action=buffer.interc_actions[t])
 
                 # fresh value estimates
                 values = self.critic(h_ssn)
@@ -218,7 +218,7 @@ class MAHAC:
             total_ratio_i += epoch_ratio_i / T
             n_updates += 1
 
-        # compute explained variance and MSBE once per update (outside no_grad — ret_s already detached)
+        # compute explained variance and MSBE once per update (outside no_grad -- ret_s already detached)
         with torch.no_grad():
             values_s_flat = buffer.scout_values.flatten()
             values_i_flat = buffer.interc_values.flatten()

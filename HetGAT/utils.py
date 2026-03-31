@@ -135,12 +135,8 @@ def collect_rollout(
             n_scouts, n_interc
         )
 
-        scout_actions = scout_dist.sample() # (B, n_s, action_dim)
-        interc_actions = interc_dist.sample() # (B, n_i, action_dim)
-
-        # log probs: sum over action dims for each agent
-        scout_log_probs = scout_dist.log_prob(scout_actions).sum(dim=-1)
-        interc_log_probs = interc_dist.log_prob(interc_actions).sum(dim=-1)
+        scout_actions, scout_log_probs, scout_raw = policy.squash_action(scout_dist)
+        interc_actions, interc_log_probs, interc_raw = policy.squash_action(interc_dist)
 
         # critic values:
         values = critic(h_ssn)
@@ -149,8 +145,8 @@ def collect_rollout(
 
         # store in buffer rewards and dones are place holders and filled after the step
         buffer.store(
-            obs_s, state_s, scout_actions, scout_log_probs, value_s,
-            obs_i, state_i, interc_actions, interc_log_probs, value_i,
+            obs_s, state_s, scout_raw, scout_log_probs, value_s,
+            obs_i, state_i, interc_raw, interc_log_probs, value_i,
             reward=torch.zeros(B, device=device),
             done=torch.zeros(B, device=device),
             positions=positions,

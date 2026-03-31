@@ -124,6 +124,30 @@ class HetNetPolicy(nn.Module):
         interc_dist = Normal(interc_mean, interc_std)
 
         return scout_dist, interc_dist, h_ssn, new_hidden_s, new_hidden_i
+    
+    @staticmethod
+    def squash_action(dist, raw_action=None):
+        """Tanh-squash an action from a Normal distribution.
+        
+        Args:
+            dist: Normal distribution
+            raw_action: pre-tanh sample (if None, samples fresh)
+        
+        Returns:
+            action: bounded in (-1, 1)
+            log_prob: corrected for tanh Jacobian, summed over action dims
+            raw_action: the pre-tanh sample (store this for PPO recompute)
+        """
+        if raw_action is None:
+            raw_action = dist.rsample()  # reparameterized sample
+        
+        action = torch.tanh(raw_action)
+        
+        # Jacobian correction: log(1 - tanh^2(u)) per action dim, then sum
+        log_prob = dist.log_prob(raw_action) - torch.log(1 - action.pow(2) + 1e-6)
+        log_prob = log_prob.sum(dim=-1)  # sum over action dims -> (B, n_agents)
+        
+        return action, log_prob, raw_action
 
 
 

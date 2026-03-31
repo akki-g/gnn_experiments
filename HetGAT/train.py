@@ -94,8 +94,8 @@ def evaluate(env_adapter, policy, n_scouts, n_interc, device, n_episodes=10):
             n_scouts, n_interc,
         )
 
-        scout_actions = scout_dist.mean
-        interc_actions = interc_dist.mean
+        scout_actions = torch.tanh(scout_dist.mean)
+        interc_actions = torch.tanh(interc_dist.mean)
         all_actions = torch.cat([scout_actions, interc_actions], dim=1)
  
         reward, done, info = env_adapter.hetnet_step(all_actions)
@@ -159,7 +159,7 @@ def plot_metrics(log_history, save_dir, run_name, log_std_min):
     ax = axes[1, 0]
     ax.plot(iters, get('entropy_scout'), label='scout', color='tab:blue')
     ax.plot(iters, get('entropy_interc'), label='interceptor', color='tab:orange')
-    # entropy floor: 0.5 * D * (1 + ln(2π) + 2*log_std_min), D=2
+    # entropy floor: 0.5 * D * (1 + ln(2*pi) + 2*log_std_min), D=2
     entropy_floor = 0.5 * 2 * (1 + np.log(2 * np.pi) + 2 * log_std_min)
     ax.axhline(entropy_floor, linestyle='--', color='gray', linewidth=0.8, label=f'floor ({entropy_floor:.2f})')
     ax.set_title('Entropy')
@@ -185,7 +185,7 @@ def plot_metrics(log_history, save_dir, run_name, log_std_min):
     ax.set_xlabel('Iteration')
     ax.legend()
 
-    # (2,1) Advantage statistics with ±1 std shading
+    # (2,1) Advantage statistics with +/-1 std shading
     ax = axes[2, 1]
     mean_s = np.array(get('advantage_mean_scout'))
     std_s = np.array(get('advantage_std_scout'))
@@ -226,7 +226,7 @@ def render_evaluation(args, policy, save_dir):
     try:
         import imageio
     except ImportError:
-        print("imageio not installed — skipping render. pip install imageio")
+        print("imageio not installed -- skipping render. pip install imageio")
         return
 
     device = torch.device('cpu')
@@ -268,7 +268,7 @@ def render_evaluation(args, policy, save_dir):
             args.n_scouts, args.n_interc,
         )
 
-        all_actions = torch.cat([scout_dist.mean, interc_dist.mean], dim=1)
+        all_actions = torch.cat([torch.tanh(scout_dist.mean), torch.tanh(interc_dist.mean)], dim=1)
         reward, done, _ = env_adapter.hetnet_step(all_actions)
         obs_s, state_s, obs_i, state_i, positions = env_adapter.get_obs()
 
