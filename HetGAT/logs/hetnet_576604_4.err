@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/lustre/fs1/home/ak565492/gnn_experiments/HetGAT/train.py", line 16, in <module>
-    from mahac import MAHAC
-  File "/lustre/fs1/home/ak565492/gnn_experiments/HetGAT/mahac.py", line 8, in <module>
-    from utils import compute_gae, build_ssn_input
-  File "/lustre/fs1/home/ak565492/gnn_experiments/HetGAT/utils.py", line 1, in <module>
-    from environments.guarded_territory import GuardedTerritoryAdapter
-ModuleNotFoundError: No module named 'environments'

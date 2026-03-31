@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/lustre/fs1/home/ak565492/gnn_experiments/HetGAT/train.py", line 2, in <module>
-    sys.path.insert(0, str(Path(__file__).parent.parent))
-                           ^^^^
-NameError: name 'Path' is not defined

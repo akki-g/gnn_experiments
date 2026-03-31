@@ -657,7 +657,7 @@ class GuardedTerritoryAdapter:
         all_actions_tensor[:, self._defender_idx] = defender_actions
         all_actions = [all_actions_tensor[:, i] for i in range(self._n_agents_total)]
 
-        all_obs, all_rew, dones, all_infos = self.env.env(all_actions)
+        all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
 
         #cache new obs for get_obs
         defender_obs = torch.stack(
