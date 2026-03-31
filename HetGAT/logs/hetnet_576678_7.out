@@ -1,0 +1,18 @@
+=============================================
+Running config 7: adversarial_expert_intruders
+=============================================
+Run: adversarial_expert_intruders_576678
+Save dir: checkpoints/adversarial_expert_intruders_576678
+Device: cuda
+Env: 3s/3i/3intruders
+  obs_portion_dim=28, state_dim=6
+  total_obs_dim=34, action_dim=2
+Policy params: 296,840
+Critic params: 8,450
+Total params:  305,290
+
+Starting training: 5000 iterations
+  rollout_length=400, ppo_epochs=3
+  Total env steps per iter: 51200
+======================================================================
+Job 7 (adversarial_expert_intruders) finished at Mon Mar 30 21:46:07 EDT 2026

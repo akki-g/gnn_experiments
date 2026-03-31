@@ -1,0 +1,18 @@
+=============================================
+Running config 8: sparse_relay_5s5i_largemap
+=============================================
+Run: sparse_relay_5s5i_largemap_576678
+Save dir: checkpoints/sparse_relay_5s5i_largemap_576678
+Device: cuda
+Env: 5s/5i/3intruders
+  obs_portion_dim=36, state_dim=6
+  total_obs_dim=42, action_dim=2
+Policy params: 297,864
+Critic params: 8,450
+Total params:  306,314
+
+Starting training: 5000 iterations
+  rollout_length=400, ppo_epochs=3
+  Total env steps per iter: 51200
+======================================================================
+Job 8 (sparse_relay_5s5i_largemap) finished at Mon Mar 30 21:46:10 EDT 2026
