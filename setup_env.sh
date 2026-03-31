@@ -6,9 +6,12 @@ module load cuda/cuda-12.1.0
 python3 -m venv ~/expenv
 source ~/expenv/bin/activate
 
+export OPENBLAS_NUM_THREADS=1
+source ~/expenv/bin/activate
+
 pip3 install --upgrade pip
 pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu121
-pip3 install vmas matplotlib
+pip3 install -r req.txt
 
 python3 -c "import torch; print('PyTorch:', torch.__version__); print('CUDA available:', torch.cuda.is_available())"
 python3 -c "import vmas; print('VMAS OK')"
