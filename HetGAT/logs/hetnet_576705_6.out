@@ -1,0 +1,18 @@
+=============================================
+Running config 6: large_4s4i_4int
+=============================================
+Run: large_4s4i_4int_576705
+Save dir: checkpoints/large_4s4i_4int_576705
+Device: cuda
+Env: 4s/4i/4intruders
+  obs_portion_dim=38, state_dim=6
+  total_obs_dim=44, action_dim=2
+Policy params: 298,120
+Critic params: 8,450
+Total params:  306,570
+
+Starting training: 5000 iterations
+  rollout_length=400, ppo_epochs=3
+  Total env steps per iter: 51200
+======================================================================
+Job 6 (large_4s4i_4int) finished at Mon Mar 30 22:04:59 EDT 2026

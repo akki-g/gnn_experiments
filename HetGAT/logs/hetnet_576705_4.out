@@ -1,0 +1,18 @@
+=============================================
+Running config 4: blind_interceptors_3s3i
+=============================================
+Run: blind_interceptors_3s3i_576705
+Save dir: checkpoints/blind_interceptors_3s3i_576705
+Device: cuda
+Env: 3s/3i/2intruders
+  obs_portion_dim=22, state_dim=6
+  total_obs_dim=28, action_dim=2
+Policy params: 296,072
+Critic params: 8,450
+Total params:  304,522
+
+Starting training: 3000 iterations
+  rollout_length=300, ppo_epochs=4
+  Total env steps per iter: 38400
+======================================================================
+Job 4 (blind_interceptors_3s3i) finished at Mon Mar 30 22:04:59 EDT 2026
