@@ -1,7 +1,7 @@
 from environments.guarded_territory import GuardedTerritoryAdapter
-from HetGAT.hetnetPolicy import HetNetPolicy
-from HetGAT.rollout import MAHACBuffer
-from HetGAT.critic import HetNetCritic
+from hetnetPolicy import HetNetPolicy
+from rollout import MAHACBuffer
+from critic import HetNetCritic
 
 import torch
 
@@ -33,7 +33,7 @@ def build_ssn_input(
 
     raw = torch.tensor(
         [float(n_scouts), float(n_interc), float(n_intrud), world_size, t_norm],
-        dytpe=torch.float32,
+        dtype=torch.float32,
         device=device
     )
 
@@ -57,9 +57,8 @@ def combine_actions(
     list of (B, action_dim) tensors, one per defender
     """
 
-    all_actions = torch.cat([scout_actions, interc_actions], dim=1)
+    return torch.cat([scout_actions, interc_actions], dim=1)
 
-    return [all_actions[:, j, :] for j in range(all_actions.shape[1])]
 
 def compute_gae(
         rewards: torch.Tensor,
@@ -107,11 +106,11 @@ def collect_rollout(
     device = buffer.device
 
     # init lstm hidden states (zeros at start)
-    hidden_s = policy.preprcess_scout(B, n_scouts, device)
-    hidden_i = policy.preprcess_interc(B, n_interc, device)
+    hidden_s = policy.preprocess_scout.init_hidden(B, n_scouts, device)
+    hidden_i = policy.preprocess_interc.init_hidden(B, n_interc, device)
 
     # get inital obs from env
-    obs_s, state_s, obs_i, state_i, positions = env_adapter.get_obs()
+    obs_s, state_s, obs_i, state_i, positions = env_adapter.hetnet_reset()
 
     for t in range(T):
         # build ssn input for ts
@@ -140,8 +139,8 @@ def collect_rollout(
         interc_actions = interc_dist.sample() # (B, n_i, action_dim)
 
         # log probs: sum over action dims for each agent
-        scout_log_probs = scout_dist.log_probs(scout_actions).sum(dim=-1)
-        interc_log_probs = interc_dist.log_probs(interc_actions).sum(dim=-1)
+        scout_log_probs = scout_dist.log_prob(scout_actions).sum(dim=-1)
+        interc_log_probs = interc_dist.log_prob(interc_actions).sum(dim=-1)
 
         # critic values:
         values = critic(h_ssn)
@@ -162,10 +161,10 @@ def collect_rollout(
 
         #env step
         all_actions = combine_actions(scout_actions, interc_actions)
-        reward, done, info = env_adapter.step(all_actions)
+        reward, done, info = env_adapter.hetnet_step(all_actions)
 
         buffer.rewards[t] = reward
-        buffer.dones[t] = done
+        buffer.dones[t] = done.float()
 
         obs_s, state_s, obs_i, state_i, positions = env_adapter.get_obs()
 
@@ -179,28 +178,28 @@ def collect_rollout(
             for key in hidden_i: 
                 hidden_i[key][done_mask_i] = 0.0
 
-        ssn_input_final = build_ssn_input(
-            n_scouts, n_interc, 
-            env_adapter.n_intruders,
-            env_adapter.world_size,
-            1.0, B, device
-        )
+    ssn_input_final = build_ssn_input(
+        n_scouts, n_interc, 
+        env_adapter.n_intruders,
+        env_adapter.world_size,
+        1.0, B, device
+    )
 
-        _, _, h_ssn_final, _, _ = policy(
-            obs_s, state_s, obs_i, state_i, 
-            positions, ssn_input_final,
-            hidden_s, hidden_i,
-            n_scouts, n_interc
-        )
+    _, _, h_ssn_final, _, _ = policy(
+        obs_s, state_s, obs_i, state_i, 
+        positions, ssn_input_final,
+        hidden_s, hidden_i,
+        n_scouts, n_interc
+    )
 
-        bootstrap_values = critic(h_ssn_final)
+    bootstrap_values = critic(h_ssn_final)
 
-        if critic.mode != 'centralized':
-            return {
-                'scout': bootstrap_values['scout'].squeeze(-1),
-                'interc': bootstrap_values['interc'].squeeze(-1)
-                }
+    if critic.mode != 'centralized':
+        return {
+            'scout': bootstrap_values['scout'].squeeze(-1),
+            'interc': bootstrap_values['interc'].squeeze(-1)
+        }
         
-        else:
-            return bootstrap_values
+    else:
+        return bootstrap_values
 

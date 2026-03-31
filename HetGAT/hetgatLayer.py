@@ -4,22 +4,22 @@ import torch.nn as nn
 
 
 class HetGATHead(nn.Module):
-    def __init__(self, d_in: int, d_out: int, device: torch.device):
+    def __init__(self, d_in: int, d_out: int):
         super().__init__()
         self.d_out = d_out
 
-        # node type weights: self transform + attention receiver side 
-        self.W_scout = nn.Linear(d_in, d_out, bias=False, device=device)
-        self.W_interc = nn.Linear(d_in, d_out, bias=False, device=device)
-        self.W_ssn = nn.Linear(d_in, d_out, bias=False, device=device)
+        # node type weights: self transform + attention receiver side
+        self.W_scout = nn.Linear(d_in, d_out, bias=False)
+        self.W_interc = nn.Linear(d_in, d_out, bias=False)
+        self.W_ssn = nn.Linear(d_in, d_out, bias=False)
 
         # edge-type weights: message transforms
-        self.W_s2s = nn.Linear(d_in, d_out, bias=False, device=device)
-        self.W_s2i = nn.Linear(d_in, d_out, bias=False, device=device)
-        self.W_i2i = nn.Linear(d_in, d_out, bias=False, device=device)
-        self.W_i2s = nn.Linear(d_in, d_out, bias=False, device=device)
-        self.W_s2ssn = nn.Linear(d_in, d_out, bias=False, device=device)
-        self.W_i2ssn = nn.Linear(d_in, d_out, bias=False, device=device)
+        self.W_s2s = nn.Linear(d_in, d_out, bias=False)
+        self.W_s2i = nn.Linear(d_in, d_out, bias=False)
+        self.W_i2i = nn.Linear(d_in, d_out, bias=False)
+        self.W_i2s = nn.Linear(d_in, d_out, bias=False)
+        self.W_s2ssn = nn.Linear(d_in, d_out, bias=False)
+        self.W_i2ssn = nn.Linear(d_in, d_out, bias=False)
 
         # attention vectors: one per edge type
         #shape (2*d_out) becaues they dot w [W_recv * h_j || W_edge *h_k]
@@ -153,13 +153,12 @@ class HetGATHead(nn.Module):
 
 class HetGATLayer(nn.Module):
     """multi-head HetGAT layer. Wraps L independent HetGATHead modules"""
-    def __init__(self, d_in: int, d_out: int, n_heads: int, device: torch.device, concat_heads: bool = True):
+    def __init__(self, d_in: int, d_out: int, n_heads: int, concat_heads: bool = True):
         super().__init__()
         self.concat_heads = concat_heads
         self.heads = nn.ModuleList([
-            HetGATHead(d_in=d_in, d_out=d_out, device=device) for _ in range(n_heads)
+            HetGATHead(d_in=d_in, d_out=d_out) for _ in range(n_heads)
         ])
-        self.device = device
 
     def forward(self, h_scout, h_interc, h_ssn, adj):
         head_outs = [head(h_scout, h_interc, h_ssn, adj) for head in self.heads]

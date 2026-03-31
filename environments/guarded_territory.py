@@ -658,5 +658,27 @@ class GuardedTerritoryAdapter:
         all_actions = [all_actions_tensor[:, i] for i in range(self._n_agents_total)]
 
         all_obs, all_rew, dones, all_infos = self.env.env(all_actions)
-        
+
+        #cache new obs for get_obs
+        defender_obs = torch.stack(
+            [all_obs[i] for i in self.defender_indices], dim=1
+        )
+        self._cached_obs = defender_obs
+        self._cached_pos = defender_obs[:, :, 2:4].clone()
+
+        #shared team reward
+        defender_rewards = torch.stack(
+            [all_rew[i] for i in self.defender_indices], dim=1
+        )
+        reward = defender_rewards.mean()
+
+        #info from first defender
+        info = {}
+        if len(all_infos) > 0 and self.defender_indices:
+            first_info = all_infos[self.defender_indices[0]]
+            if isinstance(first_info, dict):
+                info = first_info
+
+        return reward, dones, info
+
     

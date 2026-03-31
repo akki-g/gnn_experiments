@@ -24,7 +24,7 @@ class HetNetCritic(nn.Module):
                 nn.Linear(hidden_dim, 1),
             )
 
-        elif mode == 'per-class':
+        elif mode == 'per_class':
             # one head per class, both read from ssn
             self.value_head_scout = nn.Sequential(
                 nn.Linear(ssn_dim, hidden_dim),
@@ -66,10 +66,10 @@ class HetNetCritic(nn.Module):
         if self.mode == 'centralized':
             return {'all': self.value_head(ssn)}
         
-        elif self.mode == 'per-class':
+        elif self.mode == 'per_class':
             return {'scout': self.value_head_scout(ssn), 'interc': self.value_head_interc(ssn)}
-        
-        elif self.mode == 'per-agent':
+
+        elif self.mode == 'per_agent':
             B, n_s, _ = h_scout.shape
             B, n_i, _ = h_interc.shape
 

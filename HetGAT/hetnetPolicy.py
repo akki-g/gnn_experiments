@@ -33,8 +33,8 @@ class HetNetPolicy(nn.Module):
         self.head_dim = head_dim
         self.action_dim = action_dim
 
-        self.preprcess_scout = ClassPreprocessor(obs_dim_scout, state_dim_scout, hidden_dim)
-        self.preprcess_interc = ClassPreprocessor(obs_dim_interc, state_dim_interc, hidden_dim)
+        self.preprocess_scout = ClassPreprocessor(obs_dim_scout, state_dim_scout, hidden_dim)
+        self.preprocess_interc = ClassPreprocessor(obs_dim_interc, state_dim_interc, hidden_dim)
 
         # ssn input projection to match node feat dim
         gat_input_dim = 2 * hidden_dim
@@ -96,10 +96,10 @@ class HetNetPolicy(nn.Module):
         """
 
         # preprocessing 
-        h_scout, new_hidden_s = self.preprcess_scout(
+        h_scout, new_hidden_s = self.preprocess_scout(
             obs_scout, state_scout, hidden_scout
         )
-        h_interc, new_hidden_i = self.preprcess_interc(
+        h_interc, new_hidden_i = self.preprocess_interc(
             obs_interc, state_interc, hidden_interc
         )
 
