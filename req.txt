@@ -10,3 +10,4 @@ jax
 pettingzoo
 pygame
 vmas
+imageio
