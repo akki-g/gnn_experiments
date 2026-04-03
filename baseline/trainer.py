@@ -110,13 +110,17 @@ class IPPOTrainer:
                 interceptor_rew = rewards[:, n_s:].mean().item()
 
                 # -- Vectorized done detection - no CPU syncs --
-                n_tagged   = info.get("n_tagged",   torch.zeros(E, device=self.device))
-                n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
-                true_done_mask = (
-                    dones
-                    & ((n_tagged >= self.adapter.n_intruders)
-                       | (n_breached >= self.adapter.n_zones))
-                )  # (E,) bool
+                if any(dones):
+                    if self.adapter.n_intruders == 0:
+                        true_done_mask = False 
+                    else:
+                        n_tagged   = info.get("n_tagged",   torch.zeros(E, device=self.device))
+                        n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
+                        true_done_mask = (
+                            dones
+                            & ((n_tagged >= self.adapter.n_intruders)
+                            | (n_breached >= self.adapter.n_zones))
+                        )  # (E,) bool
 
                 # Broadcast to (E, N) for GAE
                 dones_for_gae = true_done_mask.float().unsqueeze(-1).expand(E, N)

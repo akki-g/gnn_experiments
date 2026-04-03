@@ -113,9 +113,12 @@ class GNNTrainer:
             scout_rew = rewards_tensor[:n_s].mean().item()
             interceptor_rew = rewards_tensor[n_s:].mean().item()
             if done_flag:
-                all_tagged = info.get("n_tagged", torch.tensor(0.0)).item() >= self.adapter.n_intruders
-                all_breached = info.get("n_breached", torch.tensor(0.0)).item() >= self.adapter.n_zones
-                true_done = all_tagged or all_breached
+                if self.adapter.n_intruders == 0:
+                    true_done = False
+                else:
+                    all_tagged = info.get("n_tagged", torch.tensor(0.0)).item() >= self.adapter.n_intruders
+                    all_breached = info.get("n_breached", torch.tensor(0.0)).item() >= self.adapter.n_zones
+                    true_done = all_tagged or all_breached
             else:
                 true_done = False
             # Broadcast global done to all agents
