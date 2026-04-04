@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from hetnetPolicy import HetNetPolicy
-from critic import HetNetCritic
-from rollout import MAHACBuffer
-from utils import compute_gae, build_ssn_input
+from HetGAT.hetnetPolicy import HetNetPolicy
+from HetGAT.critic import HetNetCritic
+from HetGAT.rollout import MAHACBuffer
+from HetGAT.utils import compute_gae, build_ssn_input
 
 
 class MAHAC:
@@ -258,7 +258,7 @@ class MAHAC:
                 value_loss = value_loss_s + value_loss_i
                 epoch_value_loss += value_loss
             
-            critic_loss = self.value_coef * epoch_value_loss.item() / T
+            critic_loss = self.value_coef * epoch_value_loss / T
 
             self.critic_optim.zero_grad()
             critic_loss.backward()

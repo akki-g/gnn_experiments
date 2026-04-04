@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 from torch.distributions import Normal
 
-from preProcessing import ClassPreprocessor
-from hetgatLayer import HetGATLayer
-from graph import build_hetero_adj
+from HetGAT.preProcessing import ClassPreprocessor
+from HetGAT.hetgatLayer import HetGATLayer
+from HetGAT.graph import build_hetero_adj
 
 class HetNetPolicy(nn.Module):
     """

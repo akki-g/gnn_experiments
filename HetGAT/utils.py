@@ -1,7 +1,7 @@
 from environments.guarded_territory import GuardedTerritoryAdapter
-from hetnetPolicy import HetNetPolicy
-from rollout import MAHACBuffer
-from critic import HetNetCritic
+from HetGAT.hetnetPolicy import HetNetPolicy
+from HetGAT.rollout import MAHACBuffer
+from HetGAT.critic import HetNetCritic
 
 import torch
 

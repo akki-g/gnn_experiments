@@ -126,13 +126,19 @@ class GNNTrainerMultiEnv:
                 scout_rew = rewards[:, :n_s].mean().item()
                 interceptor_rew = rewards[:, n_s:].mean().item()
 
-                # Truncation vs true done - per-env
-                n_tagged = info.get("n_tagged", torch.zeros(E, device=self.device))
-                n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
-                true_done_mask = (
-                    dones &
-                    ((n_tagged >= self.adapter.n_intruders) | (n_breached >= self.adapter.n_zones))
-                )
+                # Truncation vs true done - per-env (modified to account for guided coverage env)
+                if self.adapter.n_intruders == 0:
+                    true_done_mask = torch.zeros(E, dtype=torch.bool, device=self.device)
+                else:
+                    n_tagged = info.get("n_tagged", torch.zeros(E, dtype=torch.bool, device=self.device))
+                    n_breached = info.get("n_breached", torch.zeors(E, dtype=torch.bool, device=self.device))
+
+                    true_done_mask = (
+                        dones
+                        & ((n_tagged >= self.adapter.n_intruders)
+                           | (n_breached >= self.adapter.n_zones))
+                    )
+                
                 dones_for_gae = true_done_mask.float().unsqueeze(-1).expand(E,N)
                 # Buffer: store (E, N, ...) tensors
                 self.buffer.add_timestep(

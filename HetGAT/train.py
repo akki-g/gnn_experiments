@@ -12,11 +12,11 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 
-from hetnetPolicy import HetNetPolicy
-from critic import HetNetCritic
-from mahac import MAHAC
-from rollout import MAHACBuffer
-from utils import collect_rollout, build_ssn_input
+from HetGAT.hetnetPolicy import HetNetPolicy
+from HetGAT.critic import HetNetCritic
+from HetGAT.mahac import MAHAC
+from HetGAT.rollout import MAHACBuffer
+from HetGAT.utils import collect_rollout, build_ssn_input
 
 from environments.guarded_territory import GuardedTerritoryAdapter
 
