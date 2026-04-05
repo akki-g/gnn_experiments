@@ -1,0 +1,16 @@
+=============================
+Job ID:       579721
+Array Task:   6
+Node:         evc35
+GPU:          0
+Start time:   Sat Apr  4 23:04:46 EDT 2026
+=============================
+Running: HetNet/MAHAC r_comm=1.5 (Guided Coverage)
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== HetNet/MAHAC | r_comm=1.5 (Guided Coverage) | device=cuda ===
+=============================
+End time: Sat Apr  4 23:04:51 EDT 2026
+=============================

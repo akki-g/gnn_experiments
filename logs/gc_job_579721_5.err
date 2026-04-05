@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 480, in <module>
+    main()
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 476, in main
+    run_hetnet(args.r_comm, device, args.output_dir)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 271, in run_hetnet
+    adapter = make_adapter(device=device)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 95, in make_adapter
+    return GuidedCoverageAdapter(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/environments/guided_coverage.py", line 295, in __init__
+    self.env = vmas.make_env(
+               ^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/make_env.py", line 80, in make_env
+    env = Environment(
+          ^^^^^^^^^^^^
+  File "/apps/python/python-3.11.4-gcc-12.2.0/lib/python3.11/contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 100, in __init__
+    observations = self._reset(seed=seed)
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 219, in _reset
+    self.scenario.env_reset_world_at(env_index=None)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/scenario.py", line 90, in env_reset_world_at
+    self.reset_world_at(env_index)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/environments/guided_coverage.py", line 127, in reset_world_at
+    zone.set_pos(pos)
+TypeError: Entity.set_pos() missing 1 required positional argument: 'batch_index'
