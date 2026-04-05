@@ -8,7 +8,7 @@
 #SBATCH --mem=32G
 #SBATCH --time=12:00:00
 #SBATCH --array=0-6
-#SBATCH --account=cenyoiha
+#SBATCH --account=cenyioha
 
 # -- Job config map ---
 # Guided Coverage 
