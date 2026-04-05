@@ -1,0 +1,11 @@
+=============================
+Job ID:       579718
+Array Task:   3
+Node:         evc33
+GPU:          0
+Start time:   Sat Apr  4 22:05:36 EDT 2026
+=============================
+Running: GNN-MAPPO K=3 r_comm=1.0 (Guided Coverage)
+=============================
+End time: Sat Apr  4 22:05:36 EDT 2026
+=============================

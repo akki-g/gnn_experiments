@@ -1,0 +1,11 @@
+=============================
+Job ID:       579717
+Array Task:   2
+Node:         evc41
+GPU:          0
+Start time:   Sat Apr  4 22:05:05 EDT 2026
+=============================
+Running: GNN-MAPPO K=2 r_comm=1.5 (Guided Coverage)
+=============================
+End time: Sat Apr  4 22:05:05 EDT 2026
+=============================
