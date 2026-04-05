@@ -265,7 +265,7 @@ class MAHAC:
             nn.utils.clip_grad_norm_(self.critic.parameters(), self.max_grad_norm)
             self.critic_optim.step()
 
-            total_value_loss += epoch_value_loss / T
+            total_value_loss += (epoch_value_loss / T).item()
             n_critic_updates += 1
 
         # post update EV 
