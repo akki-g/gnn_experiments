@@ -55,15 +55,15 @@ R="${R_VALUES[$TASK]}"
 
 if [ "$ALGO" == "ippo" ]; then
     echo "Running: IPPO baseline (Guided Coverage)"
-    python train_guided_coverage.py --algo ippo --output_dir "$OUTPUT_DIR"
+    python guided_coverage_train.py --algo ippo --output_dir "$OUTPUT_DIR"
 
 elif [ "$ALGO" == "gnn" ]; then
     echo "Running: GNN-MAPPO K=$K r_comm=$R (Guided Coverage)"
-    python train_guided_coverage.py --algo gnn --k "$K" --r_comm "$R" --output_dir "$OUTPUT_DIR"
+    python guided_coverage_train.py --algo gnn --k "$K" --r_comm "$R" --output_dir "$OUTPUT_DIR"
 
 elif [ "$ALGO" == "hetnet" ]; then
     echo "Running: HetNet/MAHAC r_comm=$R (Guided Coverage)"
-    python train_guided_coverage.py --algo hetnet --r_comm "$R" --output_dir "$OUTPUT_DIR"
+    python guided_coverage_train.py --algo hetnet --r_comm "$R" --output_dir "$OUTPUT_DIR"
 fi
 
 echo "============================="
