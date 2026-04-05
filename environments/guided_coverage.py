@@ -34,7 +34,7 @@ class Scenario(BaseScenario):
     def make_world(self, batch_dim: int, device: torch.device, **kwargs):
         # agent / world config
         self.n_scouts = kwargs.get("n_scouts", 2)
-        self.n_interc = kwargs.get("n_interc", 2)
+        self.n_intercs = kwargs.get("n_intercs", 2)
         self.n_zones = kwargs.get("n_zones", 3)
         self.world_size = kwargs.get("world_size", 5.0)
 
@@ -60,7 +60,6 @@ class Scenario(BaseScenario):
         )
 
         self.scouts = []
-        self.scouts = []
         for i in range(self.n_scouts):
             agent = Agent(
                 name=f"scout_{i}",
@@ -77,7 +76,7 @@ class Scenario(BaseScenario):
             self.scouts.append(agent)
         
         self.intercs = []
-        for i in range(self.n_interc):
+        for i in range(self.n_intercs):
             agent = Agent(
                 name=f"interc_{i}",
                 collide=True,
@@ -212,24 +211,19 @@ class Scenario(BaseScenario):
         batch = self.world.batch_dim
         device = self.world.device
 
-        # only compute for one agent and cache for the rest (shared reward structure)
-        if not hasattr(self, '_cached_reward') or self._reward_step != self.world._elapsed_steps:
-            self._reward_step = self.world._elapsed_steps
-
-            # interc pos (B, n_interc, 2)
+        # only compute once per step, scouts[0] is always called first
+        if agent is self.scouts[0]:
+ 
             interc_pos = torch.stack([a.state.pos for a in self.intercs], dim=1)
-            #landmark pos 
             landmark_pos = torch.stack([l.state.pos for l in self.zones], dim=1)
-
-            # dist
+ 
             diff = landmark_pos.unsqueeze(2) - interc_pos.unsqueeze(1)
             dists = torch.linalg.vector_norm(diff, dim=-1)
-
-            # find closes interc for each landmark
+ 
             min_dists, _ = dists.min(dim=2)
-
+ 
             coverage_reward = -min_dists.mean(dim=1)
-
+ 
             all_defenders = self.scouts + self.intercs
             collision_penalty = torch.zeros(batch, device=device)
             for i, a1 in enumerate(all_defenders):
@@ -238,10 +232,10 @@ class Scenario(BaseScenario):
                         a1.state.pos - a2.state.pos, dim=-1
                     )
                     collision_penalty += (d < (a1.shape.radius + a2.shape.radius)).float() * 0.1
+            
             self._cached_reward = coverage_reward - collision_penalty
-
+ 
         return self._cached_reward
-    
     def done(self):
         """
         no early term episodes run for max_steps

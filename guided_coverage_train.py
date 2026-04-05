@@ -129,7 +129,7 @@ def run_ippo(device, output_dir = "ippo_gc_run"):
     
     total_steps = ITERATIONS * ROLLOUT_LENGTH   
     steps_done = 0
-    interation = 0
+    iteration = 0
 
     while steps_done < total_steps:
         rollout_steps = min(ROLLOUT_LENGTH, total_steps-steps_done)
@@ -351,7 +351,7 @@ def run_hetnet(r_comm, device, output_dir):
             state_dim_scout=state_dim,
             state_dim_interc=state_dim,
             action_dim=act_dim,
-            ssn_dim=ssn_embed_dim,
+            ssn_dim=HETNET_SSN_DIM,
             hidden_dim=hidden_dim,
             device=device,
         )
