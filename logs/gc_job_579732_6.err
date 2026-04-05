@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 480, in <module>
+    main()
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 476, in main
+    run_hetnet(args.r_comm, device, args.output_dir)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 366, in run_hetnet
+    bootstrap_values = collect_rollout(
+                       ^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/HetGAT/utils.py", line 147, in collect_rollout
+    buffer.store(
+  File "/lustre/fs1/home/ak565492/gnn_experiments/HetGAT/rollout.py", line 88, in store
+    self.ssn_inputs[t] = ssn_input
+    ~~~~~~~~~~~~~~~^^^
+RuntimeError: The expanded size of the tensor (64) must match the existing size (5) at non-singleton dimension 1.  Target sizes: [256, 64].  Tensor sizes: [256, 5]
