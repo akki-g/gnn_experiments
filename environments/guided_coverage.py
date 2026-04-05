@@ -124,7 +124,7 @@ class Scenario(BaseScenario):
             if env_index is not None:
                 zone.set_pos(pos.squeeze(0), batch_index=env_index)
             else:
-                zone.set_pos(pos)
+                zone.set_pos(pos, batch_index=env_index)
 
         #scouts: random in outer ring
         for scout in self.scouts:
@@ -134,7 +134,7 @@ class Scenario(BaseScenario):
             if env_index is not None:
                 scout.set_pos(pos.squeeze(0), batch_index=env_index)
             else:
-                scout.set_pos(pos)
+                scout.set_pos(pos, batch_index=env_index)
             scout.set_vel(torch.zeros(batch, 2, device=device).squeeze(0) if env_index is not None 
                          else torch.zeros(batch, 2, device=device), 
                          batch_index=env_index if env_index is not None else None)
@@ -147,7 +147,7 @@ class Scenario(BaseScenario):
             if env_index is not None:
                 interc.set_pos(pos.squeeze(0), batch_index=env_index)
             else:
-                interc.set_pos(pos)
+                interc.set_pos(pos, batch_index=env_index)
             interc.set_vel(torch.zeros(batch, 2, device=device).squeeze(0) if env_index is not None 
                           else torch.zeros(batch, 2, device=device),
                           batch_index=env_index if env_index is not None else None)
@@ -516,7 +516,7 @@ class GuidedCoverageAdapter:
 
         return adj
     
-    
+
 
 
 
