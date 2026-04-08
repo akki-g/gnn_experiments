@@ -59,6 +59,8 @@ class HetNetPolicy(nn.Module):
         self.ln_interc = nn.ModuleList([nn.LayerNorm(n_heads * head_dim) for _ in range(n_layers)])
 
         final_feat_dim = n_heads * head_dim
+        #project mean agent feats into ssn space for critic enrichment
+        self.ssn_enrich = nn.Linear(2*final_feat_dim, final_feat_dim)
         self.action_head_scout = nn.Sequential(
             nn.Linear(final_feat_dim, final_feat_dim),
             nn.ReLU(),
@@ -125,6 +127,12 @@ class HetNetPolicy(nn.Module):
                 h_interc_new = h_interc_new + h_interc
             h_scout = h_scout_new
             h_interc = h_interc_new
+
+        #enrich ssn with mean feats for better val estimation
+        scout_mean_feat = h_scout.mean(dim=1, keepdim=True)
+        interc_mean_feat = h_interc.mean(dim=1, keepdim=True)
+        agent_summary = torch.cat([scout_mean_feat, interc_mean_feat], dim=-1)
+        h_ssn = h_ssn + self.ssn_enrich(agent_summary) # residual enrichment
 
         # action heads
         scout_mean = self.action_head_scout(h_scout)

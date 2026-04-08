@@ -21,6 +21,8 @@ class HetNetCritic(nn.Module):
             self.value_head = nn.Sequential(
                 nn.Linear(ssn_dim, hidden_dim),
                 nn.ReLU(),
+                nn.Linear(hidden_dim, hidden_dim),
+                nn.ReLU(),
                 nn.Linear(hidden_dim, 1),
             )
 
@@ -29,10 +31,14 @@ class HetNetCritic(nn.Module):
             self.value_head_scout = nn.Sequential(
                 nn.Linear(ssn_dim, hidden_dim),
                 nn.ReLU(),
+                nn.Linear(hidden_dim, hidden_dim),
+                nn.ReLU(),
                 nn.Linear(hidden_dim, 1),
             )
             self.value_head_interc = nn.Sequential(
                 nn.Linear(ssn_dim, hidden_dim),
+                nn.ReLU(),
+                nn.Linear(hidden_dim, hidden_dim),
                 nn.ReLU(),
                 nn.Linear(hidden_dim, 1),
             )
@@ -41,10 +47,14 @@ class HetNetCritic(nn.Module):
             self.value_head_scout = nn.Sequential(
                 nn.Linear(ssn_dim+agent_dim, hidden_dim),
                 nn.ReLU(),
+                nn.Linear(hidden_dim, hidden_dim),
+                nn.ReLU(),
                 nn.Linear(hidden_dim, 1),
             )
             self.value_head_interc = nn.Sequential(
                 nn.Linear(ssn_dim+agent_dim, hidden_dim),
+                nn.ReLU(),
+                nn.Linear(hidden_dim, hidden_dim),
                 nn.ReLU(),
                 nn.Linear(hidden_dim, 1),
             )

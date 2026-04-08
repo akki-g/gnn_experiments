@@ -160,8 +160,151 @@ class MAHAC:
         n_actor_updates = 0
         n_critic_updates = 0
 
+        #actor epochs: one forwards pass per epoch instead of T
+        for epoch in range(self.ppo_epochs):
+            scout_dist, interc_dist, h_ssn, _, _ = self.policy(
+                flat_obs_s, flat_state_s, flat_obs_i, flat_state_i,
+                flat_positions, flat_ssn,
+                flat_hidden_s, flat_hidden_i,
+                n_s, n_i
+            )
+            
+            #new log probs
+            new_lp_s = scout_dist.log_prob(flat_actions_s).sum(dim=-1)
+            new_lp_i = interc_dist.log_prob(flat_actions_i).sum(dim=-1)
+
+            #ppo ratios 
+            ratio_s = torch.exp(new_lp_s - flat_old_lp_s)
+            ratio_i = torch.exp(new_lp_i - flat_old_lp_i)
+
+            #expand per class adv to per agent
+            adv_s_exp = flat_adv_s.unsqueeze(-1).expand_as(ratio_s)
+            adv_i_exp = flat_adv_i.unsqueeze(-1).expand_as(ratio_i)
+        
+            #clip surrogates
+            surr1_s = ratio_s * adv_s_exp
+            surr2_s = torch.clamp(ratio_s, 1 - self.clip_eps, 1 + self.clip_eps) * adv_s_exp
+            policy_loss_s = -torch.min(surr1_s, surr2_s).mean()
+
+            surr1_i = ratio_i * adv_s_exp
+            surr2_i = torch.clamp(ratio_i, 1-self.clip_eps, 1+self.clip_eps) * adv_i_exp
+            policy_loss_i = -torch.min(surr1_i, surr2_i).mean()
+
+            #entropy
+            entropy_s = scout_dist.entropy().sum(dim=-1).mean()
+            entropy_i = interc_dist.entropy().sum(dim=-1).mean()
+
+            #combined actor loss
+            actor_loss = (
+                policy_loss_s + policy_loss_i
+                - self.entropy_coef * (entropy_s + entropy_i)
+            )
+
+            self.actor_optim.zero_grad()
+            actor_loss.backward()
+            nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
+            self.actor_optim.step()
+
+            # clamp log std (min and max)
+            with torch.no_grad():
+                self.policy.log_std_scout.clamp_(min=self.log_std_min, max=0.5)
+                self.policy.log_std_interc.clamp_(min=self.log_std_min, max=0.5)
+            
+            total_policy_loss_s += policy_loss_s.item()
+            total_policy_loss_i += policy_loss_i.item()
+            total_entropy_s += entropy_s.item()
+            total_entropy_i += entropy_i.item()
+            total_ratio_s += ratio_s.item()
+            total_ratio_i += ratio_i.item()
+            n_actor_updates += 1
 
         
+        #critic epochs 
+        for epoch in range(self.critic_epochs):
+            with torch.no_grad():
+                _, _, h_ssn, _, _ = self.policy(
+                    flat_obs_s, flat_state_s, flat_obs_i, flat_state_i,
+                    flat_positions, flat_ssn, 
+                    flat_hidden_s, flat_hidden_i,
+                    n_s, n_i
+                )
+
+            values = self.critic(h_ssn)
+            v_s = values['scout'].squeeze(-1)
+            v_i = values['interc'].squeeze(-1)
+
+
+            # value loss clipping 
+            v_s_clipped = flat_old_v_s + torch.clamp(v_s - flat_old_v_s, -self.clip_eps, self.clip_eps)
+            v_i_clipped = flat_old_v_i + torch.clamp(v_i - flat_old_v_i, -self.clip_eps, self.clip_eps)
+
+            vl_s = torch.max(
+                F.mse_loss(v_s, flat_ret_s_norm, reduction='none'),
+                F.mse_loss(v_s_clipped, flat_ret_s_norm, reduction='none')
+            ).mean()
+            vl_i = torch.max(
+                F.mse_loss(v_i, flat_ret_i_norm, reduction='none'),
+                F.mse_loss(v_i_clipped, flat_ret_i_norm, reduction='none')
+            ).mean()
+
+            critic_loss = self.value_coef * (vl_s + vl_i)
+
+            self.critic_optim.zero_grad()
+            critic_loss.backward()
+            nn.utils.clip_grad_norm_(self.critic.parameters(), self.max_grad_norm)
+            self.critic_optim.step()
+
+            total_value_loss += (vl_s + vl_i).item()
+
+
+        #post update ev
+        with torch.no_grad():
+            _, _, h_ssn_post, _, _ = self.policy(
+                flat_obs_s, flat_state_s, flat_obs_i, flat_state_i,
+                flat_positions, flat_ssn,
+                flat_hidden_s, flat_hidden_i, 
+                n_s, n_i
+            )
+
+            post_vals = self.critic(h_ssn_post)
+            post_v_s = post_vals['scout'].squeeze(-1)
+            post_v_i = post_vals['interc'].squeeze(-1)
+
+            flat_ret_s = ret_s.reshape(T*B)
+            flat_ret_i = ret_i.reshape*(T*B)
+            flat_vals_s = buffer.scout_values.reshape(T*B)
+            flat_vals_i = buffer.interc_values.reshape(T*B)
+
+            ev_scout_post = (1.0 - (flat_ret_s - post_v_s).var() / (flat_ret_s.var() + 1e-8)).item()
+            ev_interc_post = (1.0 - (flat_ret_i - post_v_i).var() / (flat_ret_i.var() + 1e-8)).item()   
+            ev_scout = (1.0 - (flat_ret_s - v_s).var() / (flat_ret_s.var() + 1e-8)).item()
+            ev_interc = (1.0 - (flat_ret_i - v_i).var() / (flat_ret_i.var() + 1e-8)).item()
+            msbe_scout = F.mse_loss(flat_vals_s, flat_ret_s).item()
+            msbe_interc = F.mse_loss(flat_vals_i, flat_ret_i).item()
+
+         
+        metrics = {
+            'policy_loss_scout': total_policy_loss_s / n_actor_updates,
+            'policy_loss_interc': total_policy_loss_i / n_actor_updates,
+            'value_loss': total_value_loss / n_critic_updates,
+            'entropy_scout': total_entropy_s / n_actor_updates,
+            'entropy_interc': total_entropy_i / n_actor_updates,
+            'log_std_scout': self.policy.log_std_scout.data.mean().item(),
+            'log_std_interc': self.policy.log_std_interc.data.mean().item(),
+            'ratio_scout_mean': total_ratio_s / n_actor_updates,
+            'ratio_interc_mean': total_ratio_i / n_actor_updates,
+            'ev_scout': ev_scout,
+            'ev_interc': ev_interc,
+            'ev_scout_post': ev_scout_post,
+            'ev_interc_post': ev_interc_post,
+            'msbe_scout': msbe_scout,
+            'msbe_interc': msbe_interc,
+            'advantage_mean_scout': raw_adv_mean_s,
+            'advantage_std_scout': raw_adv_std_s,
+            'advantage_mean_interc': raw_adv_mean_i,
+            'advantage_std_interc': raw_adv_std_i,
+        }
+        return metrics
 
         
 
