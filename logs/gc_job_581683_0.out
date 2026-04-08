@@ -1,0 +1,19 @@
+=============================
+Job ID:       581684
+Array Task:   0
+Node:         evc21
+GPU:          0
+Start time:   Wed Apr  8 19:30:43 EDT 2026
+=============================
+Running: IPPO baseline (Guided Coverage)
+Using device: cuda
+GPU: Tesla V100-PCIE-32GB
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== IPPO baseline (Guided Coverage) | 256 envs | device=cuda ===
+[IPPO] iter=1 steps=265/265000 | pi=-0.0004 v=318.6177 ent=2.8356 ret=-3.052 exp_var=-0.000
+[IPPO] iter=20 steps=5300/265000 | pi=-0.0006 v=0.1962 ent=2.7491 ret=-1.428 exp_var=0.343
+[IPPO] iter=40 steps=10600/265000 | pi=-0.0006 v=0.5033 ent=2.6195 ret=-2.055 exp_var=0.378
+[IPPO] iter=60 steps=15900/265000 | pi=-0.0010 v=0.2096 ent=2.4781 ret=-1.456 exp_var=0.221
+[IPPO] iter=80 steps=21200/265000 | pi=-0.0011 v=0.2312 ent=2.3537 ret=-1.483 exp_var=0.353
+[IPPO] iter=100 steps=26500/265000 | pi=-0.0008 v=0.5408 ent=2.2379 ret=-2.103 exp_var=0.526

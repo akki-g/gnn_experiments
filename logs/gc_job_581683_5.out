@@ -1,0 +1,18 @@
+=============================
+Job ID:       581689
+Array Task:   5
+Node:         evc24
+GPU:          0
+Start time:   Wed Apr  8 19:31:25 EDT 2026
+=============================
+Running: HetNet/MAHAC r_comm=1.0 (Guided Coverage)
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== HetNet/MAHAC | r_comm=1.0 (Guided Coverage) | device=cuda ===
+[HetNet] iter=1/1000 steps=265/265000 | pi_s=0.0062 pi_i=0.0099 v=2.0564 ent_s=2.838 ent_i=2.838 ret=-3.761 ev_s_post=-0.001 ev_i_post=0.004 r_s=1.000 r_i=1.000 std_s=-0.00 std_i=-0.00
+[HetNet] iter=20/1000 steps=5300/265000 | pi_s=0.0013 pi_i=0.0012 v=1.1159 ent_s=2.841 ent_i=2.840 ret=-3.232 ev_s_post=0.059 ev_i_post=0.067 r_s=1.000 r_i=1.001 std_s=0.00 std_i=0.00
+[HetNet] iter=40/1000 steps=10600/265000 | pi_s=0.0002 pi_i=0.0005 v=0.8429 ent_s=2.821 ent_i=2.830 ret=-2.809 ev_s_post=0.086 ev_i_post=0.091 r_s=1.000 r_i=1.000 std_s=-0.01 std_i=-0.00
+[HetNet] iter=60/1000 steps=15900/265000 | pi_s=0.0002 pi_i=0.0007 v=0.7444 ent_s=2.811 ent_i=2.820 ret=-2.317 ev_s_post=0.101 ev_i_post=0.103 r_s=1.000 r_i=1.000 std_s=-0.01 std_i=-0.01
+[HetNet] iter=80/1000 steps=21200/265000 | pi_s=0.0001 pi_i=0.0003 v=0.6466 ent_s=2.804 ent_i=2.818 ret=-2.275 ev_s_post=0.114 ev_i_post=0.115 r_s=1.000 r_i=1.000 std_s=-0.02 std_i=-0.01

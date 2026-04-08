@@ -1,0 +1,17 @@
+=============================
+Job ID:       581683
+Array Task:   6
+Node:         evc21
+GPU:          0
+Start time:   Wed Apr  8 19:32:31 EDT 2026
+=============================
+Running: HetNet/MAHAC r_comm=1.5 (Guided Coverage)
+Using device: cuda
+GPU: Tesla V100-PCIE-32GB
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== HetNet/MAHAC | r_comm=1.5 (Guided Coverage) | device=cuda ===
+[HetNet] iter=1/1000 steps=265/265000 | pi_s=0.0109 pi_i=0.0141 v=2.0577 ent_s=2.838 ent_i=2.838 ret=-3.719 ev_s_post=-0.000 ev_i_post=0.004 r_s=1.000 r_i=1.000 std_s=-0.00 std_i=0.00
+[HetNet] iter=20/1000 steps=5300/265000 | pi_s=0.0014 pi_i=0.0011 v=1.2002 ent_s=2.837 ent_i=2.846 ret=-3.188 ev_s_post=0.049 ev_i_post=0.059 r_s=1.000 r_i=1.000 std_s=-0.00 std_i=0.00
+[HetNet] iter=40/1000 steps=10600/265000 | pi_s=0.0003 pi_i=0.0003 v=0.9707 ent_s=2.812 ent_i=2.835 ret=-2.815 ev_s_post=0.075 ev_i_post=0.080 r_s=1.000 r_i=1.000 std_s=-0.01 std_i=-0.00
+[HetNet] iter=60/1000 steps=15900/265000 | pi_s=0.0003 pi_i=0.0005 v=0.8053 ent_s=2.791 ent_i=2.813 ret=-2.510 ev_s_post=0.091 ev_i_post=0.094 r_s=1.000 r_i=1.000 std_s=-0.02 std_i=-0.01
