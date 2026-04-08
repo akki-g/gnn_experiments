@@ -128,10 +128,10 @@ class GNNTrainerMultiEnv:
 
                 # Truncation vs true done - per-env (modified to account for guided coverage env)
                 if self.adapter.n_intruders == 0:
-                    true_done_mask = torch.zeros(E, dtype=torch.bool, device=self.device)
+                    true_done_mask = dones.bool() if dones.dtype != torch.bool else dones
                 else:
-                    n_tagged = info.get("n_tagged", torch.zeros(E, dtype=torch.bool, device=self.device))
-                    n_breached = info.get("n_breached", torch.zeors(E, dtype=torch.bool, device=self.device))
+                    n_tagged = info.get("n_tagged", torch.zeros(E, device=self.device))
+                    n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
 
                     true_done_mask = (
                         dones

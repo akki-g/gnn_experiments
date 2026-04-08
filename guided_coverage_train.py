@@ -35,15 +35,15 @@ F_dim = 64
 G_dim = 64
 lr = 3e-4
 gamma = 0.99
-gae_lambda = 0.85
+gae_lambda = 0.95
 clip_eps = 0.2
 value_coef = 0.5
-entropy_coef = 0.01
+entropy_coef = 0.001
 
 ROLLOUT_LENGTH = 265
 ITERATIONS = 1000
 BATCH_SIZE = 256
-NUM_EPOCHS = 10
+NUM_EPOCHS = 5
 SEED = 42
 LOG_EVERY = 20
 

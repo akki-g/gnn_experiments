@@ -530,12 +530,22 @@ class GuardedTerritoryAdapter:
         return defender_obs, defender_rewards, dones, info, positions
 
     def build_adj(self, positions: torch.Tensor, r_comm: float) -> torch.Tensor:
-        """Build row-normalized adj matrix. positions: (num_envs, n_def, 2)"""
+        """
+        Symmetric-normalized adjacency WITHOUT self-loops.
+        S^0 = I in GraphConv handles self-features; self-loops here would double-count.
+        Returns D^{-1/2} A D^{-1/2} where A has zero diagonal.
+        positions: (num_envs, n_def, 2)
+        """
         diff = positions.unsqueeze(2) - positions.unsqueeze(1)
         dist = torch.linalg.vector_norm(diff, dim=-1)
         adj = (dist <= r_comm).float()
-        deg = adj.sum(dim=-1, keepdim=True).clamp(min=1)
-        adj = adj / deg
+        # Remove self-loops
+        adj.diagonal(dim1=-2, dim2=-1).zero_()
+        # Symmetric normalization: D^{-1/2} A D^{-1/2}
+        deg = adj.sum(dim=-1)
+        deg_inv_sqrt = deg.pow(-0.5)
+        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0.0
+        adj = deg_inv_sqrt.unsqueeze(-1) * adj * deg_inv_sqrt.unsqueeze(-2)
         return adj
 
     def build_hetero_adj(self, positions: torch.Tensor, r_comm: float) -> Dict[str, torch.Tensor]:
