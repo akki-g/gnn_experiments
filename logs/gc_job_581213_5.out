@@ -1,0 +1,15 @@
+=============================
+Job ID:       581226
+Array Task:   5
+Node:         evc34
+GPU:          0
+Start time:   Tue Apr  7 22:44:40 EDT 2026
+=============================
+Running: HetNet/MAHAC r_comm=1.0 (Guided Coverage)
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== HetNet/MAHAC | r_comm=1.0 (Guided Coverage) | device=cuda ===
+[HetNet] iter=1/1000 steps=265/265000 | pi_s=-0.0003 pi_i=-0.0003 v=2.1238 ent_s=2.838 ent_i=2.839 ret=-3.078 ev_s_post=-0.001 ev_i_post=0.002 r_s=1.000 r_i=1.000 std_s=-0.00 std_i=0.00
+[HetNet] iter=20/1000 steps=5300/265000 | pi_s=-0.0000 pi_i=-0.0002 v=0.6084 ent_s=2.852 ent_i=2.861 ret=-2.332 ev_s_post=0.106 ev_i_post=0.109 r_s=1.000 r_i=1.000 std_s=0.01 std_i=0.01
