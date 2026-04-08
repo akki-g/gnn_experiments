@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 480, in <module>
+    main()
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 472, in main
+    run_gnn(args.k, args.r_comm, device, args.output_dir)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/guided_coverage_train.py", line 213, in run_gnn
+    last_obs, rollout_metrics = trainer.collect_rollouts(num_steps=rollout_steps)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/gnn/trainer_multienv.py", line 122, in collect_rollouts
+    next_obs, rewards, dones, info, next_positions = self.adapter.step(actions)
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/environments/guided_coverage.py", line 391, in step
+    all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/apps/python/python-3.11.4-gcc-12.2.0/lib/python3.11/contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 388, in step
+    self._set_action(actions[i], agent)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 651, in _set_action
+    assert not torch.any(
+AssertionError: Physical actions of agent scout_0 are out of its range 1.0

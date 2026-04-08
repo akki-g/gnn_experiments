@@ -32,25 +32,19 @@ class CommPolicy(nn.Module):
 
     def get_actions(self, obs, S):
         mean = self.forward(obs, S)
-        std = self.log_std.exp().expand_as(mean)
+        std = self.log_std.clamp(min=-5.0, max=2.0).exp().expand_as(mean)
         dist = Normal(mean, std)
-        raw_action = dist.sample()
-        action = torch.tanh(raw_action)
+        action = dist.sample()
 
-        log_prob = dist.log_prob(raw_action) - torch.log(1 - action.pow(2) + 1e-6)
-        log_prob = log_prob.sum(dim=-1)
+        log_prob = dist.log_prob(action).sum(dim=-1)
         entropy = dist.entropy().sum(dim=-1)
         return action, log_prob, entropy
 
     def evaluate_actions(self, obs, S, actions):
         mean = self.forward(obs, S)
-        std = self.log_std.exp().expand_as(mean)
+        std = self.log_std.clamp(min=-5.0, max=2.0).exp().expand_as(mean)
         dist = Normal(mean, std)
 
-        raw_actions = torch.atanh(actions.clamp(-0.999, 0.999))
-
-        log_prob = dist.log_prob(raw_actions) - torch.log(1 - actions.pow(2) + 1e-6)
-        log_prob = log_prob.sum(dim=-1)
-
+        log_prob = dist.log_prob(actions).sum(dim=-1)
         entropy = dist.entropy().sum(dim=-1)
         return log_prob, entropy, mean

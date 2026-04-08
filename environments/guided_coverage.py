@@ -288,8 +288,10 @@ class GuidedCoverageAdapter:
 
         self.env = vmas.make_env(
             scenario=Scenario(),
-            num_envs=num_envs, 
+            num_envs=num_envs,
             device=device,
+            continuous_actions=True,
+            clamp_actions=True,
             max_steps=max_steps,
             n_scouts=n_scouts,
             n_intercs=n_intercs,
@@ -414,15 +416,21 @@ class GuidedCoverageAdapter:
     
     def build_adj(self, position: torch.Tensor, r_comm: float) -> torch.Tensor:
         """
-        row normed adj matrix for gnn-mappo
-        pos (B, n_def, 2)
-        returns (B, n_def, n_def)
+        Symmetric-normalized adjacency WITHOUT self-loops.
+        S^0 = I in GraphConv handles self-features; self-loops here would double-count.
+        Returns D^{-1/2} A D^{-1/2} where A has zero diagonal.
+        positions: (num_envs, n_def, 2)
         """
         diff = position.unsqueeze(2) - position.unsqueeze(1)
         dist = torch.linalg.vector_norm(diff, dim=-1)
         adj = (dist <= r_comm).float()
-        deg = adj.sum(dim=-1, keepdim=True).clamp(min=1)
-        adj = adj/deg
+        # Remove self-loops
+        adj.diagonal(dim1=-2, dim2=-1).zero_()
+        # Symmetric normalization: D^{-1/2} A D^{-1/2}
+        deg = adj.sum(dim=-1)
+        deg_inv_sqrt = deg.pow(-0.5)
+        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0.0
+        adj = deg_inv_sqrt.unsqueeze(-1) * adj * deg_inv_sqrt.unsqueeze(-2)
         return adj
     
     # HetNet interface

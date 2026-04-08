@@ -1,0 +1,16 @@
+=============================
+Job ID:       581223
+Array Task:   2
+Node:         evc34
+GPU:          0
+Start time:   Tue Apr  7 22:44:07 EDT 2026
+=============================
+Running: GNN-MAPPO K=2 r_comm=1.5 (Guided Coverage)
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== GNN-MAPPO | K=2, r_comm=1.5 (Guided Coverage) | device=cuda ===
+=============================
+End time: Tue Apr  7 22:44:16 EDT 2026
+=============================

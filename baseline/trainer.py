@@ -111,7 +111,9 @@ class IPPOTrainer:
 
                 # -- Vectorized done detection - no CPU syncs --
                 if self.adapter.n_intruders == 0:
-                    true_done_mask = torch.zeros(E, dtype=torch.bool, device=self.device)
+                    # Time-limit IS the terminal condition for coverage/non-intruder envs.
+                    # VMAS fires dones=True at max_steps; treat as true episode end.
+                    true_done_mask = dones.bool() if dones.dtype != torch.bool else dones
                 else:
                     n_tagged = info.get("n_tagged", torch.zeros(E, device=self.device))
                     n_breached = info.get("n_breached", torch.zeros(E, device=self.device))

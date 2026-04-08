@@ -31,8 +31,8 @@ class HetGATHead(nn.Module):
         self.a_i2ssn = nn.Parameter(torch.empty(2*d_out))
 
 
+        self.attn_dropout = 0.1
         self._init_weights()
-        return
     
     def _init_weights(self):
         """xavier uniform for weights for attention vectors"""
@@ -58,35 +58,39 @@ class HetGATHead(nn.Module):
         Compute attention-weighted aggregation for one edge type
 
         returns: (B, N_dst, d_out)
+
+        changed to use gatv2 style attention: leaky relu before dot product w attention vecto 
+        more expressive than v1 
         """
-        # transform 
+
         src_t = W_edge(h_src)
         dst_t = W_node(h_dst)
 
-        # pairwise attention scores 
-        # need: for every (src_k, dst_j) pair, compute a^T * [dst_t_j || src_t_k]
-        # split attention vector into receiver and sender halves    
-        a_dst = a[:self.d_out]
-        a_src = a[self.d_out:]
+        N_src = h_src.shape[1]
+        N_dst = h_dst.shape[1]
 
-        # instead of materializing the full (B, N_src, 2*d_out) tensor,
-        # use: a^T * [x || y] = a_dst^T * x + a_src * y -> much cheaper 
-        e_dst = (dst_t * a_dst).sum(dim=-1) #(B, N_dst)
-        e_src = (src_t * a_src).sum(dim=-1) #(B, N_src)
+        # pairwise sum of proj features
+        pairwise = src_t.unsqueeze(2) + dst_t.unsqueeze(1)
 
-        # broadcast to pairwise: e[b,k,j] = e_src[b,k] + e_dst[b,j]
-        e = e_src.unsqueeze(2) + e_dst.unsqueeze(1)
-        e = F.leaky_relu(e, negative_slope=0.2)
+        # gat v2: leaky relu before dotting w attention
+        pairwise = F.leaky_relu(pairwise, negative_slope=0.2)
 
-        # mask non-neighbors, softmax over sources for each dest
+        #split attention vector and dot: a is (2*d_out,) but we only need first d_out elements
+        a_vec = a[:self.d_out]
+        e = (pairwise * a_vec).sum(dim=-1)
+
+        # mask and softmax over sources
         e = e.masked_fill(mask==0, float('-inf'))
         alpha = F.softmax(e, dim=1)
-        alpha = alpha.masked_fill(torch.isnan(alpha), 0.0)
+        alpha - alpha.masked_fill(torch.isnan(alpha), 0.0)
 
-        # weighted aggregation
-        out = torch.einsum('bsd, bsf -> bdf', alpha, src_t) # (B, N_dst, d_out)
+        if self.training:
+            alpha = F.dropout(alpha, p=self.attn_dropout, training=True)
+
+        out = torch.einsum('bsd, bsf -> bdf', alpha, src_t)
 
         return out
+        
     
     def forward(self, h_scout, h_interc, h_ssn, adj):
         """
