@@ -308,7 +308,7 @@ def run_hetnet(r_comm, device, output_dir):
         policy=policy,
         critic=critic,
         lr_actor=lr,
-        lr_critic=lr*3,
+        lr_critic=lr,
         critic_epochs=3,
         gamma=gamma,
         lam=gae_lambda,

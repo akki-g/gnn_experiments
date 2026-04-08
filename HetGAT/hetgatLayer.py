@@ -31,8 +31,8 @@ class HetGATHead(nn.Module):
         self.a_i2ssn = nn.Parameter(torch.empty(2*d_out))
 
 
+        self.attn_dropout = 0.1
         self._init_weights()
-        return
     
     def _init_weights(self):
         """xavier uniform for weights for attention vectors"""
@@ -82,6 +82,9 @@ class HetGATHead(nn.Module):
         e = e.masked_fill(mask==0, float('-inf'))
         alpha = F.softmax(e, dim=1)
         alpha = alpha.masked_fill(torch.isnan(alpha), 0.0)
+        # Attention dropout (GAT paper standard practice)
+        if self.training:
+            alpha = F.dropout(alpha, p=self.attn_dropout, training=True)
 
         # weighted aggregation
         out = torch.einsum('bsd, bsf -> bdf', alpha, src_t) # (B, N_dst, d_out)

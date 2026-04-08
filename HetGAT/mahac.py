@@ -155,9 +155,9 @@ class MAHAC:
                     buffer.n_s, buffer.n_i
                 )
 
-                # get fresh log probs (buffer stores pre-tanh raw actions)
-                _, new_log_prob_s, _ = self.policy.squash_action(scout_dist, raw_action=buffer.scout_actions[t])
-                _, new_log_prob_i, _ = self.policy.squash_action(interc_dist, raw_action=buffer.interc_actions[t])
+                # get fresh log probs (buffer stores raw actions — no tanh squashing)
+                new_log_prob_s = scout_dist.log_prob(buffer.scout_actions[t]).sum(dim=-1)
+                new_log_prob_i = interc_dist.log_prob(buffer.interc_actions[t]).sum(dim=-1)
 
                 #scout ppo loss
                 ratio_s = torch.exp(new_log_prob_s - old_log_probs_s[t])

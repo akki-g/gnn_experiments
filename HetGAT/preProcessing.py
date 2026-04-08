@@ -17,6 +17,9 @@ class ClassPreprocessor(nn.Module):
         self.fc_state = nn.Linear(state_dim, hidden_dim)
         self.lstm_state = nn.LSTMCell(hidden_dim, hidden_dim)
 
+        self.ln_obs = nn.LayerNorm(hidden_dim)
+        self.ln_state = nn.LayerNorm(hidden_dim)
+
 
     def init_hidden(self, batch_size: int, n_agents: int, device: torch.device):
         """call at ep start, returns dict of hidden state"""
@@ -47,11 +50,11 @@ class ClassPreprocessor(nn.Module):
         state_flat = state.reshape(B*N, -1)
 
         # obs pathway
-        obs_fc = F.relu(self.fc_obs(obs_flat))
+        obs_fc = self.ln_obs(F.relu(self.fc_obs(obs_flat)))
         obs_h, obs_c = self.lstm_obs(obs_fc, (hidden['obs_h'], hidden['obs_c']))
 
         # state pathway
-        state_fc = F.relu(self.fc_state(state_flat))
+        state_fc = self.ln_state(F.relu(self.fc_state(state_flat)))
         state_h, state_c = self.lstm_state(state_fc, (hidden['state_h'], hidden['state_c']))
 
         # concat and reshape back

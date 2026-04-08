@@ -54,6 +54,10 @@ class HetNetPolicy(nn.Module):
                 )
             )
 
+        # LayerNorm after each HetGAT layer (applied to scout and interc separately)
+        self.ln_scout = nn.ModuleList([nn.LayerNorm(n_heads * head_dim) for _ in range(n_layers)])
+        self.ln_interc = nn.ModuleList([nn.LayerNorm(n_heads * head_dim) for _ in range(n_layers)])
+
         final_feat_dim = n_heads * head_dim
         self.action_head_scout = nn.Sequential(
             nn.Linear(final_feat_dim, final_feat_dim),
@@ -109,16 +113,25 @@ class HetNetPolicy(nn.Module):
         # build adj graph
         adj = build_hetero_adj(positions, self.r_comm, n_scouts, n_interc)
         
-        # hetGAT stack
-        for layer in self.hetgatLayers:
-            h_scout, h_interc, h_ssn = layer(h_scout, h_interc, h_ssn, adj)
+        # hetGAT stack with residual connections and LayerNorm
+        for i, layer in enumerate(self.hetgatLayers):
+            h_scout_new, h_interc_new, h_ssn = layer(h_scout, h_interc, h_ssn, adj)
+            # Apply LayerNorm
+            h_scout_new = self.ln_scout[i](h_scout_new)
+            h_interc_new = self.ln_interc[i](h_interc_new)
+            # Residual connection (skip layer 0 — dimension changes from 2*hidden_dim to n_heads*head_dim)
+            if i > 0:
+                h_scout_new = h_scout_new + h_scout
+                h_interc_new = h_interc_new + h_interc
+            h_scout = h_scout_new
+            h_interc = h_interc_new
 
         # action heads
         scout_mean = self.action_head_scout(h_scout)
         interc_mean = self.action_head_interc(h_interc)
 
-        scout_std = self.log_std_scout.exp().expand_as(scout_mean)
-        interc_std = self.log_std_interc.exp().expand_as(interc_mean)
+        scout_std = self.log_std_scout.clamp(min=-5.0, max=2.0).exp().expand_as(scout_mean)
+        interc_std = self.log_std_interc.clamp(min=-5.0, max=2.0).exp().expand_as(interc_mean)
 
         scout_dist = Normal(scout_mean, scout_std)
         interc_dist = Normal(interc_mean, interc_std)
@@ -126,28 +139,16 @@ class HetNetPolicy(nn.Module):
         return scout_dist, interc_dist, h_ssn, new_hidden_s, new_hidden_i
     
     @staticmethod
-    def squash_action(dist, raw_action=None):
-        """Tanh-squash an action from a Normal distribution.
-        
-        Args:
-            dist: Normal distribution
-            raw_action: pre-tanh sample (if None, samples fresh)
-        
+    def sample_action(dist):
+        """Sample action from Normal distribution. No tanh — VMAS clamps via max_speed.
+
         Returns:
-            action: bounded in (-1, 1)
-            log_prob: corrected for tanh Jacobian, summed over action dims
-            raw_action: the pre-tanh sample (store this for PPO recompute)
+            action: raw sample from distribution
+            log_prob: log probability summed over action dims -> (B, n_agents)
         """
-        if raw_action is None:
-            raw_action = dist.rsample()  # reparameterized sample
-        
-        action = torch.tanh(raw_action)
-        
-        # Jacobian correction: log(1 - tanh^2(u)) per action dim, then sum
-        log_prob = dist.log_prob(raw_action) - torch.log(1 - action.pow(2) + 1e-6)
-        log_prob = log_prob.sum(dim=-1)  # sum over action dims -> (B, n_agents)
-        
-        return action, log_prob, raw_action
+        action = dist.sample()
+        log_prob = dist.log_prob(action).sum(dim=-1)
+        return action, log_prob
 
 
 

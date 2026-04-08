@@ -288,8 +288,10 @@ class GuidedCoverageAdapter:
 
         self.env = vmas.make_env(
             scenario=Scenario(),
-            num_envs=num_envs, 
+            num_envs=num_envs,
             device=device,
+            continuous_actions=True,
+            clamp_actions=True,
             max_steps=max_steps,
             n_scouts=n_scouts,
             n_intercs=n_intercs,
