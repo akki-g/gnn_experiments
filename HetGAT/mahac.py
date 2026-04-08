@@ -186,7 +186,7 @@ class MAHAC:
             surr2_s = torch.clamp(ratio_s, 1 - self.clip_eps, 1 + self.clip_eps) * adv_s_exp
             policy_loss_s = -torch.min(surr1_s, surr2_s).mean()
 
-            surr1_i = ratio_i * adv_s_exp
+            surr1_i = ratio_i * adv_i_exp
             surr2_i = torch.clamp(ratio_i, 1-self.clip_eps, 1+self.clip_eps) * adv_i_exp
             policy_loss_i = -torch.min(surr1_i, surr2_i).mean()
 
@@ -214,8 +214,8 @@ class MAHAC:
             total_policy_loss_i += policy_loss_i.item()
             total_entropy_s += entropy_s.item()
             total_entropy_i += entropy_i.item()
-            total_ratio_s += ratio_s.item()
-            total_ratio_i += ratio_i.item()
+            total_ratio_s += ratio_s.mean().item()
+            total_ratio_i += ratio_i.mean().item()
             n_actor_updates += 1
 
         
@@ -255,6 +255,7 @@ class MAHAC:
             self.critic_optim.step()
 
             total_value_loss += (vl_s + vl_i).item()
+            n_critic_updates += 1
 
 
         #post update ev
@@ -271,7 +272,7 @@ class MAHAC:
             post_v_i = post_vals['interc'].squeeze(-1)
 
             flat_ret_s = ret_s.reshape(T*B)
-            flat_ret_i = ret_i.reshape*(T*B)
+            flat_ret_i = ret_i.reshape(T*B)
             flat_vals_s = buffer.scout_values.reshape(T*B)
             flat_vals_i = buffer.interc_values.reshape(T*B)
 

@@ -82,7 +82,7 @@ class HetGATHead(nn.Module):
         # mask and softmax over sources
         e = e.masked_fill(mask==0, float('-inf'))
         alpha = F.softmax(e, dim=1)
-        alpha - alpha.masked_fill(torch.isnan(alpha), 0.0)
+        alpha = alpha.masked_fill(torch.isnan(alpha), 0.0)
 
         if self.training:
             alpha = F.dropout(alpha, p=self.attn_dropout, training=True)
