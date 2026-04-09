@@ -60,3 +60,12 @@ Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
 [IPPO] iter=920 steps=243800/265000 | pi=0.0006 v=0.3692 ent=-4.0386 ret=-3.665 exp_var=0.092
 [IPPO] iter=940 steps=249100/265000 | pi=0.0004 v=0.3523 ent=-4.1902 ret=-3.227 exp_var=0.030
 [IPPO] iter=960 steps=254400/265000 | pi=0.0005 v=0.3337 ent=-4.3100 ret=-3.539 exp_var=0.107
+[IPPO] iter=980 steps=259700/265000 | pi=0.0006 v=0.3431 ent=-4.4561 ret=-4.016 exp_var=0.131
+[IPPO] iter=1000 steps=265000/265000 | pi=0.0006 v=0.3482 ent=-4.6328 ret=-4.125 exp_var=0.118
+Saved plot: /home/ak565492/gnn_experiments/outputs/guided_coverage/gc_ippo.png
+Saved checkpoint: /home/ak565492/gnn_experiments/outputs/guided_coverage/gc_ippo_final.pt
+
+[IPPO] Final Return:-4.125
+=============================
+End time: Wed Apr  8 21:27:12 EDT 2026
+=============================
