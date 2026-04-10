@@ -162,6 +162,16 @@ def collect_rollout(
         buffer.rewards[t] = reward
         buffer.dones[t] = done.float()
 
+        # FIX-0: diagnostic — verify dones fire and reward scale
+        if t < 3 or t == T - 1:
+            print(
+                f"  [DIAG] t={t} done_sum={done.float().sum().item():.0f}/{B} "
+                f"reward_mean={reward.mean().item():.4f} "
+                f"reward_min={reward.min().item():.4f} "
+                f"reward_max={reward.max().item():.4f}",
+                flush=True,
+            )
+
         obs_s, state_s, obs_i, state_i, positions = env_adapter.get_obs()
 
         # reset LSTM hidden states for term envs
@@ -173,6 +183,16 @@ def collect_rollout(
                 hidden_s[key][done_mask_s] = 0.0
             for key in hidden_i: 
                 hidden_i[key][done_mask_i] = 0.0
+
+    # FIX-0: rollout summary diagnostic
+    total_dones = buffer.dones.sum().item()
+    print(
+        f"  [ROLLOUT SUMMARY] total_dones={total_dones:.0f} "
+        f"expected_if_100step_eps≈{B * (T // 100):.0f} "
+        f"reward_global_mean={buffer.rewards.mean().item():.4f} "
+        f"reward_global_std={buffer.rewards.std().item():.4f}",
+        flush=True,
+    )
 
     ssn_input_final = build_ssn_input(
         n_scouts, n_interc, 

@@ -301,6 +301,11 @@ class GuidedCoverageAdapter:
             interc_fov=interc_fov
         )
 
+        # FIX-1B: explicit step counter so dones fire reliably at max_steps
+        # (guards against VMAS version differences or scenario.done() always returning False)
+        self._max_steps = max_steps
+        self._step_counters = torch.zeros(num_envs, device=device, dtype=torch.long)
+
         self.num_envs = num_envs
 
         # all agents are defenders
@@ -374,6 +379,7 @@ class GuidedCoverageAdapter:
         """
         all_obs = self.env.reset()
         defender_obs = self._stack_defender_obs(all_obs)
+        self._step_counters.zero_()  # FIX-1B: reset step counters on full reset
         return defender_obs, self._cached_pos
     
     def reset_env(self):
@@ -384,13 +390,19 @@ class GuidedCoverageAdapter:
 
     def step(self, defender_actions: torch.Tensor):
         """
-        gnn-mappo / ippo interface 
+        gnn-mappo / ippo interface
         args: defender_actions (B, n_def, 2)
         returns: obs, rewards, dones, info, positions
         """
 
         all_actions = self._make_action_list(defender_actions)
         all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
+
+        # FIX-1B: force dones at max_steps regardless of VMAS internal behavior
+        self._step_counters += 1
+        forced_dones = self._step_counters >= self._max_steps
+        dones = dones | forced_dones
+        self._step_counters[dones] = 0  # reset counters for done envs (VMAS auto-resets them)
 
         defender_obs = self._stack_defender_obs(all_obs)
 
@@ -442,6 +454,7 @@ class GuidedCoverageAdapter:
 
         all_obs = self.env.reset()
         self._stack_defender_obs(all_obs)
+        self._step_counters.zero_()  # FIX-1B: reset step counters
         return self.get_obs()
     
     def get_obs(self):
@@ -475,6 +488,12 @@ class GuidedCoverageAdapter:
         
         all_actions = self._make_action_list(defender_actions)
         all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
+
+        # FIX-1B: force dones at max_steps regardless of VMAS internal behavior
+        self._step_counters += 1
+        forced_dones = self._step_counters >= self._max_steps
+        dones = dones | forced_dones
+        self._step_counters[dones] = 0  # reset counters for done envs (VMAS auto-resets them)
 
         self._stack_defender_obs(all_obs)
 

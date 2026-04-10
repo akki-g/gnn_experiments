@@ -39,7 +39,7 @@ class IPPOPolicy(nn.Module):
 
     def get_actions(self, obs):
         mean = self.forward(obs)
-        std = self.log_std.clamp(min=-5.0, max=2.0).exp().expand_as(mean)
+        std = self.log_std.clamp(min=-2.0, max=0.5).exp().expand_as(mean)
         dist = Normal(mean, std)
         action = dist.sample()
 
@@ -49,7 +49,7 @@ class IPPOPolicy(nn.Module):
 
     def evaluate_actions(self, obs, actions):
         mean = self.forward(obs)
-        std = self.log_std.clamp(min=-5.0, max=2.0).exp().expand_as(mean)
+        std = self.log_std.clamp(min=-2.0, max=0.5).exp().expand_as(mean)
         dist = Normal(mean, std)
 
         log_prob = dist.log_prob(actions).sum(dim=-1)

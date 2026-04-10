@@ -82,11 +82,15 @@ class GNNRolloutBuffer:
         advantages = (advantages - adv_mean) / adv_std
 
         if connectivity_bias:
-            # compute edge counts from adjacency matrices
-            edge_counts = adj.sum(dim=(-2, -1)) - N  # subtract self-loops
-            edge_counts = edge_counts + 1.0  # numerical stability
+            # adj is symmetric-normalized (no self-loops), so recover binary
+            # connectivity and count actual edges — do NOT subtract N
+            binary_adj = (adj.abs() > 1e-6).float()
+            edge_counts = binary_adj.sum(dim=(-2, -1)) + 1.0  # Laplace smoothing
             edge_probs = edge_counts / edge_counts.sum()
-            perm = torch.multinomial(edge_probs, T * E, replacement=False)
+            if torch.isfinite(edge_probs).all() and (edge_probs >= 0).all():
+                perm = torch.multinomial(edge_probs, T * E, replacement=False)
+            else:
+                perm = torch.randperm(T * E, device=self.device)
         else:
             perm = torch.randperm(T * E, device=self.device)
 

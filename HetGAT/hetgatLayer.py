@@ -22,13 +22,15 @@ class HetGATHead(nn.Module):
         self.W_i2ssn = nn.Linear(d_in, d_out, bias=False)
 
         # attention vectors: one per edge type
-        #shape (2*d_out) becaues they dot w [W_recv * h_j || W_edge *h_k]
-        self.a_s2s = nn.Parameter(torch.empty(2*d_out))
-        self.a_s2i = nn.Parameter(torch.empty(2*d_out))
-        self.a_i2s = nn.Parameter(torch.empty(2*d_out))
-        self.a_i2i = nn.Parameter(torch.empty(2*d_out))
-        self.a_s2ssn = nn.Parameter(torch.empty(2*d_out))
-        self.a_i2ssn = nn.Parameter(torch.empty(2*d_out))
+        # FIX-5: GATv2 formula is a^T * LeakyReLU(W_l*h_i + W_r*h_j), so a has dim d_out
+        # (NOT 2*d_out — that was GATv1 where concatenation happened inside the attention vector)
+        # Reference: Brody et al. 2022, torch_geometric GATv2Conv uses att=(1, heads, out_channels)
+        self.a_s2s = nn.Parameter(torch.empty(d_out))
+        self.a_s2i = nn.Parameter(torch.empty(d_out))
+        self.a_i2s = nn.Parameter(torch.empty(d_out))
+        self.a_i2i = nn.Parameter(torch.empty(d_out))
+        self.a_s2ssn = nn.Parameter(torch.empty(d_out))
+        self.a_i2ssn = nn.Parameter(torch.empty(d_out))
 
 
         self.attn_dropout = 0.1
@@ -41,8 +43,8 @@ class HetGATHead(nn.Module):
             if param.dim() >= 2:
                 nn.init.xavier_uniform_(param)
             else:
-                bound = 1.0 / (2*self.d_out) ** 0.5
-                # attention vectors scale like Xavier for fan_in = 2*d_out
+                bound = 1.0 / (self.d_out) ** 0.5
+                # FIX-5: attention vectors now have dim d_out, so Xavier bound uses d_out
                 nn.init.uniform_(param, -bound, bound)
     
     def _attend(
@@ -51,7 +53,7 @@ class HetGATHead(nn.Module):
             h_dst: torch.Tensor, # (B, N_dst, d_in)
             W_edge: nn.Linear, # d_in -> d_out (transforms sender)
             W_node: nn.Linear, # d_in -> d_out (transforms receiver - same as self transform)
-            a: nn.Parameter, # (2*d_out, )
+            a: nn.Parameter, # (d_out,) — GATv2 attention vector (FIX-5)
             mask: torch.Tensor, # (B, N_src, N_dst) 1=connected
     ) -> torch.Tensor:
         """
@@ -75,9 +77,8 @@ class HetGATHead(nn.Module):
         # gat v2: leaky relu before dotting w attention
         pairwise = F.leaky_relu(pairwise, negative_slope=0.2)
 
-        #split attention vector and dot: a is (2*d_out,) but we only need first d_out elements
-        a_vec = a[:self.d_out]
-        e = (pairwise * a_vec).sum(dim=-1)
+        # FIX-5: a is now exactly d_out dimensional — no slicing needed
+        e = (pairwise * a).sum(dim=-1)
 
         # mask and softmax over sources
         e = e.masked_fill(mask==0, float('-inf'))

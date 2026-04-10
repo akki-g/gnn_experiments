@@ -110,11 +110,8 @@ class MAHAC:
         adv_s = (adv_s - adv_s.mean()) / (adv_s.std() + 1e-8)
         adv_i = (adv_i - adv_i.mean()) / (adv_i.std() + 1e-8)
 
-        #norm ret for val loss
-        ret_s_mean, ret_s_std = ret_s.mean(), ret_s.std()
-        ret_i_mean, ret_i_std = ret_i.mean(), ret_i.std()   
-        ret_s_norm = (ret_s - ret_s_mean) / (ret_s_std + 1e-8)
-        ret_i_norm = (ret_i - ret_i_mean) / (ret_i_std + 1e-8)
+        # FIX-2: do NOT normalize returns — train critic on raw returns (CleanRL/SpinUp standard)
+        # Simple batch normalization creates scale mismatch between critic training and EV evaluation
 
         # preflatten buffer data for batched forward pass
         flat_obs_s = buffer.scout_obs.reshape(T*B, n_s, -1)
@@ -144,10 +141,10 @@ class MAHAC:
         flat_adv_i = adv_i.reshape(T*B)
         flat_old_lp_s = old_log_probs_s.reshape(T*B, n_s)
         flat_old_lp_i = old_log_probs_i.reshape(T*B, n_i)
-        flat_ret_s_norm = ret_s_norm.reshape(T*B)
-        flat_ret_i_norm = ret_i_norm.reshape(T*B)
-        flat_old_v_s = buffer.scout_values.reshape(T*B)
-        flat_old_v_i = buffer.interc_values.reshape(T*B)
+        # FIX-2: use raw (unnormalized) returns as critic targets
+        flat_ret_s = ret_s.reshape(T*B)
+        flat_ret_i = ret_i.reshape(T*B)
+        # flat_old_v_s / flat_old_v_i removed — value clipping removed in FIX-6
 
         #metric trackers
         total_policy_loss_s = 0.0
@@ -233,19 +230,11 @@ class MAHAC:
             v_s = values['scout'].squeeze(-1)
             v_i = values['interc'].squeeze(-1)
 
-
-            # value loss clipping 
-            v_s_clipped = flat_old_v_s + torch.clamp(v_s - flat_old_v_s, -self.clip_eps, self.clip_eps)
-            v_i_clipped = flat_old_v_i + torch.clamp(v_i - flat_old_v_i, -self.clip_eps, self.clip_eps)
-
-            vl_s = torch.max(
-                F.mse_loss(v_s, flat_ret_s_norm, reduction='none'),
-                F.mse_loss(v_s_clipped, flat_ret_s_norm, reduction='none')
-            ).mean()
-            vl_i = torch.max(
-                F.mse_loss(v_i, flat_ret_i_norm, reduction='none'),
-                F.mse_loss(v_i_clipped, flat_ret_i_norm, reduction='none')
-            ).mean()
+            # FIX-2+6: simple MSE against raw returns — no value clipping
+            # Value clipping at ±0.2 would prevent the critic from learning when raw returns
+            # have a large scale (e.g. multi-step discounted returns). SpinUp uses plain MSE.
+            vl_s = F.mse_loss(v_s, flat_ret_s)
+            vl_i = F.mse_loss(v_i, flat_ret_i)
 
             critic_loss = self.value_coef * (vl_s + vl_i)
 
@@ -271,8 +260,7 @@ class MAHAC:
             post_v_s = post_vals['scout'].squeeze(-1)
             post_v_i = post_vals['interc'].squeeze(-1)
 
-            flat_ret_s = ret_s.reshape(T*B)
-            flat_ret_i = ret_i.reshape(T*B)
+            # flat_ret_s, flat_ret_i already defined above (FIX-2)
             flat_vals_s = buffer.scout_values.reshape(T*B)
             flat_vals_i = buffer.interc_values.reshape(T*B)
 
