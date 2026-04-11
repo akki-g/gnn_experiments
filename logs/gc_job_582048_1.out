@@ -1,0 +1,71 @@
+=============================
+Job ID:       582050
+Array Task:   1
+Node:         evc32
+GPU:          0
+Start time:   Fri Apr 10 15:44:06 EDT 2026
+=============================
+Running: GNN-MAPPO K=2 r_comm=1.0 (Guided Coverage)
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== GNN-MAPPO | K=2, r_comm=1.0 (Guided Coverage) | device=cuda ===
+[GNN K2_r1.0] iter=1/1000 steps=265 | pi=-0.0004 v=318.8996 ent=2.8300 ret=-12.293 exp_var=-0.001
+[GNN K2_r1.0] iter=20/1000 steps=5300 | pi=-0.0007 v=0.1276 ent=2.7074 ret=-4.994 exp_var=0.179
+[GNN K2_r1.0] iter=40/1000 steps=10600 | pi=-0.0012 v=0.1204 ent=2.5341 ret=-4.951 exp_var=0.121
+[GNN K2_r1.0] iter=60/1000 steps=15900 | pi=-0.0008 v=0.1360 ent=2.3539 ret=-5.095 exp_var=0.069
+[GNN K2_r1.0] iter=80/1000 steps=21200 | pi=-0.0015 v=0.1267 ent=2.1549 ret=-4.914 exp_var=0.084
+[GNN K2_r1.0] iter=100/1000 steps=26500 | pi=-0.0012 v=0.1428 ent=1.9432 ret=-5.385 exp_var=0.151
+[GNN K2_r1.0] iter=120/1000 steps=31800 | pi=-0.0014 v=0.0963 ent=1.7497 ret=-4.761 exp_var=0.152
+[GNN K2_r1.0] iter=140/1000 steps=37100 | pi=-0.0019 v=0.1055 ent=1.5538 ret=-4.990 exp_var=0.210
+[GNN K2_r1.0] iter=160/1000 steps=42400 | pi=-0.0011 v=0.1220 ent=1.3758 ret=-5.040 exp_var=0.256
+[GNN K2_r1.0] iter=180/1000 steps=47700 | pi=-0.0009 v=0.1520 ent=1.2669 ret=-5.643 exp_var=0.281
+[GNN K2_r1.0] iter=200/1000 steps=53000 | pi=-0.0006 v=0.1525 ent=1.1478 ret=-5.780 exp_var=0.139
+[GNN K2_r1.0] iter=220/1000 steps=58300 | pi=-0.0004 v=0.2071 ent=0.9704 ret=-6.127 exp_var=0.151
+[GNN K2_r1.0] iter=240/1000 steps=63600 | pi=-0.0006 v=0.5799 ent=0.7949 ret=-7.023 exp_var=0.149
+[GNN K2_r1.0] iter=260/1000 steps=68900 | pi=-0.0003 v=0.6620 ent=0.6653 ret=-7.596 exp_var=0.225
+[GNN K2_r1.0] iter=280/1000 steps=74200 | pi=-0.0005 v=0.9604 ent=0.5125 ret=-8.496 exp_var=0.242
+[GNN K2_r1.0] iter=300/1000 steps=79500 | pi=-0.0005 v=0.7489 ent=0.3841 ret=-7.997 exp_var=0.252
+[GNN K2_r1.0] iter=320/1000 steps=84800 | pi=-0.0004 v=0.3691 ent=0.2684 ret=-12.517 exp_var=0.080
+[GNN K2_r1.0] iter=340/1000 steps=90100 | pi=-0.0002 v=0.3469 ent=0.1387 ret=-13.504 exp_var=0.054
+[GNN K2_r1.0] iter=360/1000 steps=95400 | pi=-0.0002 v=0.3538 ent=-0.0070 ret=-13.289 exp_var=0.081
+[GNN K2_r1.0] iter=380/1000 steps=100700 | pi=-0.0001 v=0.3733 ent=-0.2072 ret=-12.964 exp_var=0.098
+[GNN K2_r1.0] iter=400/1000 steps=106000 | pi=0.0002 v=0.3645 ent=-0.4189 ret=-12.924 exp_var=0.112
+[GNN K2_r1.0] iter=420/1000 steps=111300 | pi=-0.0001 v=0.4077 ent=-0.5887 ret=-11.864 exp_var=0.154
+[GNN K2_r1.0] iter=440/1000 steps=116600 | pi=0.0001 v=0.4284 ent=-0.7737 ret=-11.405 exp_var=0.174
+[GNN K2_r1.0] iter=460/1000 steps=121900 | pi=-0.0000 v=0.4051 ent=-0.9711 ret=-11.856 exp_var=0.141
+[GNN K2_r1.0] iter=480/1000 steps=127200 | pi=0.0002 v=0.3510 ent=-1.1637 ret=-11.860 exp_var=0.148
+[GNN K2_r1.0] iter=500/1000 steps=132500 | pi=0.0001 v=0.3440 ent=-1.3135 ret=-11.894 exp_var=0.144
+[GNN K2_r1.0] iter=520/1000 steps=137800 | pi=0.0004 v=0.3331 ent=-1.5097 ret=-11.598 exp_var=0.159
+[GNN K2_r1.0] iter=540/1000 steps=143100 | pi=0.0004 v=0.3419 ent=-1.6940 ret=-11.207 exp_var=0.168
+[GNN K2_r1.0] iter=560/1000 steps=148400 | pi=0.0002 v=0.1230 ent=-1.8834 ret=-9.546 exp_var=0.114
+[GNN K2_r1.0] iter=580/1000 steps=153700 | pi=0.0001 v=0.1082 ent=-2.0835 ret=-9.612 exp_var=0.165
+[GNN K2_r1.0] iter=600/1000 steps=159000 | pi=0.0003 v=0.1556 ent=-2.2781 ret=-9.864 exp_var=0.124
+[GNN K2_r1.0] iter=620/1000 steps=164300 | pi=0.0003 v=0.1708 ent=-2.4863 ret=-10.371 exp_var=0.172
+[GNN K2_r1.0] iter=640/1000 steps=169600 | pi=0.0004 v=0.1613 ent=-2.7194 ret=-10.672 exp_var=0.194
+[GNN K2_r1.0] iter=660/1000 steps=174900 | pi=0.0005 v=0.1666 ent=-2.9681 ret=-10.234 exp_var=0.197
+[GNN K2_r1.0] iter=680/1000 steps=180200 | pi=0.0005 v=0.1655 ent=-3.2183 ret=-10.502 exp_var=0.210
+[GNN K2_r1.0] iter=700/1000 steps=185500 | pi=0.0006 v=0.1760 ent=-3.4786 ret=-10.822 exp_var=0.201
+[GNN K2_r1.0] iter=720/1000 steps=190800 | pi=0.0008 v=0.1636 ent=-3.7412 ret=-10.640 exp_var=0.229
+[GNN K2_r1.0] iter=740/1000 steps=196100 | pi=0.0009 v=0.1789 ent=-4.0007 ret=-10.790 exp_var=0.246
+[GNN K2_r1.0] iter=760/1000 steps=201400 | pi=0.0010 v=0.1854 ent=-4.2392 ret=-11.040 exp_var=0.266
+[GNN K2_r1.0] iter=780/1000 steps=206700 | pi=0.0010 v=0.2156 ent=-4.4789 ret=-11.023 exp_var=0.297
+[GNN K2_r1.0] iter=800/1000 steps=212000 | pi=0.0011 v=0.2020 ent=-4.7177 ret=-10.940 exp_var=0.311
+[GNN K2_r1.0] iter=820/1000 steps=217300 | pi=0.0009 v=0.2081 ent=-4.9437 ret=-11.020 exp_var=0.331
+[GNN K2_r1.0] iter=840/1000 steps=222600 | pi=0.0011 v=0.2100 ent=-5.1575 ret=-11.046 exp_var=0.336
+[GNN K2_r1.0] iter=860/1000 steps=227900 | pi=0.0010 v=0.2161 ent=-5.3533 ret=-11.098 exp_var=0.338
+[GNN K2_r1.0] iter=880/1000 steps=233200 | pi=0.0008 v=0.2371 ent=-5.5290 ret=-11.093 exp_var=0.370
+[GNN K2_r1.0] iter=900/1000 steps=238500 | pi=0.0006 v=0.2145 ent=-5.6925 ret=-11.204 exp_var=0.417
+[GNN K2_r1.0] iter=920/1000 steps=243800 | pi=0.0006 v=0.2099 ent=-5.8382 ret=-11.118 exp_var=0.408
+[GNN K2_r1.0] iter=940/1000 steps=249100 | pi=0.0003 v=0.2063 ent=-5.9557 ret=-11.110 exp_var=0.389
+[GNN K2_r1.0] iter=960/1000 steps=254400 | pi=0.0000 v=0.2002 ent=-6.0387 ret=-11.117 exp_var=0.409
+[GNN K2_r1.0] iter=980/1000 steps=259700 | pi=0.0001 v=0.2052 ent=-6.1233 ret=-11.073 exp_var=0.410
+[GNN K2_r1.0] iter=1000/1000 steps=265000 | pi=0.0002 v=0.2054 ent=-6.2162 ret=-11.061 exp_var=0.404
+Saved plot: /home/ak565492/gnn_experiments/outputs/guided_coverage/gc_gnn_K2_r1.0.png
+Saved checkpoint: /home/ak565492/gnn_experiments/outputs/guided_coverage/gc_gnn_K2_r1.0_final.pt
+
+[GNN K2_r1.0] Final return: -11.061
+=============================
+End time: Fri Apr 10 17:48:15 EDT 2026
+=============================
