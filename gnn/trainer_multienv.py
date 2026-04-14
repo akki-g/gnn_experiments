@@ -213,7 +213,8 @@ class GNNTrainerMultiEnv:
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.comm_policy.parameters(), max_norm=0.5)
                 self.comm_optim.step()
-
+                with torch.no_grad():
+                    self.comm_policy.log_std.clamp_(min=-1.5, max=0.5)
                 policy_losses.append(policy_loss.item())
                 entropies.append(entropy_loss.item())
 

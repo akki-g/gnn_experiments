@@ -38,7 +38,7 @@ gamma = 0.99
 gae_lambda = 0.95
 clip_eps = 0.2
 value_coef = 0.5
-entropy_coef = 0.0    # FIX-3: standard for continuous PPO (CleanRL default=0.0)
+entropy_coef = 0.01   # entropy regularization — prevents policy collapse in continuous MARL
 
 ROLLOUT_LENGTH = 265
 ITERATIONS = 1000

@@ -208,6 +208,8 @@ class IPPOTrainer:
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.policy.parameters(), max_norm=0.5)
                 self.policy_optim.step()
+                with torch.no_grad():
+                    self.policy.log_std.clamp_(min=-1.5, max=0.5)
 
                 policy_losses.append(policy_loss.item())
                 entropies.append(entropy_loss.item())
