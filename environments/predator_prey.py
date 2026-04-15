@@ -164,7 +164,7 @@ class Scenario(BaseScenario):
                 agent.set_vel(torch.zeros(2, device=device), batch_index=env_index)
             else:
                 agent.set_pos(pos, batch_index=env_index)
-                agent.set_vel(torch.zeros(batch, 2, device=2), batch_index=env_index)
+                agent.set_vel(torch.zeros(batch, 2, device=device), batch_index=env_index)
 
         return
     
@@ -325,6 +325,7 @@ class PredatorPreyAdapter:
             num_envs=num_envs,
             device=device,
             continuous_actions=True,
+            clamp_actions=True,
             max_steps=max_steps,
             n_scouts=n_scouts,
             n_interceptors=n_interceptors,
