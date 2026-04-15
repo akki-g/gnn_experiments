@@ -244,7 +244,7 @@ class Scenario(BaseScenario):
             self._agent_at_prey = agent_dists < self.capture_radius
             
             #step penalty
-            rew = torch.full((batch), self.step_penalty, device=device)
+            rew = torch.full((batch,), self.step_penalty, device=device)
 
             #distance shaping: encourage all agents towards prey
             rew -= 0.1 * agent_dists.mean(dim=1)
