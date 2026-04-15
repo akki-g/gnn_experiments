@@ -13,3 +13,7 @@ Env: PCP | 2S + 2I | world=5.0 | max_steps=80
 === IPPO baseline (PCP) | 256 envs | device=cuda ===
 [IPPO] iter=1 steps=256/384000 | pi=-0.0003 v=119.6074 ent=2.8496 ret=-174.436 exp_var=0.007
 [IPPO] iter=20 steps=5120/384000 | pi=-0.0007 v=170.7914 ent=3.1308 ret=9.839 exp_var=0.022
+[IPPO] iter=40 steps=10240/384000 | pi=-0.0007 v=232.6761 ent=3.3108 ret=9.781 exp_var=0.118
+[IPPO] iter=60 steps=15360/384000 | pi=-0.0005 v=289.6190 ent=3.4311 ret=9.605 exp_var=0.190
+[IPPO] iter=80 steps=20480/384000 | pi=-0.0005 v=299.2779 ent=3.5325 ret=9.429 exp_var=0.206
+[IPPO] iter=100 steps=25600/384000 | pi=-0.0006 v=305.8586 ent=3.6818 ret=9.427 exp_var=0.275

@@ -1,0 +1,27 @@
+=============================
+Job ID:       585263
+Array Task:   7
+Node:         evc33
+GPU:          0
+Start time:   Wed Apr 15 18:45:50 EDT 2026
+=============================
+Running: PCP GNN K=2 r=1.5
+Using device: cpu
+Env: PCP | 2S + 2I | world=5.0 | max_steps=80
+
+=== GNN-MAPPO | K=2, r_comm=1.5 (PCP) | device=cpu ===
+[GNN K2_r1.5] iter=1 steps=256/384000 | pi=-0.0001 v=117.5470 ent=2.8703 ret=-3.941 exp_var=0.020
+[GNN K2_r1.5] iter=20 steps=5120/384000 | pi=-0.0010 v=205.7743 ent=3.1259 ret=-0.219 exp_var=0.029
+[GNN K2_r1.5] iter=40 steps=10240/384000 | pi=-0.0015 v=295.9273 ent=3.1367 ret=3.710 exp_var=0.137
+[GNN K2_r1.5] iter=60 steps=15360/384000 | pi=-0.0014 v=351.1542 ent=3.1265 ret=5.098 exp_var=0.298
+[GNN K2_r1.5] iter=80 steps=20480/384000 | pi=-0.0015 v=299.2242 ent=3.0892 ret=5.339 exp_var=0.339
+[GNN K2_r1.5] iter=100 steps=25600/384000 | pi=-0.0009 v=365.2147 ent=3.0390 ret=5.048 exp_var=0.691
+[GNN K2_r1.5] iter=120 steps=30720/384000 | pi=-0.0010 v=339.9571 ent=3.0523 ret=4.940 exp_var=0.462
+[GNN K2_r1.5] iter=140 steps=35840/384000 | pi=-0.0007 v=358.1218 ent=3.0464 ret=4.516 exp_var=0.486
+[GNN K2_r1.5] iter=160 steps=40960/384000 | pi=-0.0011 v=350.3205 ent=3.0622 ret=4.785 exp_var=0.566
+[GNN K2_r1.5] iter=180 steps=46080/384000 | pi=-0.0008 v=355.1146 ent=3.0917 ret=4.848 exp_var=0.541
+[GNN K2_r1.5] iter=200 steps=51200/384000 | pi=-0.0009 v=371.0610 ent=3.0698 ret=4.863 exp_var=0.549
+[GNN K2_r1.5] iter=220 steps=56320/384000 | pi=-0.0006 v=372.5070 ent=3.0517 ret=4.807 exp_var=0.572
+[GNN K2_r1.5] iter=240 steps=61440/384000 | pi=-0.0011 v=369.1044 ent=3.0076 ret=4.739 exp_var=0.627
+[GNN K2_r1.5] iter=260 steps=66560/384000 | pi=-0.0006 v=396.5823 ent=2.9921 ret=4.760 exp_var=0.631
+[GNN K2_r1.5] iter=280 steps=71680/384000 | pi=-0.0012 v=492.5450 ent=3.0119 ret=4.806 exp_var=0.545

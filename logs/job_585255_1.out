@@ -1,0 +1,34 @@
+=============================
+Job ID:       585257
+Array Task:   1
+Node:         evc10
+GPU:          0
+Start time:   Wed Apr 15 18:45:50 EDT 2026
+=============================
+Running: PP GNN K=2 r=1.5
+Using device: cuda
+GPU: Tesla V100-PCIE-16GB
+Env: PP | 2S + 1I | world=5.0 | max_steps=80
+
+=== GNN-MAPPO | K=2, r_comm=1.5 (PP) | device=cuda ===
+[GNN K2_r1.5] iter=1 steps=256/384000 | pi=-0.0002 v=47.6345 ent=2.8551 ret=-1.878 exp_var=0.007
+[GNN K2_r1.5] iter=20 steps=5120/384000 | pi=-0.0008 v=8.0938 ent=3.2613 ret=-0.492 exp_var=0.552
+[GNN K2_r1.5] iter=40 steps=10240/384000 | pi=-0.0007 v=26.9538 ent=3.3464 ret=10.852 exp_var=0.885
+[GNN K2_r1.5] iter=60 steps=15360/384000 | pi=-0.0007 v=0.1053 ent=3.6348 ret=13.815 exp_var=-3.220
+[GNN K2_r1.5] iter=80 steps=20480/384000 | pi=-0.0006 v=0.0015 ent=3.4834 ret=14.560 exp_var=-15.189
+[GNN K2_r1.5] iter=100 steps=25600/384000 | pi=-0.0005 v=0.0006 ent=3.5473 ret=14.711 exp_var=-74.654
+[GNN K2_r1.5] iter=120 steps=30720/384000 | pi=-0.0008 v=0.0007 ent=3.7022 ret=14.710 exp_var=-65.425
+[GNN K2_r1.5] iter=140 steps=35840/384000 | pi=-0.0008 v=0.0004 ent=3.8229 ret=14.738 exp_var=-92.135
+[GNN K2_r1.5] iter=160 steps=40960/384000 | pi=-0.0009 v=0.0005 ent=3.8376 ret=14.705 exp_var=-37.062
+[GNN K2_r1.5] iter=180 steps=46080/384000 | pi=-0.0006 v=0.0006 ent=3.8371 ret=14.645 exp_var=-18.005
+[GNN K2_r1.5] iter=200 steps=51200/384000 | pi=-0.0007 v=0.0004 ent=3.8364 ret=14.715 exp_var=-52.510
+[GNN K2_r1.5] iter=220 steps=56320/384000 | pi=-0.0007 v=0.0002 ent=3.8373 ret=14.767 exp_var=-93.582
+[GNN K2_r1.5] iter=240 steps=61440/384000 | pi=-0.0606 v=9.5334 ent=3.8199 ret=12.412 exp_var=0.937
+[GNN K2_r1.5] iter=260 steps=66560/384000 | pi=-0.0705 v=8.9215 ent=3.6065 ret=11.466 exp_var=0.975
+[GNN K2_r1.5] iter=280 steps=71680/384000 | pi=0.0134 v=6.0076 ent=3.4864 ret=11.153 exp_var=0.989
+[GNN K2_r1.5] iter=300 steps=76800/384000 | pi=0.0055 v=3.3429 ent=3.8377 ret=10.981 exp_var=0.995
+[GNN K2_r1.5] iter=320 steps=81920/384000 | pi=0.0038 v=2.3531 ent=3.8377 ret=10.783 exp_var=0.996
+[GNN K2_r1.5] iter=340 steps=87040/384000 | pi=0.0007 v=4.4420 ent=3.8377 ret=10.651 exp_var=0.993
+[GNN K2_r1.5] iter=360 steps=92160/384000 | pi=0.0002 v=6.0561 ent=3.8378 ret=11.164 exp_var=0.985
+[GNN K2_r1.5] iter=380 steps=97280/384000 | pi=-0.0002 v=9.4760 ent=3.8377 ret=11.039 exp_var=0.941
+[GNN K2_r1.5] iter=400 steps=102400/384000 | pi=0.0000 v=5.5141 ent=3.8376 ret=10.720 exp_var=0.979

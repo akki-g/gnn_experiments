@@ -13,3 +13,5 @@ Env: PCP | 2S + 2I | world=5.0 | max_steps=80
 === GNN-MAPPO | K=3, r_comm=1.5 (PCP) | device=cuda ===
 [GNN K3_r1.5] iter=1 steps=256/384000 | pi=-0.0002 v=119.4170 ent=2.8642 ret=-3.934 exp_var=0.014
 [GNN K3_r1.5] iter=20 steps=5120/384000 | pi=-0.0015 v=174.0299 ent=3.0632 ret=-1.056 exp_var=0.064
+[GNN K3_r1.5] iter=40 steps=10240/384000 | pi=-0.0009 v=286.4636 ent=3.0965 ret=-0.936 exp_var=0.192
+[GNN K3_r1.5] iter=60 steps=15360/384000 | pi=-0.0013 v=285.8345 ent=3.1728 ret=0.900 exp_var=0.281

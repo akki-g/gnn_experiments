@@ -1,0 +1,36 @@
+=============================
+Job ID:       585256
+Array Task:   0
+Node:         evc9
+GPU:          0
+Start time:   Wed Apr 15 18:45:50 EDT 2026
+=============================
+Running: PP IPPO
+Using device: cuda
+GPU: Tesla V100-PCIE-16GB
+Env: PP | 2S + 1I | world=5.0 | max_steps=80
+
+=== IPPO baseline (PP) | 256 envs | device=cuda ===
+[IPPO] iter=1 steps=256/384000 | pi=-0.0005 v=46.5170 ent=2.8412 ret=-111.508 exp_var=0.012
+[IPPO] iter=20 steps=5120/384000 | pi=-0.0063 v=31.8078 ent=2.8625 ret=4.923 exp_var=0.074
+[IPPO] iter=40 steps=10240/384000 | pi=-0.0015 v=0.0005 ent=2.8900 ret=4.940 exp_var=-4.094
+[IPPO] iter=60 steps=15360/384000 | pi=-0.0007 v=0.0004 ent=3.2771 ret=4.941 exp_var=-9.506
+[IPPO] iter=80 steps=20480/384000 | pi=-0.0006 v=0.0003 ent=3.7237 ret=4.941 exp_var=-11.358
+[IPPO] iter=100 steps=25600/384000 | pi=-0.0001 v=0.0001 ent=3.8358 ret=4.941 exp_var=-18.129
+[IPPO] iter=120 steps=30720/384000 | pi=0.0003 v=0.0002 ent=3.8371 ret=4.941 exp_var=-24.799
+[IPPO] iter=140 steps=35840/384000 | pi=-0.0002 v=0.0002 ent=3.8377 ret=4.941 exp_var=-22.014
+[IPPO] iter=160 steps=40960/384000 | pi=-0.0003 v=0.0002 ent=3.8378 ret=4.941 exp_var=-22.374
+[IPPO] iter=180 steps=46080/384000 | pi=0.0001 v=0.0002 ent=3.8377 ret=4.941 exp_var=-29.442
+[IPPO] iter=200 steps=51200/384000 | pi=-0.0002 v=0.0001 ent=3.8379 ret=4.941 exp_var=-12.013
+[IPPO] iter=220 steps=56320/384000 | pi=-0.0002 v=0.0001 ent=3.8378 ret=4.941 exp_var=-13.295
+[IPPO] iter=240 steps=61440/384000 | pi=-0.0001 v=0.0001 ent=3.8379 ret=4.941 exp_var=-3.990
+[IPPO] iter=260 steps=66560/384000 | pi=-0.0002 v=0.0002 ent=3.8376 ret=4.941 exp_var=-13.036
+[IPPO] iter=280 steps=71680/384000 | pi=-0.0001 v=0.0002 ent=3.8378 ret=4.941 exp_var=-6.417
+[IPPO] iter=300 steps=76800/384000 | pi=-0.0002 v=0.0001 ent=3.8376 ret=4.941 exp_var=-10.517
+[IPPO] iter=320 steps=81920/384000 | pi=-0.0005 v=0.0001 ent=3.8379 ret=4.941 exp_var=-12.664
+[IPPO] iter=340 steps=87040/384000 | pi=-0.0007 v=0.0001 ent=3.8379 ret=4.941 exp_var=-10.569
+[IPPO] iter=360 steps=92160/384000 | pi=-0.0006 v=0.0001 ent=3.8378 ret=4.941 exp_var=-16.882
+[IPPO] iter=380 steps=97280/384000 | pi=-0.0002 v=0.0001 ent=3.8379 ret=4.941 exp_var=-12.231
+[IPPO] iter=400 steps=102400/384000 | pi=-0.0002 v=0.0001 ent=3.8379 ret=4.941 exp_var=-14.154
+[IPPO] iter=420 steps=107520/384000 | pi=-0.0007 v=0.0001 ent=3.8378 ret=4.941 exp_var=-10.841
+[IPPO] iter=440 steps=112640/384000 | pi=-0.0005 v=0.0000 ent=3.8379 ret=4.941 exp_var=-10.427
