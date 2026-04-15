@@ -1,0 +1,13 @@
+=============================
+Job ID:       585236
+Array Task:   9
+Node:         evc36
+GPU:          0
+Start time:   Wed Apr 15 18:18:53 EDT 2026
+=============================
+Running: PCP GNN K=2 r=2.0
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: PCP | 2S + 2I | world=5.0 | max_steps=80
+
+=== GNN-MAPPO | K=2, r_comm=2.0 (PCP) | device=cuda ===

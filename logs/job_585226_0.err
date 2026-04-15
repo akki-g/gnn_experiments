@@ -1,0 +1,35 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 460, in <module>
+    main()
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 452, in main
+    run_ippo(args, device)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 105, in run_ippo
+    adapter = make_adapter(args, device)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 79, in make_adapter
+    return PredatorPreyAdapter(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/environments/predator_prey.py", line 323, in __init__
+    self.env = vmas.make_env(
+               ^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/make_env.py", line 80, in make_env
+    env = Environment(
+          ^^^^^^^^^^^^
+  File "/apps/python/python-3.11.4-gcc-12.2.0/lib/python3.11/contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 100, in __init__
+    observations = self._reset(seed=seed)
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 219, in _reset
+    self.scenario.env_reset_world_at(env_index=None)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/scenario.py", line 90, in env_reset_world_at
+    self.reset_world_at(env_index)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/environments/predator_prey.py", line 167, in reset_world_at
+    agent.set_vel(torch.zeros(batch, 2, device=2), batch_index=env_index)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+

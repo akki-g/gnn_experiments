@@ -1,0 +1,16 @@
+=============================
+Job ID:       585227
+Array Task:   0
+Node:         evc9
+GPU:          0
+Start time:   Wed Apr 15 18:18:53 EDT 2026
+=============================
+Running: PP IPPO
+Using device: cuda
+GPU: Tesla V100-PCIE-16GB
+Env: PP | 2S + 1I | world=5.0 | max_steps=80
+
+=== IPPO baseline (PP) | 256 envs | device=cuda ===
+=============================
+End time: Wed Apr 15 18:19:58 EDT 2026
+=============================

@@ -1,0 +1,18 @@
+=============================
+Job ID:       585225
+Array Task:   5
+Node:         evc8
+GPU:          0
+Start time:   Wed Apr 15 18:18:45 EDT 2026
+=============================
+Running: HetNet/MAHAC r_comm=1.0 (Guided Coverage)
+Using device: cuda
+GPU: Tesla V100-PCIE-16GB
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== HetNet/MAHAC | r_comm=1.0 (Guided Coverage) | device=cuda ===
+  [DIAG] t=0 done_sum=0/256 reward_mean=-1.9064 reward_min=-3.5299 reward_max=-0.8003
+  [DIAG] t=1 done_sum=0/256 reward_mean=-1.9064 reward_min=-3.5165 reward_max=-0.8065
+  [DIAG] t=2 done_sum=0/256 reward_mean=-1.9063 reward_min=-3.5231 reward_max=-0.8124
+  [DIAG] t=264 done_sum=256/256 reward_mean=-3.7630 reward_min=-5.7690 reward_max=-0.8063
+  [ROLLOUT SUMMARY] total_dones=42496 expected_if_100step_eps≈512 reward_global_mean=-2.6027 reward_global_std=1.0276

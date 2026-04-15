@@ -1,0 +1,16 @@
+=============================
+Job ID:       585230
+Array Task:   3
+Node:         evc20
+GPU:          0
+Start time:   Wed Apr 15 18:18:53 EDT 2026
+=============================
+Running: PP GNN K=2 r=2.0
+Using device: cuda
+GPU: Tesla V100-PCIE-32GB
+Env: PP | 2S + 1I | world=5.0 | max_steps=80
+
+=== GNN-MAPPO | K=2, r_comm=2.0 (PP) | device=cuda ===
+=============================
+End time: Wed Apr 15 18:19:58 EDT 2026
+=============================

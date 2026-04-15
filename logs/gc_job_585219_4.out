@@ -1,0 +1,13 @@
+=============================
+Job ID:       585224
+Array Task:   4
+Node:         evc8
+GPU:          0
+Start time:   Wed Apr 15 18:18:45 EDT 2026
+=============================
+Running: GNN-MAPPO K=3 r_comm=1.5 (Guided Coverage)
+Using device: cuda
+GPU: Tesla V100-PCIE-16GB
+Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
+
+=== GNN-MAPPO | K=3, r_comm=1.5 (Guided Coverage) | device=cuda ===

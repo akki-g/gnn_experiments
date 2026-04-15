@@ -1,0 +1,16 @@
+=============================
+Job ID:       585239
+Array Task:   12
+Node:         evc40
+GPU:          0
+Start time:   Wed Apr 15 18:18:54 EDT 2026
+=============================
+Running: PCP HetNet r=1.5 s=3/i=3
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: PCP | 3S + 3I | world=5.0 | max_steps=80
+
+=== HetNet/MAHAC | r_comm=1.5 (PCP) | device=cuda ===
+=============================
+End time: Wed Apr 15 18:20:31 EDT 2026
+=============================

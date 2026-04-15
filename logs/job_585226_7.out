@@ -1,0 +1,12 @@
+=============================
+Job ID:       585234
+Array Task:   7
+Node:         evc33
+GPU:          0
+Start time:   Wed Apr 15 18:18:53 EDT 2026
+=============================
+Running: PCP GNN K=2 r=1.5
+Using device: cpu
+Env: PCP | 2S + 2I | world=5.0 | max_steps=80
+
+=== GNN-MAPPO | K=2, r_comm=1.5 (PCP) | device=cpu ===

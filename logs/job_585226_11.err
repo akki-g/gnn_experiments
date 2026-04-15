@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 460, in <module>
+    main()
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 456, in main
+    run_hetnet(args, device)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 336, in run_hetnet
+    bootstrap_values = collect_rollout(
+                       ^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/HetGAT/utils.py", line 160, in collect_rollout
+    reward, done, info = env_adapter.hetnet_step(all_actions)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/environments/predator_capture_prey.py", line 526, in hetnet_step
+    all_obs, all_rew, dones, all_info = self.env.step(all_actions)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/apps/python/python-3.11.4-gcc-12.2.0/lib/python3.11/contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 388, in step
+    self._set_action(actions[i], agent)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 651, in _set_action
+    assert not torch.any(
+AssertionError: Physical actions of agent scout_0 are out of its range 1.0
