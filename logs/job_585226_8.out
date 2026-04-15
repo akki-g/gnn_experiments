@@ -11,3 +11,6 @@ GPU: NVIDIA H100 PCIe
 Env: PCP | 2S + 2I | world=5.0 | max_steps=80
 
 === GNN-MAPPO | K=3, r_comm=1.5 (PCP) | device=cuda ===
+=============================
+End time: Wed Apr 15 18:20:53 EDT 2026
+=============================

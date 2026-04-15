@@ -10,3 +10,6 @@ Using device: cpu
 Env: PCP | 2S + 2I | world=5.0 | max_steps=80
 
 === GNN-MAPPO | K=2, r_comm=1.5 (PCP) | device=cpu ===
+=============================
+End time: Wed Apr 15 18:21:02 EDT 2026
+=============================

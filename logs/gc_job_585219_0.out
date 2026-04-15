@@ -11,3 +11,9 @@ GPU: Tesla V100-PCIE-32GB
 Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
 
 === IPPO baseline (Guided Coverage) | 256 envs | device=cuda ===
+[IPPO] iter=1 steps=265/265000 | pi=-0.0002 v=318.6177 ent=2.8589 ret=-3.052 exp_var=-0.000
+[IPPO] iter=20 steps=5300/265000 | pi=-0.0005 v=0.1333 ent=3.2087 ret=-1.294 exp_var=0.158
+[IPPO] iter=40 steps=10600/265000 | pi=-0.0004 v=0.1096 ent=3.5191 ret=-1.284 exp_var=0.089
+[IPPO] iter=60 steps=15900/265000 | pi=-0.0009 v=0.5999 ent=3.7986 ret=-1.866 exp_var=0.255
+[IPPO] iter=80 steps=21200/265000 | pi=-0.0005 v=0.7310 ent=3.8377 ret=-3.289 exp_var=0.157
+[IPPO] iter=100 steps=26500/265000 | pi=-0.0009 v=0.3475 ent=3.8375 ret=-1.418 exp_var=-0.058

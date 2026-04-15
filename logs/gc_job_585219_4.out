@@ -11,3 +11,8 @@ GPU: Tesla V100-PCIE-16GB
 Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
 
 === GNN-MAPPO | K=3, r_comm=1.5 (Guided Coverage) | device=cuda ===
+[GNN K3_r1.5] iter=1/1000 steps=265 | pi=-0.0003 v=317.4982 ent=2.8572 ret=-12.262 exp_var=0.000
+[GNN K3_r1.5] iter=20/1000 steps=5300 | pi=-0.0014 v=0.2004 ent=3.1523 ret=-5.575 exp_var=0.204
+[GNN K3_r1.5] iter=40/1000 steps=10600 | pi=-0.0019 v=0.1175 ent=3.3575 ret=-4.950 exp_var=0.209
+[GNN K3_r1.5] iter=60/1000 steps=15900 | pi=-0.0017 v=0.2214 ent=3.5719 ret=-5.349 exp_var=0.297
+[GNN K3_r1.5] iter=80/1000 steps=21200 | pi=-0.0017 v=0.2262 ent=3.7888 ret=-5.636 exp_var=0.358
