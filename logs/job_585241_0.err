@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 460, in <module>
+    main()
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 452, in main
+    run_ippo(args, device)
+  File "/lustre/fs1/home/ak565492/gnn_experiments/train_hetnet_envs.py", line 125, in run_ippo
+    last_obs, rollout_metrics = trainer.collect_rollouts(num_steps=rollout_steps)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/baseline/trainer.py", line 106, in collect_rollouts
+    next_obs, rewards, dones, info, next_positions = self.adapter.step(actions)
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/environments/predator_prey.py", line 402, in step
+    all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/apps/python/python-3.11.4-gcc-12.2.0/lib/python3.11/contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 400, in step
+    return self._get_from_scenario(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/vmas/simulator/environment/environment.py", line 278, in _get_from_scenario
+    reward = self.scenario.reward(agent).clone()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ak565492/gnn_experiments/environments/predator_prey.py", line 247, in reward
+    rew = torch.full((batch), self.step_penalty, device=device)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: full() received an invalid combination of arguments - got (int, float, device=torch.device), but expected one of:
+ * (tuple of ints size, Number fill_value, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, Number fill_value, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+

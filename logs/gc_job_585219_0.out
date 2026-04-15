@@ -17,3 +17,5 @@ Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
 [IPPO] iter=60 steps=15900/265000 | pi=-0.0009 v=0.5999 ent=3.7986 ret=-1.866 exp_var=0.255
 [IPPO] iter=80 steps=21200/265000 | pi=-0.0005 v=0.7310 ent=3.8377 ret=-3.289 exp_var=0.157
 [IPPO] iter=100 steps=26500/265000 | pi=-0.0009 v=0.3475 ent=3.8375 ret=-1.418 exp_var=-0.058
+[IPPO] iter=120 steps=31800/265000 | pi=-0.0011 v=0.1153 ent=3.8374 ret=-1.300 exp_var=0.184
+[IPPO] iter=140 steps=37100/265000 | pi=-0.0012 v=0.1067 ent=3.8373 ret=-1.240 exp_var=0.144

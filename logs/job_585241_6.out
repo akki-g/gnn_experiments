@@ -1,0 +1,15 @@
+=============================
+Job ID:       585248
+Array Task:   6
+Node:         evc36
+GPU:          0
+Start time:   Wed Apr 15 18:35:49 EDT 2026
+=============================
+Running: PCP IPPO
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: PCP | 2S + 2I | world=5.0 | max_steps=80
+
+=== IPPO baseline (PCP) | 256 envs | device=cuda ===
+[IPPO] iter=1 steps=256/384000 | pi=-0.0003 v=119.6074 ent=2.8496 ret=-174.436 exp_var=0.007
+[IPPO] iter=20 steps=5120/384000 | pi=-0.0007 v=170.7914 ent=3.1308 ret=9.839 exp_var=0.022

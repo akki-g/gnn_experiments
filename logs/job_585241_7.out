@@ -1,0 +1,15 @@
+=============================
+Job ID:       585249
+Array Task:   7
+Node:         evc39
+GPU:          0
+Start time:   Wed Apr 15 18:35:49 EDT 2026
+=============================
+Running: PCP GNN K=2 r=1.5
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: PCP | 2S + 2I | world=5.0 | max_steps=80
+
+=== GNN-MAPPO | K=2, r_comm=1.5 (PCP) | device=cuda ===
+[GNN K2_r1.5] iter=1 steps=256/384000 | pi=-0.0002 v=117.5051 ent=2.8624 ret=-3.932 exp_var=0.016
+[GNN K2_r1.5] iter=20 steps=5120/384000 | pi=-0.0012 v=226.8640 ent=2.9888 ret=0.133 exp_var=0.078

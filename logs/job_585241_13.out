@@ -1,0 +1,118 @@
+=============================
+Job ID:       585241
+Array Task:   13
+Node:         evc43
+GPU:          0
+Start time:   Wed Apr 15 18:35:49 EDT 2026
+=============================
+Running: PCP HetNet r=1.5 s=1/i=3
+Using device: cuda
+GPU: NVIDIA H100 PCIe
+Env: PCP | 1S + 3I | world=5.0 | max_steps=80
+
+=== HetNet/MAHAC | r_comm=1.5 (PCP) | device=cuda ===
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6804 reward_min=-1.1610 reward_max=-0.2846
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6804 reward_min=-1.1614 reward_max=-0.2855
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6805 reward_min=-1.1618 reward_max=-0.2862
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6774 reward_min=-1.3488 reward_max=1.7002
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6836 reward_global_std=0.3133
+[HetNet] iter=1/1500 steps=256/384000 | pi_s=0.0042 pi_i=0.0093 v=62.1604 ent_s=2.838 ent_i=2.839 ret=-0.989 ev_s_post=-0.011 ev_i_post=-0.002 r_s=1.000 r_i=1.000 std_s=0.00 std_i=0.00
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6726 reward_min=-1.0380 reward_max=1.2735
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6726 reward_min=-1.0387 reward_max=1.2747
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6726 reward_min=-1.0398 reward_max=1.2745
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6920 reward_min=-1.2513 reward_max=1.6454
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6793 reward_global_std=0.3302
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6606 reward_min=-1.0662 reward_max=-0.3237
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6607 reward_min=-1.0653 reward_max=-0.3245
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6609 reward_min=-1.0642 reward_max=-0.3248
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.7089 reward_min=-1.1637 reward_max=1.6521
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6822 reward_global_std=0.2888
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6670 reward_min=-1.0620 reward_max=-0.2777
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6670 reward_min=-1.0613 reward_max=-0.2766
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6670 reward_min=-1.0601 reward_max=-0.2769
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6984 reward_min=-1.3075 reward_max=1.4961
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6749 reward_global_std=0.3125
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6641 reward_min=-1.0402 reward_max=-0.2064
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6641 reward_min=-1.0402 reward_max=-0.2067
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6641 reward_min=-1.0408 reward_max=-0.2066
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6989 reward_min=-1.2805 reward_max=1.6789
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6777 reward_global_std=0.3130
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6436 reward_min=-1.0290 reward_max=1.5201
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6436 reward_min=-1.0298 reward_max=1.5202
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6436 reward_min=-1.0296 reward_max=1.5200
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6180 reward_min=-1.3825 reward_max=1.6378
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6259 reward_global_std=0.3986
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6896 reward_min=-1.0626 reward_max=-0.3090
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6896 reward_min=-1.0625 reward_max=-0.3086
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6896 reward_min=-1.0631 reward_max=-0.3089
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.7244 reward_min=-1.3635 reward_max=1.6157
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.7130 reward_global_std=0.2421
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6808 reward_min=-1.1025 reward_max=1.3314
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6808 reward_min=-1.1029 reward_max=1.3315
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6808 reward_min=-1.1036 reward_max=1.3323
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6815 reward_min=-1.2905 reward_max=1.5515
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6795 reward_global_std=0.2914
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6644 reward_min=-1.1654 reward_max=1.5571
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6644 reward_min=-1.1668 reward_max=1.5584
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6643 reward_min=-1.1695 reward_max=1.5586
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6586 reward_min=-1.3453 reward_max=1.6216
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6534 reward_global_std=0.3394
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6920 reward_min=-1.1404 reward_max=-0.2758
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6919 reward_min=-1.1402 reward_max=-0.2760
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6918 reward_min=-1.1395 reward_max=-0.2762
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6332 reward_min=-1.2303 reward_max=1.6986
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6589 reward_global_std=0.3579
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6788 reward_min=-1.0293 reward_max=-0.3416
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6787 reward_min=-1.0310 reward_max=-0.3416
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6787 reward_min=-1.0327 reward_max=-0.3414
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6536 reward_min=-1.2441 reward_max=1.6206
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6531 reward_global_std=0.3342
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6833 reward_min=-1.1381 reward_max=-0.2964
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6833 reward_min=-1.1388 reward_max=-0.2955
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6834 reward_min=-1.1385 reward_max=-0.2943
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6605 reward_min=-1.2425 reward_max=1.6556
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6582 reward_global_std=0.3886
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6755 reward_min=-1.0973 reward_max=1.6508
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6754 reward_min=-1.0987 reward_max=1.6504
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6752 reward_min=-1.1014 reward_max=1.6498
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6390 reward_min=-1.2628 reward_max=1.6167
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6391 reward_global_std=0.3697
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6750 reward_min=-1.0137 reward_max=-0.3600
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6749 reward_min=-1.0143 reward_max=-0.3608
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6746 reward_min=-1.0136 reward_max=-0.3617
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6626 reward_min=-1.2379 reward_max=1.7070
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6445 reward_global_std=0.3521
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6694 reward_min=-1.1321 reward_max=-0.3490
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6693 reward_min=-1.1305 reward_max=-0.3495
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6692 reward_min=-1.1293 reward_max=-0.3513
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6621 reward_min=-1.1838 reward_max=1.5982
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6329 reward_global_std=0.3582
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6793 reward_min=-1.0561 reward_max=-0.3790
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6793 reward_min=-1.0556 reward_max=-0.3792
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6789 reward_min=-1.0546 reward_max=-0.3792
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6716 reward_min=-1.2680 reward_max=1.5515
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6363 reward_global_std=0.3634
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6769 reward_min=-1.0555 reward_max=-0.3285
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6767 reward_min=-1.0563 reward_max=-0.3282
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6765 reward_min=-1.0566 reward_max=-0.3284
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6499 reward_min=-1.1281 reward_max=1.7075
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6410 reward_global_std=0.3387
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6776 reward_min=-1.0007 reward_max=-0.4217
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6774 reward_min=-1.0008 reward_max=-0.4204
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6772 reward_min=-1.0017 reward_max=-0.4200
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6239 reward_min=-1.1645 reward_max=1.6287
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6258 reward_global_std=0.3701
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6905 reward_min=-1.1892 reward_max=-0.2806
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6903 reward_min=-1.1877 reward_max=-0.2817
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6900 reward_min=-1.1859 reward_max=-0.2826
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6440 reward_min=-1.2230 reward_max=1.6822
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6416 reward_global_std=0.3254
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6674 reward_min=-1.0374 reward_max=1.4154
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6672 reward_min=-1.0378 reward_max=1.4148
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6669 reward_min=-1.0388 reward_max=1.4153
+  [DIAG] t=255 done_sum=256/256 reward_mean=-0.6063 reward_min=-1.2134 reward_max=1.7094
+  [ROLLOUT SUMMARY] total_dones=45312 expected_if_100step_eps≈512 reward_global_mean=-0.6078 reward_global_std=0.3927
+[HetNet] iter=20/1500 steps=5120/384000 | pi_s=0.0003 pi_i=0.0007 v=64.0980 ent_s=2.874 ent_i=2.877 ret=-0.879 ev_s_post=0.050 ev_i_post=0.078 r_s=1.000 r_i=1.000 std_s=0.02 std_i=0.02
+  [DIAG] t=0 done_sum=0/256 reward_mean=-0.6686 reward_min=-1.0380 reward_max=1.4670
+  [DIAG] t=1 done_sum=0/256 reward_mean=-0.6685 reward_min=-1.0378 reward_max=1.4674
+  [DIAG] t=2 done_sum=0/256 reward_mean=-0.6682 reward_min=-1.0367 reward_max=1.4675

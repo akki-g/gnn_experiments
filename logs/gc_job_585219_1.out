@@ -16,3 +16,4 @@ Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
 [GNN K2_r1.0] iter=40/1000 steps=10600 | pi=-0.0010 v=0.2486 ent=3.4718 ret=-6.151 exp_var=0.152
 [GNN K2_r1.0] iter=60/1000 steps=15900 | pi=-0.0011 v=0.3752 ent=3.8191 ret=-6.047 exp_var=0.229
 [GNN K2_r1.0] iter=80/1000 steps=21200 | pi=-0.0011 v=0.2287 ent=3.8370 ret=-5.668 exp_var=0.126
+[GNN K2_r1.0] iter=100/1000 steps=26500 | pi=-0.0012 v=0.5289 ent=3.8370 ret=-9.103 exp_var=0.208
