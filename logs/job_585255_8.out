@@ -33,3 +33,64 @@ Env: PCP | 2S + 2I | world=5.0 | max_steps=80
 [GNN K3_r1.5] iter=380 steps=97280/384000 | pi=-0.0009 v=323.7573 ent=3.3410 ret=6.786 exp_var=0.196
 [GNN K3_r1.5] iter=400 steps=102400/384000 | pi=-0.0010 v=317.8811 ent=3.3358 ret=6.854 exp_var=0.205
 [GNN K3_r1.5] iter=420 steps=107520/384000 | pi=-0.0011 v=322.1296 ent=3.3608 ret=6.797 exp_var=0.199
+[GNN K3_r1.5] iter=440 steps=112640/384000 | pi=-0.0005 v=321.9230 ent=3.4101 ret=6.647 exp_var=0.209
+[GNN K3_r1.5] iter=460 steps=117760/384000 | pi=-0.0011 v=332.6721 ent=3.4113 ret=6.696 exp_var=0.220
+[GNN K3_r1.5] iter=480 steps=122880/384000 | pi=-0.0009 v=334.7792 ent=3.4380 ret=6.647 exp_var=0.213
+[GNN K3_r1.5] iter=500 steps=128000/384000 | pi=-0.0009 v=334.6371 ent=3.4762 ret=6.463 exp_var=0.240
+[GNN K3_r1.5] iter=520 steps=133120/384000 | pi=-0.0011 v=358.4749 ent=3.5055 ret=6.594 exp_var=0.321
+[GNN K3_r1.5] iter=540 steps=138240/384000 | pi=-0.0012 v=367.7751 ent=3.5306 ret=6.582 exp_var=0.408
+[GNN K3_r1.5] iter=560 steps=143360/384000 | pi=-0.0009 v=364.4806 ent=3.4957 ret=6.751 exp_var=0.416
+[GNN K3_r1.5] iter=580 steps=148480/384000 | pi=-0.0009 v=360.4191 ent=3.4789 ret=6.899 exp_var=0.376
+[GNN K3_r1.5] iter=600 steps=153600/384000 | pi=-0.0017 v=376.9090 ent=3.5045 ret=7.424 exp_var=0.251
+[GNN K3_r1.5] iter=620 steps=158720/384000 | pi=-0.0016 v=380.6996 ent=3.6014 ret=7.603 exp_var=0.416
+[GNN K3_r1.5] iter=640 steps=163840/384000 | pi=-0.0016 v=414.8922 ent=3.6783 ret=7.638 exp_var=0.404
+[GNN K3_r1.5] iter=660 steps=168960/384000 | pi=-0.0015 v=428.8450 ent=3.7563 ret=7.344 exp_var=0.378
+[GNN K3_r1.5] iter=680 steps=174080/384000 | pi=-0.0014 v=415.7069 ent=3.7927 ret=7.076 exp_var=0.287
+[GNN K3_r1.5] iter=700 steps=179200/384000 | pi=-0.0011 v=434.7290 ent=3.8347 ret=7.035 exp_var=0.259
+[GNN K3_r1.5] iter=720 steps=184320/384000 | pi=-0.0010 v=426.0190 ent=3.8368 ret=7.013 exp_var=0.256
+[GNN K3_r1.5] iter=740 steps=189440/384000 | pi=-0.0009 v=416.5480 ent=3.8371 ret=7.092 exp_var=0.293
+[GNN K3_r1.5] iter=760 steps=194560/384000 | pi=-0.0013 v=431.5776 ent=3.8345 ret=7.068 exp_var=0.287
+[GNN K3_r1.5] iter=780 steps=199680/384000 | pi=-0.0010 v=428.4664 ent=3.8376 ret=7.326 exp_var=0.236
+[GNN K3_r1.5] iter=800 steps=204800/384000 | pi=-0.0011 v=413.5350 ent=3.8373 ret=7.509 exp_var=0.211
+[GNN K3_r1.5] iter=820 steps=209920/384000 | pi=-0.0011 v=400.0482 ent=3.8374 ret=7.376 exp_var=0.256
+[GNN K3_r1.5] iter=840 steps=215040/384000 | pi=-0.0009 v=454.5064 ent=3.8373 ret=7.485 exp_var=0.196
+[GNN K3_r1.5] iter=860 steps=220160/384000 | pi=-0.0008 v=423.0411 ent=3.8377 ret=7.493 exp_var=0.273
+[GNN K3_r1.5] iter=880 steps=225280/384000 | pi=-0.0014 v=419.7904 ent=3.8376 ret=7.720 exp_var=0.282
+[GNN K3_r1.5] iter=900 steps=230400/384000 | pi=-0.0012 v=406.3066 ent=3.8375 ret=7.833 exp_var=0.293
+[GNN K3_r1.5] iter=920 steps=235520/384000 | pi=-0.0017 v=386.2210 ent=3.8366 ret=8.583 exp_var=0.311
+[GNN K3_r1.5] iter=940 steps=240640/384000 | pi=-0.0021 v=347.4650 ent=3.8371 ret=9.879 exp_var=0.307
+[GNN K3_r1.5] iter=960 steps=245760/384000 | pi=-0.0022 v=315.7410 ent=3.8374 ret=10.861 exp_var=0.291
+[GNN K3_r1.5] iter=980 steps=250880/384000 | pi=-0.0024 v=302.3787 ent=3.8370 ret=11.858 exp_var=0.404
+[GNN K3_r1.5] iter=1000 steps=256000/384000 | pi=-0.0019 v=308.9377 ent=3.8362 ret=12.017 exp_var=0.265
+[GNN K3_r1.5] iter=1020 steps=261120/384000 | pi=-0.0019 v=296.1335 ent=3.8373 ret=12.272 exp_var=0.226
+[GNN K3_r1.5] iter=1040 steps=266240/384000 | pi=-0.0017 v=300.9241 ent=3.8370 ret=12.280 exp_var=0.232
+[GNN K3_r1.5] iter=1060 steps=271360/384000 | pi=-0.0017 v=297.8153 ent=3.8365 ret=12.446 exp_var=0.264
+[GNN K3_r1.5] iter=1080 steps=276480/384000 | pi=-0.0015 v=283.8595 ent=3.8344 ret=12.460 exp_var=0.322
+[GNN K3_r1.5] iter=1100 steps=281600/384000 | pi=-0.0018 v=290.5280 ent=3.8367 ret=12.725 exp_var=0.255
+[GNN K3_r1.5] iter=1120 steps=286720/384000 | pi=-0.0015 v=274.1315 ent=3.8374 ret=12.843 exp_var=0.195
+[GNN K3_r1.5] iter=1140 steps=291840/384000 | pi=-0.0016 v=278.3005 ent=3.8377 ret=12.744 exp_var=0.146
+[GNN K3_r1.5] iter=1160 steps=296960/384000 | pi=-0.0013 v=272.9320 ent=3.8371 ret=12.761 exp_var=0.098
+[GNN K3_r1.5] iter=1180 steps=302080/384000 | pi=-0.0010 v=267.4934 ent=3.8367 ret=12.738 exp_var=0.057
+[GNN K3_r1.5] iter=1200 steps=307200/384000 | pi=-0.0009 v=271.3315 ent=3.8376 ret=12.649 exp_var=0.058
+[GNN K3_r1.5] iter=1220 steps=312320/384000 | pi=-0.0009 v=270.6517 ent=3.8369 ret=12.682 exp_var=0.067
+[GNN K3_r1.5] iter=1240 steps=317440/384000 | pi=-0.0011 v=271.6199 ent=3.8371 ret=12.663 exp_var=0.093
+[GNN K3_r1.5] iter=1260 steps=322560/384000 | pi=-0.0008 v=273.6397 ent=3.8378 ret=12.638 exp_var=0.092
+[GNN K3_r1.5] iter=1280 steps=327680/384000 | pi=-0.0010 v=274.7046 ent=3.8374 ret=12.676 exp_var=0.109
+[GNN K3_r1.5] iter=1300 steps=332800/384000 | pi=-0.0008 v=270.5061 ent=3.8378 ret=12.672 exp_var=0.082
+[GNN K3_r1.5] iter=1320 steps=337920/384000 | pi=-0.0009 v=272.1615 ent=3.8378 ret=12.729 exp_var=0.074
+[GNN K3_r1.5] iter=1340 steps=343040/384000 | pi=-0.0009 v=272.1270 ent=3.8375 ret=12.740 exp_var=0.094
+[GNN K3_r1.5] iter=1360 steps=348160/384000 | pi=-0.0009 v=277.4380 ent=3.8378 ret=12.764 exp_var=0.109
+[GNN K3_r1.5] iter=1380 steps=353280/384000 | pi=-0.0009 v=275.9949 ent=3.8378 ret=12.753 exp_var=0.134
+[GNN K3_r1.5] iter=1400 steps=358400/384000 | pi=-0.0010 v=273.2510 ent=3.8378 ret=12.775 exp_var=0.127
+[GNN K3_r1.5] iter=1420 steps=363520/384000 | pi=-0.0008 v=275.7090 ent=3.8378 ret=12.749 exp_var=0.099
+[GNN K3_r1.5] iter=1440 steps=368640/384000 | pi=-0.0008 v=277.9046 ent=3.8377 ret=12.762 exp_var=0.082
+[GNN K3_r1.5] iter=1460 steps=373760/384000 | pi=-0.0008 v=272.4715 ent=3.8379 ret=12.813 exp_var=0.095
+[GNN K3_r1.5] iter=1480 steps=378880/384000 | pi=-0.0008 v=271.1711 ent=3.8379 ret=12.852 exp_var=0.100
+[GNN K3_r1.5] iter=1500 steps=384000/384000 | pi=-0.0007 v=266.4298 ent=3.8379 ret=12.871 exp_var=0.117
+Saved plot: /home/ak565492/gnn_experiments/outputs/hetnet_envs/pcp_gnn_K3_r1.5.png
+Saved checkpoint: /home/ak565492/gnn_experiments/outputs/hetnet_envs/pcp_gnn_K3_r1.5_final.pt
+
+[GNN K3_r1.5] Final return: 12.871
+=============================
+End time: Wed Apr 15 21:48:53 EDT 2026
+=============================

@@ -43,3 +43,29 @@ Env: Guided Coverage | 2S + 2I -> 3 zones | world=3.0
 [IPPO] iter=580 steps=153700/265000 | pi=-0.0006 v=0.7217 ent=3.8357 ret=-1.971 exp_var=0.335
 [IPPO] iter=600 steps=159000/265000 | pi=-0.0005 v=0.6715 ent=3.8367 ret=-1.952 exp_var=0.365
 [IPPO] iter=620 steps=164300/265000 | pi=-0.0004 v=0.6691 ent=3.8376 ret=-1.954 exp_var=0.373
+[IPPO] iter=640 steps=169600/265000 | pi=-0.0002 v=0.6727 ent=3.8352 ret=-1.958 exp_var=0.372
+[IPPO] iter=660 steps=174900/265000 | pi=-0.0005 v=0.7874 ent=3.8359 ret=-1.954 exp_var=0.281
+[IPPO] iter=680 steps=180200/265000 | pi=-0.0003 v=0.7543 ent=3.8372 ret=-1.977 exp_var=0.330
+[IPPO] iter=700 steps=185500/265000 | pi=-0.0006 v=0.7414 ent=3.8374 ret=-1.975 exp_var=0.347
+[IPPO] iter=720 steps=190800/265000 | pi=-0.0003 v=0.7755 ent=3.8358 ret=-2.026 exp_var=0.332
+[IPPO] iter=740 steps=196100/265000 | pi=-0.0003 v=0.9615 ent=3.8371 ret=-2.249 exp_var=0.331
+[IPPO] iter=760 steps=201400/265000 | pi=-0.0006 v=0.5152 ent=3.8371 ret=-1.697 exp_var=0.353
+[IPPO] iter=780 steps=206700/265000 | pi=-0.0004 v=0.2220 ent=3.8369 ret=-1.436 exp_var=0.447
+[IPPO] iter=800 steps=212000/265000 | pi=-0.0005 v=0.3867 ent=3.8371 ret=-1.523 exp_var=0.394
+[IPPO] iter=820 steps=217300/265000 | pi=-0.0009 v=0.5125 ent=3.8373 ret=-1.560 exp_var=0.280
+[IPPO] iter=840 steps=222600/265000 | pi=-0.0009 v=0.5125 ent=3.8369 ret=-1.592 exp_var=0.303
+[IPPO] iter=860 steps=227900/265000 | pi=-0.0006 v=0.5120 ent=3.8375 ret=-1.626 exp_var=0.362
+[IPPO] iter=880 steps=233200/265000 | pi=-0.0006 v=0.5287 ent=3.8369 ret=-1.656 exp_var=0.390
+[IPPO] iter=900 steps=238500/265000 | pi=-0.0009 v=0.4445 ent=3.8371 ret=-1.562 exp_var=0.340
+[IPPO] iter=920 steps=243800/265000 | pi=-0.0008 v=0.6581 ent=3.8372 ret=-1.656 exp_var=0.320
+[IPPO] iter=940 steps=249100/265000 | pi=-0.0010 v=0.6914 ent=3.8375 ret=-1.623 exp_var=0.333
+[IPPO] iter=960 steps=254400/265000 | pi=-0.0004 v=0.5960 ent=3.8375 ret=-1.609 exp_var=0.381
+[IPPO] iter=980 steps=259700/265000 | pi=-0.0009 v=0.3792 ent=3.8372 ret=-1.471 exp_var=0.328
+[IPPO] iter=1000 steps=265000/265000 | pi=-0.0008 v=0.1616 ent=3.8371 ret=-1.316 exp_var=0.204
+Saved plot: /home/ak565492/gnn_experiments/outputs/guided_coverage/gc_ippo.png
+Saved checkpoint: /home/ak565492/gnn_experiments/outputs/guided_coverage/gc_ippo_final.pt
+
+[IPPO] Final Return:-1.316
+=============================
+End time: Wed Apr 15 20:23:40 EDT 2026
+=============================
