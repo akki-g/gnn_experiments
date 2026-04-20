@@ -94,8 +94,8 @@ def evaluate(env_adapter, policy, n_scouts, n_interc, device, n_episodes=10):
             n_scouts, n_interc,
         )
 
-        scout_actions = torch.tanh(scout_dist.mean)
-        interc_actions = torch.tanh(interc_dist.mean)
+        scout_actions = scout_dist.mean    # FIX-P4-B9: no tanh; VMAS clamp_actions handles bounds
+        interc_actions = interc_dist.mean  # FIX-P4-B9
         all_actions = torch.cat([scout_actions, interc_actions], dim=1)
  
         reward, done, info = env_adapter.hetnet_step(all_actions)
@@ -268,7 +268,7 @@ def render_evaluation(args, policy, save_dir):
             args.n_scouts, args.n_interc,
         )
 
-        all_actions = torch.cat([torch.tanh(scout_dist.mean), torch.tanh(interc_dist.mean)], dim=1)
+        all_actions = torch.cat([scout_dist.mean, interc_dist.mean], dim=1)  # FIX-P4-B9: no tanh; VMAS clamp_actions handles bounds
         reward, done, _ = env_adapter.hetnet_step(all_actions)
         obs_s, state_s, obs_i, state_i, positions = env_adapter.get_obs()
 
@@ -433,8 +433,8 @@ def train(args):
                 f"v_loss={metrics['value_loss']:.4f}  "
                 f"ent_s={metrics['entropy_scout']:.3f}  "
                 f"ent_i={metrics['entropy_interc']:.3f}  "
-                f"std_s={metrics['log_std_scout']:.3f}  "
-                f"std_i={metrics['log_std_interc']:.3f}  "
+                f"log_std_s={metrics['log_std_scout']:.3f}  "  # FIX-P2-B3: label matches value (log_std, not std)
+                f"log_std_i={metrics['log_std_interc']:.3f}  "  # FIX-P2-B3
                 f"skill={new_skill:.2f}"
             )
 

@@ -382,8 +382,8 @@ def run_hetnet(args, device):
                 f"ev_i_post={update_metrics['ev_interc_post']:.3f} "
                 f"r_s={update_metrics['ratio_scout_mean']:.3f} "
                 f"r_i={update_metrics['ratio_interc_mean']:.3f} "
-                f"std_s={update_metrics['log_std_scout']:.2f} "
-                f"std_i={update_metrics['log_std_interc']:.2f}",
+                f"log_std_s={update_metrics['log_std_scout']:.2f} "  # FIX-P2-B3: label matches value
+                f"log_std_i={update_metrics['log_std_interc']:.2f}",  # FIX-P2-B3
                 flush=True,
             )
 

@@ -107,8 +107,8 @@ class MAHAC:
             old_log_probs_i = buffer.interc_log_probs.detach()
 
         #norm adv
-        adv_s = (adv_s - adv_s.mean()) / (adv_s.std() + 1e-8)
-        adv_i = (adv_i - adv_i.mean()) / (adv_i.std() + 1e-8)
+        adv_s = (adv_s - adv_s.mean()) / adv_s.std().clamp(min=1e-4)  # FIX-P3-B10: floor prevents amplification
+        adv_i = (adv_i - adv_i.mean()) / adv_i.std().clamp(min=1e-4)  # FIX-P3-B10
 
         # FIX-2: do NOT normalize returns — train critic on raw returns (CleanRL/SpinUp standard)
         # Simple batch normalization creates scale mismatch between critic training and EV evaluation
@@ -156,6 +156,13 @@ class MAHAC:
         total_ratio_i = 0.0
         n_actor_updates = 0
         n_critic_updates = 0
+        # FIX-P2-DIAG: track log-prob difference per epoch (epoch 0 should be ~0, epoch 1+ nonzero)
+        lp_diff_epoch0_s = 0.0
+        lp_diff_epoch0_i = 0.0
+        lp_diff_final_s = 0.0
+        lp_diff_final_i = 0.0
+        total_actor_grad_norm = 0.0   # FIX-P4-B4: pre-clip grad norm for entropy_coef diagnostics
+        total_ent_loss_contrib = 0.0  # FIX-P4-B4: entropy loss contribution tracking
 
         #actor epochs: one forwards pass per epoch instead of T
         for epoch in range(self.ppo_epochs):
@@ -170,9 +177,19 @@ class MAHAC:
             new_lp_s = scout_dist.log_prob(flat_actions_s).sum(dim=-1)
             new_lp_i = interc_dist.log_prob(flat_actions_i).sum(dim=-1)
 
-            #ppo ratios 
+            #ppo ratios
             ratio_s = torch.exp(new_lp_s - flat_old_lp_s)
             ratio_i = torch.exp(new_lp_i - flat_old_lp_i)
+
+            # FIX-P2-DIAG: epoch-0 lp_diff should be ~0; nonzero after first optimizer step
+            with torch.no_grad():
+                _lp_diff_s = (new_lp_s - flat_old_lp_s).abs().mean().item()
+                _lp_diff_i = (new_lp_i - flat_old_lp_i).abs().mean().item()
+                if epoch == 0:
+                    lp_diff_epoch0_s = _lp_diff_s
+                    lp_diff_epoch0_i = _lp_diff_i
+                lp_diff_final_s = _lp_diff_s
+                lp_diff_final_i = _lp_diff_i
 
             #expand per class adv to per agent
             adv_s_exp = flat_adv_s.unsqueeze(-1).expand_as(ratio_s)
@@ -199,6 +216,14 @@ class MAHAC:
 
             self.actor_optim.zero_grad()
             actor_loss.backward()
+
+            # FIX-P4-B4: log pre-clip actor grad norm for entropy_coef diagnostics
+            _gnorm = sum(
+                p.grad.norm() ** 2 for p in self.policy.parameters() if p.grad is not None
+            ).sqrt().item()
+            total_actor_grad_norm += _gnorm
+            total_ent_loss_contrib += abs(self.entropy_coef * (entropy_s.item() + entropy_i.item()))
+
             nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
             self.actor_optim.step()
 
@@ -292,6 +317,12 @@ class MAHAC:
             'advantage_std_scout': raw_adv_std_s,
             'advantage_mean_interc': raw_adv_mean_i,
             'advantage_std_interc': raw_adv_std_i,
+            'lp_diff_epoch0_scout': lp_diff_epoch0_s,   # FIX-P2-DIAG: should be ~0 at epoch 0
+            'lp_diff_epoch0_interc': lp_diff_epoch0_i,
+            'lp_diff_final_scout': lp_diff_final_s,     # FIX-P2-DIAG: nonzero after optimizer step
+            'lp_diff_final_interc': lp_diff_final_i,
+            'actor_grad_norm_preclip': total_actor_grad_norm / max(n_actor_updates, 1),  # FIX-P4-B4
+            'ent_loss_contribution': total_ent_loss_contrib / max(n_actor_updates, 1),   # FIX-P4-B4
         }
         return metrics
 
