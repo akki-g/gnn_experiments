@@ -109,21 +109,10 @@ class IPPOTrainer:
                 scout_rew      = rewards[:, :n_s].mean().item()
                 interceptor_rew = rewards[:, n_s:].mean().item()
 
-                # -- Vectorized done detection - no CPU syncs --
-                if self.adapter.n_intruders == 0:
-                    # Time-limit IS the terminal condition for coverage/non-intruder envs.
-                    # VMAS fires dones=True at max_steps; treat as true episode end.
-                    true_done_mask = dones.bool() if dones.dtype != torch.bool else dones
-                else:
-                    n_tagged = info.get("n_tagged", torch.zeros(E, device=self.device))
-                    n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
-
-                    true_done_mask = (
-                        dones 
-                        & ((n_tagged >= self.adapter.n_intruders)
-                           | (n_breached >= self.adapter.n_zones))
-                    )
-                
+                # FIX-P1-B7: use adapter-emitted is_truncation to distinguish
+                # truncation (bootstrap V) from true termination (bootstrap 0)
+                is_trunc = info.get("is_truncation", torch.zeros_like(dones))
+                true_done_mask = dones & ~is_trunc
                 dones_for_gae = true_done_mask.float().unsqueeze(-1).expand(E, N)
 
                 # -- Buffer store --
@@ -142,13 +131,14 @@ class IPPOTrainer:
                 step_mean_inter_rew.append(interceptor_rew)
 
                 # -- Episode return tracking (vectorized, minimal syncs) --
+                # FIX-P1-B1: reset on raw dones so truncated episodes also close correctly
                 self._running_episode_returns += rewards.mean(dim=-1)  # (E,)
-                if true_done_mask.any():
-                    for e in true_done_mask.nonzero(as_tuple=True)[0].tolist():
+                if dones.any():
+                    for e in dones.nonzero(as_tuple=True)[0].tolist():
                         completed_episode_returns.append(
                             self._running_episode_returns[e].item()
                         )
-                    self._running_episode_returns[true_done_mask] = 0.0
+                    self._running_episode_returns[dones] = 0.0
 
                 obs_tensor = next_obs
                 positions  = next_positions
@@ -184,11 +174,17 @@ class IPPOTrainer:
 
         self.buffer.compute_advantages(last_values=last_values)
 
+        # FIX-P3-B6: compute exp_var once per iteration on full pre-update rollout
+        # Uses buffer-stored values (before critic update) vs. GAE returns
+        with torch.no_grad():
+            _pre_values  = torch.stack(self.buffer.values).reshape(-1).float()
+            _pre_returns = self.buffer.returns.reshape(-1).float()
+            _exp_var = (1.0 - (_pre_returns - _pre_values).var() / (_pre_returns.var() + 1e-8)).item()
+
         policy_losses  = []
         entropies      = []
         value_losses   = []
         bellman_errors = []
-        explained_vars = []
 
         # -- Actor update ----------------------------------------------
         for _ in range(num_actor_epochs):
@@ -224,18 +220,11 @@ class IPPOTrainer:
 
                 pred_values = self.critic(flat_obs_c).squeeze(-1)
 
-                # value loss clipping
-                values_clipped = flat_old_values + torch.clamp(pred_values - flat_old_values, -self.clip_eps, self.clip_eps)
-                value_loss_unclipped = F.mse_loss(pred_values, flat_returns, reduction='none')
-                value_loss_clipped = F.mse_loss(values_clipped, flat_returns, reduction='none')
-                value_loss = torch.max(value_loss_unclipped, value_loss_clipped).mean()
+                # FIX-P3-B6: simple MSE — value clipping removed (no return normalization; aligns with CleanRL)
+                value_loss = F.mse_loss(pred_values, flat_returns)
 
                 td_error    = flat_returns - pred_values
                 mean_bellman_error = td_error.abs().mean()
-
-                # Explained variance diagnostic
-                var_returns = flat_returns.var() + 1e-8
-                exp_var = 1.0 - td_error.var() / var_returns
 
                 self.critic_optim.zero_grad()
                 value_loss.backward()
@@ -244,7 +233,6 @@ class IPPOTrainer:
 
                 value_losses.append(value_loss.item())
                 bellman_errors.append(mean_bellman_error.item())
-                explained_vars.append(exp_var.item())
 
         self.buffer.clear()
 
@@ -253,7 +241,7 @@ class IPPOTrainer:
             "value_loss":         self._safe_mean(value_losses),
             "entropy":            self._safe_mean(entropies),
             "mean_bellman_error": self._safe_mean(bellman_errors),
-            "explained_var":      self._safe_mean(explained_vars),
+            "explained_var":      _exp_var,  # FIX-P3-B6: single pre-update value, not minibatch average
         }
         for key in ["policy_loss", "value_loss", "entropy", "mean_bellman_error", "explained_var"]:
             self.metrics_history[key].append(update_metrics[key])

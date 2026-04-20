@@ -131,10 +131,11 @@ class Scenario(BaseScenario):
         
         # prey- random positions in center 60% of the world
         inner = self.world_size * 0.6
+        # FIX-P1-B8: scale prey_pos to [-inner, inner] (was [0, 1]; PCP already correct)
         prey_pos = (torch.rand(
             (1,2) if env_index is not None else (batch, 2),
             device=device
-        ))
+        ) * 2 - 1) * inner
 
         if env_index is not None:
             self.prey.set_pos(prey_pos.squeeze(0), batch_index=env_index)
@@ -326,7 +327,7 @@ class PredatorPreyAdapter:
             device=device,
             continuous_actions=True,
             clamp_actions=True,
-            max_steps=max_steps,
+            max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS max_steps causes stale done=True after step 80
             n_scouts=n_scouts,
             n_interceptors=n_interceptors,
             world_size=world_size,
@@ -351,6 +352,8 @@ class PredatorPreyAdapter:
 
         self._cached_obs = None
         self._cached_pos = None
+        # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py
+        self._step_counters = torch.zeros(num_envs, device=self.device, dtype=torch.long)
 
     @property
     def obs_dim(self) -> int:
@@ -386,9 +389,10 @@ class PredatorPreyAdapter:
     def _make_action_list(self, defender_actions: torch.Tensor):
         return [defender_actions[:, j, :] for j in range(self.n_defenders)]
     
-    # gnn-mappo / ippo interface    
+    # gnn-mappo / ippo interface
     def reset(self):
         all_obs = self.env.reset()
+        self._step_counters.zero_()  # FIX-P1-B1: reset step counters on full reset
         self._stack_obs(all_obs)
         return self._cached_obs, self._cached_pos
     
@@ -400,6 +404,13 @@ class PredatorPreyAdapter:
 
         all_actions = self._make_action_list(defender_actions)
         all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
+
+        # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py
+        self._step_counters += 1
+        forced_dones = self._step_counters >= self._max_steps
+        is_truncation = forced_dones & ~dones  # FIX-P1-B7: truncation flag for downstream GAE
+        dones = dones | forced_dones
+        self._step_counters[dones] = 0
 
         self._stack_obs(all_obs)
 
@@ -417,7 +428,9 @@ class PredatorPreyAdapter:
         all_found = info.get("all_found", torch.zeros(self.num_envs, dtype=torch.bool, device=self.device))
         info["n_tagged"] = all_found.float()
         info["n_breached"] = torch.zeros(self.num_envs, device=self.device)
-        
+        # FIX-P1-B7: emit truncation flag for downstream GAE
+        info["is_truncation"] = is_truncation
+
         return self._cached_obs, rewards, dones, info, self._cached_pos
     
 
@@ -447,6 +460,7 @@ class PredatorPreyAdapter:
     # hetnet interface
     def hetnet_reset(self):
         all_obs = self.env.reset()
+        self._step_counters.zero_()  # FIX-P1-B1: reset step counters on full reset
         self._stack_obs(all_obs)
         return self.get_obs()
     
@@ -477,6 +491,13 @@ class PredatorPreyAdapter:
         all_actions = self._make_action_list(defender_actions)
         all_obs, all_rew, dones, all_info = self.env.step(all_actions)
 
+        # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py
+        self._step_counters += 1
+        forced_dones = self._step_counters >= self._max_steps
+        is_truncation = forced_dones & ~dones  # FIX-P1-B7: truncation flag for downstream GAE
+        dones = dones | forced_dones
+        self._step_counters[dones] = 0
+
         self._stack_obs(all_obs)
 
         reward = all_rew[0]
@@ -486,6 +507,9 @@ class PredatorPreyAdapter:
             first_info = all_info[0]
             if isinstance(first_info, dict):
                 info = first_info
+
+        # FIX-P1-B7: emit truncation flag for downstream GAE
+        info["is_truncation"] = is_truncation
 
         return reward, dones, info
     

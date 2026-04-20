@@ -186,9 +186,11 @@ def collect_rollout(
 
     # FIX-0: rollout summary diagnostic
     total_dones = buffer.dones.sum().item()
+    # FIX-P1-B5: use adapter's actual max_steps instead of hardcoded 100
+    _ms = getattr(env_adapter, '_max_steps', 100)
     print(
         f"  [ROLLOUT SUMMARY] total_dones={total_dones:.0f} "
-        f"expected_if_100step_eps≈{B * (T // 100):.0f} "
+        f"expected_{_ms}step_eps≈{B * (T // _ms):.0f} "
         f"reward_global_mean={buffer.rewards.mean().item():.4f} "
         f"reward_global_std={buffer.rewards.std().item():.4f}",
         flush=True,

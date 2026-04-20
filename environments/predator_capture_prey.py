@@ -372,7 +372,7 @@ class PredatorCapturePreyAdapter:
             device=device,
             continuous_actions=True,
             clamp_actions=True,
-            max_steps=max_steps,
+            max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS max_steps causes stale done=True after step 80
             n_scouts=n_scouts,
             n_interceptors=n_interceptors,
             world_size=world_size,
@@ -400,6 +400,8 @@ class PredatorCapturePreyAdapter:
 
         self._cached_obs = None
         self._cached_pos = None
+        # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py
+        self._step_counters = torch.zeros(num_envs, device=self.device, dtype=torch.long)
 
     @property
     def obs_dim(self) -> int:
@@ -438,6 +440,7 @@ class PredatorCapturePreyAdapter:
     # gnn-mappo / ippo interface
     def reset(self):
         all_obs = self.env.reset()
+        self._step_counters.zero_()  # FIX-P1-B1: reset step counters on full reset
         self._stack_obs(all_obs)
         return self._cached_obs, self._cached_pos
 
@@ -449,6 +452,13 @@ class PredatorCapturePreyAdapter:
 
         all_actions = self._make_action_list(defender_actions)
         all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
+
+        # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py
+        self._step_counters += 1
+        forced_dones = self._step_counters >= self._max_steps
+        is_truncation = forced_dones & ~dones  # FIX-P1-B7: truncation flag for downstream GAE
+        dones = dones | forced_dones
+        self._step_counters[dones] = 0
 
         self._stack_obs(all_obs)
 
@@ -466,6 +476,8 @@ class PredatorCapturePreyAdapter:
         all_found = info.get("all_found", torch.zeros(self.num_envs, dtype=torch.bool, device=self.device))
         info["n_tagged"] = all_found.float()
         info["n_breached"] = torch.zeros(self.num_envs, device=self.device)
+        # FIX-P1-B7: emit truncation flag for downstream GAE
+        info["is_truncation"] = is_truncation
 
         return self._cached_obs, rewards, dones, info, self._cached_pos
 
@@ -496,6 +508,7 @@ class PredatorCapturePreyAdapter:
     # hetnet interface
     def hetnet_reset(self):
         all_obs = self.env.reset()
+        self._step_counters.zero_()  # FIX-P1-B1: reset step counters on full reset
         self._stack_obs(all_obs)
         return self.get_obs()
 
@@ -526,6 +539,13 @@ class PredatorCapturePreyAdapter:
         all_actions = self._make_action_list(defender_actions)
         all_obs, all_rew, dones, all_info = self.env.step(all_actions)
 
+        # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py
+        self._step_counters += 1
+        forced_dones = self._step_counters >= self._max_steps
+        is_truncation = forced_dones & ~dones  # FIX-P1-B7: truncation flag for downstream GAE
+        dones = dones | forced_dones
+        self._step_counters[dones] = 0
+
         self._stack_obs(all_obs)
 
         reward = all_rew[0]
@@ -535,6 +555,9 @@ class PredatorCapturePreyAdapter:
             first_info = all_info[0]
             if isinstance(first_info, dict):
                 info = first_info
+
+        # FIX-P1-B7: emit truncation flag for downstream GAE
+        info["is_truncation"] = is_truncation
 
         return reward, dones, info
 

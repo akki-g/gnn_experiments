@@ -126,20 +126,11 @@ class GNNTrainerMultiEnv:
                 scout_rew = rewards[:, :n_s].mean().item()
                 interceptor_rew = rewards[:, n_s:].mean().item()
 
-                # Truncation vs true done - per-env (modified to account for guided coverage env)
-                if self.adapter.n_intruders == 0:
-                    true_done_mask = dones.bool() if dones.dtype != torch.bool else dones
-                else:
-                    n_tagged = info.get("n_tagged", torch.zeros(E, device=self.device))
-                    n_breached = info.get("n_breached", torch.zeros(E, device=self.device))
-
-                    true_done_mask = (
-                        dones
-                        & ((n_tagged >= self.adapter.n_intruders)
-                           | (n_breached >= self.adapter.n_zones))
-                    )
-                
-                dones_for_gae = true_done_mask.float().unsqueeze(-1).expand(E,N)
+                # FIX-P1-B7: use adapter-emitted is_truncation to distinguish
+                # truncation (bootstrap V) from true termination (bootstrap 0)
+                is_trunc = info.get("is_truncation", torch.zeros_like(dones))
+                true_done_mask = dones & ~is_trunc
+                dones_for_gae = true_done_mask.float().unsqueeze(-1).expand(E, N)
                 # Buffer: store (E, N, ...) tensors
                 self.buffer.add_timestep(
                     obs=obs_tensor,
@@ -193,7 +184,13 @@ class GNNTrainerMultiEnv:
             last_values = self.critic(flat_obs).squeeze(-1).reshape(E, N)
         self.buffer.compute_advantages(last_values=last_values)
 
-        policy_losses, entropies, value_losses, bellman_errors, explained_vars = [], [], [], [], []
+        # FIX-P3-B6: compute exp_var once per iteration on full pre-update rollout
+        with torch.no_grad():
+            _pre_values  = torch.stack(self.buffer.values).reshape(-1).float()
+            _pre_returns = self.buffer.returns.reshape(-1).float()
+            _exp_var = (1.0 - (_pre_returns - _pre_values).var() / (_pre_returns.var() + 1e-8)).item()
+
+        policy_losses, entropies, value_losses, bellman_errors = [], [], [], []
 
         # Actor update
         for _ in range(num_actor_epochs):
@@ -229,18 +226,11 @@ class GNNTrainerMultiEnv:
 
                 pred_values = self.critic(flat_obs).squeeze(-1)
 
-                # value loss clipping
-                values_clipped = flat_old_values + torch.clamp(pred_values - flat_old_values, -self.clip_eps, self.clip_eps)
-                value_loss_unclipped = F.mse_loss(pred_values, flat_returns, reduction='none')
-                value_loss_clipped = F.mse_loss(values_clipped, flat_returns, reduction='none')
-                value_loss = torch.max(value_loss_unclipped, value_loss_clipped).mean()
+                # FIX-P3-B6: simple MSE — value clipping removed (aligns with CleanRL and mahac.py)
+                value_loss = F.mse_loss(pred_values, flat_returns)
 
                 td_error = flat_returns - pred_values
                 mean_bellman_error = td_error.abs().mean()
-
-                with torch.no_grad():
-                    ev = 1 - (flat_returns - pred_values).var() / (flat_returns.var() + 1e-8)
-                    explained_vars.append(ev.item())
 
                 self.critic_optim.zero_grad()
                 value_loss.backward()
@@ -261,7 +251,7 @@ class GNNTrainerMultiEnv:
             "value_loss": self._safe_mean(value_losses),
             "entropy": self._safe_mean(entropies),
             "mean_bellman_error": self._safe_mean(bellman_errors),
-            "explained_var": self._safe_mean(explained_vars)
+            "explained_var": _exp_var,  # FIX-P3-B6: single pre-update value, not minibatch average
         }
         for k in update_metrics:
             self.metrics_history[k].append(update_metrics[k])
