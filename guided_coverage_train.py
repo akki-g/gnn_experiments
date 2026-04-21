@@ -394,7 +394,7 @@ def run_hetnet(r_comm, device, output_dir):
         # ppo update (backprop through time over T timesteps)
         # mahac.update(...) -> metrics dict
         # actor: ppo_epochs outer loops * T timesteps inner loop
-        # critic: critic_epochs outer loop * T inner, w value clipping
+        # critic: critic_epochs outer loop * T inner (simple MSE, no value clipping — FIX-P3-B6)
 
         update_metrics = mahac.update(buffer, bootstrap_values)
         steps_done += rollout_steps

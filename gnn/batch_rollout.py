@@ -78,7 +78,7 @@ class GNNRolloutBuffer:
 
         # Normalize advantages across entire buffer
         adv_mean = advantages.mean()
-        adv_std = advantages.std() + 1e-8
+        adv_std = advantages.std().clamp(min=1e-4)  # FIX-P3-B10: floor prevents amplification when advantages near-zero
         advantages = (advantages - adv_mean) / adv_std
 
         if connectivity_bias:

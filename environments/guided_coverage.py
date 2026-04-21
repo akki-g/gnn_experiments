@@ -292,7 +292,7 @@ class GuidedCoverageAdapter:
             device=device,
             continuous_actions=True,
             clamp_actions=True,
-            max_steps=max_steps,
+            max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS never resets self.steps after done, causing stale done signals
             n_scouts=n_scouts,
             n_intercs=n_intercs,
             n_zones=n_zones,
@@ -423,6 +423,8 @@ class GuidedCoverageAdapter:
             info["n_tagged"] = torch.zeros(self.num_envs, device=self.device)
         if "n_breached" not in info:
             info["n_breached"] = torch.zeros(self.num_envs, device=self.device)
+        # FIX-P1-B7: all GC dones are truncations (scenario.done() always returns False)
+        info["is_truncation"] = forced_dones
 
         return defender_obs, defender_rewards, dones, info, self._cached_pos
     
@@ -505,6 +507,9 @@ class GuidedCoverageAdapter:
             first_info = all_infos[0]
             if isinstance(first_info, dict):
                 info = first_info
+
+        # FIX-P1-B7: all GC dones are truncations (scenario.done() always returns False)
+        info["is_truncation"] = forced_dones
 
         return reward, dones, info
     
