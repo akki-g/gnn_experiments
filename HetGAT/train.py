@@ -65,7 +65,9 @@ def make_config():
                         help="Run a rendered eval episode after training (local only, not for SLURM)")
     parser.add_argument("--load_checkpoint", type=str, default=None,
                         help="Path to a checkpoint .pt file to load for rendering")
- 
+    parser.add_argument("--discrete", action="store_true", default=False,
+                        help="Use discrete action space (5 primitives) instead of continuous")
+
     args = parser.parse_args()
     return args
 
@@ -94,8 +96,12 @@ def evaluate(env_adapter, policy, n_scouts, n_interc, device, n_episodes=10):
             n_scouts, n_interc,
         )
 
-        scout_actions = scout_dist.mean    # FIX-P4-B9: no tanh; VMAS clamp_actions handles bounds
-        interc_actions = interc_dist.mean  # FIX-P4-B9
+        if isinstance(scout_dist, torch.distributions.Categorical):
+            scout_actions = scout_dist.probs.argmax(dim=-1)
+            interc_actions = interc_dist.probs.argmax(dim=-1)
+        else:
+            scout_actions = scout_dist.mean    # FIX-P4-B9: no tanh; VMAS clamp_actions handles bounds
+            interc_actions = interc_dist.mean  # FIX-P4-B9
         all_actions = torch.cat([scout_actions, interc_actions], dim=1)
  
         reward, done, info = env_adapter.hetnet_step(all_actions)
@@ -123,7 +129,7 @@ def evaluate(env_adapter, policy, n_scouts, n_interc, device, n_episodes=10):
     return mean_reward, mean_episodes
 
 
-def plot_metrics(log_history, save_dir, run_name, log_std_min):
+def plot_metrics(log_history, save_dir, run_name, log_std_min, discrete=False):
     """Generate training_curves.png with a 3x2 subplot grid."""
     if not log_history:
         return
@@ -159,9 +165,10 @@ def plot_metrics(log_history, save_dir, run_name, log_std_min):
     ax = axes[1, 0]
     ax.plot(iters, get('entropy_scout'), label='scout', color='tab:blue')
     ax.plot(iters, get('entropy_interc'), label='interceptor', color='tab:orange')
-    # entropy floor: 0.5 * D * (1 + ln(2*pi) + 2*log_std_min), D=2
-    entropy_floor = 0.5 * 2 * (1 + np.log(2 * np.pi) + 2 * log_std_min)
-    ax.axhline(entropy_floor, linestyle='--', color='gray', linewidth=0.8, label=f'floor ({entropy_floor:.2f})')
+    if not discrete:
+        # entropy floor: 0.5 * D * (1 + ln(2*pi) + 2*log_std_min), D=2
+        entropy_floor = 0.5 * 2 * (1 + np.log(2 * np.pi) + 2 * log_std_min)
+        ax.axhline(entropy_floor, linestyle='--', color='gray', linewidth=0.8, label=f'floor ({entropy_floor:.2f})')
     ax.set_title('Entropy')
     ax.set_xlabel('Iteration')
     ax.legend()
@@ -176,14 +183,19 @@ def plot_metrics(log_history, save_dir, run_name, log_std_min):
     ax.set_xlabel('Iteration')
     ax.legend()
 
-    # (2,0) log_std per class
+    # (2,0) log_std per class (skipped for discrete)
     ax = axes[2, 0]
-    ax.plot(iters, get('log_std_scout'), label='scout', color='tab:blue')
-    ax.plot(iters, get('log_std_interc'), label='interceptor', color='tab:orange')
-    ax.axhline(log_std_min, linestyle='--', color='gray', linewidth=0.8, label=f'min ({log_std_min})')
-    ax.set_title('log_std')
+    if not discrete:
+        ax.plot(iters, get('log_std_scout'), label='scout', color='tab:blue')
+        ax.plot(iters, get('log_std_interc'), label='interceptor', color='tab:orange')
+        ax.axhline(log_std_min, linestyle='--', color='gray', linewidth=0.8, label=f'min ({log_std_min})')
+        ax.set_title('log_std')
+        ax.legend()
+    else:
+        ax.text(0.5, 0.5, 'N/A (discrete mode)', transform=ax.transAxes,
+                ha='center', va='center', color='gray')
+        ax.set_title('log_std (N/A)')
     ax.set_xlabel('Iteration')
-    ax.legend()
 
     # (2,1) Advantage statistics with +/-1 std shading
     ax = axes[2, 1]
@@ -268,7 +280,13 @@ def render_evaluation(args, policy, save_dir):
             args.n_scouts, args.n_interc,
         )
 
-        all_actions = torch.cat([scout_dist.mean, interc_dist.mean], dim=1)  # FIX-P4-B9: no tanh; VMAS clamp_actions handles bounds
+        if isinstance(scout_dist, torch.distributions.Categorical):
+            _s_act = scout_dist.probs.argmax(dim=-1)
+            _i_act = interc_dist.probs.argmax(dim=-1)
+        else:
+            _s_act = scout_dist.mean  # FIX-P4-B9: no tanh; VMAS clamp_actions handles bounds
+            _i_act = interc_dist.mean
+        all_actions = torch.cat([_s_act, _i_act], dim=1)
         reward, done, _ = env_adapter.hetnet_step(all_actions)
         obs_s, state_s, obs_i, state_i, positions = env_adapter.get_obs()
 
@@ -344,6 +362,8 @@ def train(args):
         n_layers=args.n_gat_layers,
         ssn_input_dim=5,
         r_comm=args.r_comm,
+        discrete=args.discrete,
+        n_actions=5,
     ).to(device)
 
     ssn_out_dim = args.n_heads * args.head_dim  # after concat
@@ -371,6 +391,7 @@ def train(args):
         max_grad_norm=args.max_grad_norm,
         ppo_epochs=args.ppo_epochs,
         log_std_min=args.log_std_min,
+        discrete=args.discrete,
     )
 
     buffer = MAHACBuffer(
@@ -386,6 +407,7 @@ def train(args):
         ssn_dim=5,
         hidden_dim=args.hidden_dim,
         device=device,
+        discrete=args.discrete,
     )
 
     print(f"\nStarting training: {args.n_iterations} iterations")
@@ -444,7 +466,8 @@ def train(args):
                 "iteration": iteration,
                 "policy_state_dict": policy.state_dict(),
                 "critic_state_dict": critic.state_dict(),
-                "optimizer_state_dict": trainer.optimizer.state_dict(),
+                "actor_optimizer_state_dict": trainer.actor_optim.state_dict(),
+                "critic_optimizer_state_dict": trainer.critic_optim.state_dict(),
                 "metrics": metrics,
             }, ckpt_path)
 
@@ -460,7 +483,8 @@ def train(args):
         "iteration": args.n_iterations,
         "policy_state_dict": policy.state_dict(),
         "critic_state_dict": critic.state_dict(),
-        "optimizer_state_dict": trainer.optimizer.state_dict(),
+        "actor_optimizer_state_dict": trainer.actor_optim.state_dict(),
+        "critic_optimizer_state_dict": trainer.critic_optim.state_dict(),
     }, final_path)
  
     log_path = os.path.join(save_dir, "log.json")
@@ -470,7 +494,7 @@ def train(args):
     print("=" * 70)
     print(f"Training complete. Final checkpoint: {final_path}")
 
-    plot_metrics(log_history, save_dir, args.run_name, args.log_std_min)
+    plot_metrics(log_history, save_dir, args.run_name, args.log_std_min, discrete=args.discrete)
 
     if args.render:
         render_evaluation(args, policy, save_dir)

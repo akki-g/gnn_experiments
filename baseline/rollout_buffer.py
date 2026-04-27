@@ -10,10 +10,11 @@ class IPPORolloutBuffer:
     adjacency matrix field.
     """
 
-    def __init__(self, gamma, gae_lambda, device):
+    def __init__(self, gamma, gae_lambda, device, discrete: bool = False):
         self.gamma = gamma
         self.gae_lambda = gae_lambda
         self.device = device
+        self.discrete = discrete
         self.obs = []
         self.actions = []
         self.rewards = []
@@ -79,13 +80,20 @@ class IPPORolloutBuffer:
         N = self.obs[0].shape[1]
 
         obs       = torch.stack(self.obs).to(device=self.device, dtype=torch.float32)       # (T, E, N, obs_dim)
-        actions   = torch.stack(self.actions).to(device=self.device, dtype=torch.float32)   # (T, E, N, act_dim)
         log_probs = torch.stack(self.log_probs).to(device=self.device, dtype=torch.float32) # (T, E, N)
         values    = torch.stack(self.values).to(device=self.device, dtype=torch.float32)    # (T, E, N)
 
+        if self.discrete:
+            actions = torch.stack(self.actions).to(device=self.device, dtype=torch.long)    # (T, E, N)
+        else:
+            actions = torch.stack(self.actions).to(device=self.device, dtype=torch.float32) # (T, E, N, act_dim)
+
         # Merge T and E into one shuffleable batch dimension
         obs       = obs.reshape(T * E, N, -1)
-        actions   = actions.reshape(T * E, N, -1)
+        if self.discrete:
+            actions = actions.reshape(T * E, N)      # (T*E, N) — no trailing dim
+        else:
+            actions = actions.reshape(T * E, N, -1)  # (T*E, N, act_dim)
         log_probs = log_probs.reshape(T * E, N)
         values    = values.reshape(T * E, N)
         advantages = self.advantages.reshape(T * E, N)

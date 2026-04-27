@@ -267,7 +267,7 @@ class GuidedCoverageAdapter:
 
     def __init__(
             self,
-            num_envs: int, 
+            num_envs: int,
             device: torch.device,
             n_scouts: int = 2,
             n_intercs: int = 2,
@@ -276,6 +276,8 @@ class GuidedCoverageAdapter:
             world_size: float = 2.0,
             scout_fov: float = 1.5,
             interc_fov: float = 0.3,
+            discrete: bool = False,
+            n_actions: int = 5,
     ):
         self.device = device
         self.n_scouts = n_scouts
@@ -283,23 +285,40 @@ class GuidedCoverageAdapter:
         self.n_intruders = 0 # allows it to be compatible w the build_ssn_input method
         self.n_zones = n_zones
         self._world_size = world_size
+        self.discrete = discrete
+        self._n_actions = n_actions
 
         self.n_defenders = n_scouts + n_intercs
 
-        self.env = vmas.make_env(
-            scenario=Scenario(),
-            num_envs=num_envs,
-            device=device,
-            continuous_actions=True,
-            clamp_actions=True,
-            max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS never resets self.steps after done, causing stale done signals
-            n_scouts=n_scouts,
-            n_intercs=n_intercs,
-            n_zones=n_zones,
-            world_size=world_size,
-            scout_fov=scout_fov,
-            interc_fov=interc_fov
-        )
+        if discrete:
+            self.env = vmas.make_env(
+                scenario=Scenario(),
+                num_envs=num_envs,
+                device=device,
+                continuous_actions=False,
+                max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS never resets self.steps after done, causing stale done signals
+                n_scouts=n_scouts,
+                n_intercs=n_intercs,
+                n_zones=n_zones,
+                world_size=world_size,
+                scout_fov=scout_fov,
+                interc_fov=interc_fov
+            )
+        else:
+            self.env = vmas.make_env(
+                scenario=Scenario(),
+                num_envs=num_envs,
+                device=device,
+                continuous_actions=True,
+                clamp_actions=True,
+                max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS never resets self.steps after done, causing stale done signals
+                n_scouts=n_scouts,
+                n_intercs=n_intercs,
+                n_zones=n_zones,
+                world_size=world_size,
+                scout_fov=scout_fov,
+                interc_fov=interc_fov
+            )
 
         # FIX-1B: explicit step counter so dones fire reliably at max_steps
         # (guards against VMAS version differences or scenario.done() always returning False)
@@ -330,9 +349,13 @@ class GuidedCoverageAdapter:
         self._cached_pos = None
 
     @property
+    def n_actions(self) -> int:
+        return self._n_actions
+
+    @property
     def obs_dim(self) -> int:
         return self._obs_dim
-    
+
     @property
     def state_dim(self) -> int:
         return self._state_dim
@@ -371,6 +394,12 @@ class GuidedCoverageAdapter:
         """
         return [defender_actions[:, i] for i in range(self.n_defenders)]
 
+    def _dispatch_actions(self, defender_actions: torch.Tensor):
+        if self.discrete:
+            return [defender_actions[:, j].long() for j in range(self.n_defenders)]
+        else:
+            return [defender_actions[:, j] for j in range(self.n_defenders)]
+
     # gnn-mappo and ippo interface
 
     def reset(self):
@@ -395,7 +424,7 @@ class GuidedCoverageAdapter:
         returns: obs, rewards, dones, info, positions
         """
 
-        all_actions = self._make_action_list(defender_actions)
+        all_actions = self._dispatch_actions(defender_actions)
         all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
 
         # FIX-1B: force dones at max_steps regardless of VMAS internal behavior
@@ -488,7 +517,7 @@ class GuidedCoverageAdapter:
             info: dict 
         """
         
-        all_actions = self._make_action_list(defender_actions)
+        all_actions = self._dispatch_actions(defender_actions)
         all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
 
         # FIX-1B: force dones at max_steps regardless of VMAS internal behavior

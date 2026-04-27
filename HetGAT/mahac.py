@@ -20,20 +20,21 @@ class MAHAC:
     def __init__(
             self,
             policy: HetNetPolicy,
-            critic: HetNetCritic, 
+            critic: HetNetCritic,
             lr_actor: float = 3e-4,
             lr_critic: float = 1e-3,
             critic_epochs: int = 1,
             gamma: float = 0.99,
             lam: float = 0.95,
             clip_eps: float = 0.2,
-            entropy_coef: float = 0.01, 
+            entropy_coef: float = 0.01,
             value_coef: float = 0.25, # was 0.5
             max_grad_norm: float = 0.5,
             ppo_epochs: int = 4,
-            log_std_min: float = -1.5 # clamp to prevent entropy collapse
+            log_std_min: float = -1.5, # clamp to prevent entropy collapse
+            discrete: bool = False,
             ):
-        
+
         self.policy = policy
         self.critic = critic
         self.gamma = gamma
@@ -44,6 +45,7 @@ class MAHAC:
         self.max_grad_norm = max_grad_norm
         self.ppo_epochs = ppo_epochs
         self.log_std_min = log_std_min
+        self.discrete = discrete
 
         self.critic_epochs = critic_epochs
         self.actor_optim = torch.optim.Adam(
@@ -120,8 +122,12 @@ class MAHAC:
         flat_state_i = buffer.interc_states.reshape(T*B, n_i, -1)
         flat_positions = buffer.positions.reshape(T*B, n_s+n_i, -1)
         flat_ssn = buffer.ssn_inputs.reshape(T*B, -1)
-        flat_actions_s = buffer.scout_actions.reshape(T*B, n_s, -1)
-        flat_actions_i = buffer.interc_actions.reshape(T*B, n_i, -1)
+        if self.discrete:
+            flat_actions_s = buffer.scout_actions.reshape(T*B, n_s)
+            flat_actions_i = buffer.interc_actions.reshape(T*B, n_i)
+        else:
+            flat_actions_s = buffer.scout_actions.reshape(T*B, n_s, -1)
+            flat_actions_i = buffer.interc_actions.reshape(T*B, n_i, -1)
 
 
         flat_hidden_s = {
@@ -174,8 +180,12 @@ class MAHAC:
             )
             
             #new log probs
-            new_lp_s = scout_dist.log_prob(flat_actions_s).sum(dim=-1)
-            new_lp_i = interc_dist.log_prob(flat_actions_i).sum(dim=-1)
+            if self.discrete:
+                new_lp_s = scout_dist.log_prob(flat_actions_s)   # no sum for Categorical
+                new_lp_i = interc_dist.log_prob(flat_actions_i)
+            else:
+                new_lp_s = scout_dist.log_prob(flat_actions_s).sum(dim=-1)
+                new_lp_i = interc_dist.log_prob(flat_actions_i).sum(dim=-1)
 
             #ppo ratios
             ratio_s = torch.exp(new_lp_s - flat_old_lp_s)
@@ -205,8 +215,12 @@ class MAHAC:
             policy_loss_i = -torch.min(surr1_i, surr2_i).mean()
 
             #entropy
-            entropy_s = scout_dist.entropy().sum(dim=-1).mean()
-            entropy_i = interc_dist.entropy().sum(dim=-1).mean()
+            if self.discrete:
+                entropy_s = scout_dist.entropy().mean()
+                entropy_i = interc_dist.entropy().mean()
+            else:
+                entropy_s = scout_dist.entropy().sum(dim=-1).mean()
+                entropy_i = interc_dist.entropy().sum(dim=-1).mean()
 
             #combined actor loss
             actor_loss = (
@@ -227,10 +241,11 @@ class MAHAC:
             nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
             self.actor_optim.step()
 
-            # clamp log std (min and max)
-            with torch.no_grad():
-                self.policy.log_std_scout.clamp_(min=self.log_std_min, max=0.5)
-                self.policy.log_std_interc.clamp_(min=self.log_std_min, max=0.5)
+            # clamp log std (min and max) — continuous mode only
+            if not self.discrete:
+                with torch.no_grad():
+                    self.policy.log_std_scout.clamp_(min=self.log_std_min, max=0.5)
+                    self.policy.log_std_interc.clamp_(min=self.log_std_min, max=0.5)
             
             total_policy_loss_s += policy_loss_s.item()
             total_policy_loss_i += policy_loss_i.item()
@@ -303,8 +318,14 @@ class MAHAC:
             'value_loss': total_value_loss / n_critic_updates,
             'entropy_scout': total_entropy_s / n_actor_updates,
             'entropy_interc': total_entropy_i / n_actor_updates,
-            'log_std_scout': self.policy.log_std_scout.data.mean().item(),
-            'log_std_interc': self.policy.log_std_interc.data.mean().item(),
+            'log_std_scout': (
+                self.policy.log_std_scout.data.mean().item()
+                if not self.discrete else float('nan')
+            ),
+            'log_std_interc': (
+                self.policy.log_std_interc.data.mean().item()
+                if not self.discrete else float('nan')
+            ),
             'ratio_scout_mean': total_ratio_s / n_actor_updates,
             'ratio_interc_mean': total_ratio_i / n_actor_updates,
             'ev_scout': ev_scout,

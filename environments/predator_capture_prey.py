@@ -355,35 +355,58 @@ class PredatorCapturePreyAdapter:
         scout_speed: float = 0.8,
         interceptor_speed: float = 0.8,
         step_penalty: float = -0.05,
+        discrete: bool = False,
+        n_actions: int = 5,
     ):
         self.num_envs = num_envs
         self.device = torch.device(device)
         self.n_scouts = n_scouts
         self.n_interceptors = n_interceptors
         self.n_defenders = n_scouts + n_interceptors
+        self.discrete = discrete
+        self._n_actions = n_actions
 
         self.n_intruders = 1
         self.n_zones = 1
         self._world_size = world_size
 
-        self.env = vmas.make_env(
-            scenario=Scenario(),
-            num_envs=num_envs,
-            device=device,
-            continuous_actions=True,
-            clamp_actions=True,
-            max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS max_steps causes stale done=True after step 80
-            n_scouts=n_scouts,
-            n_interceptors=n_interceptors,
-            world_size=world_size,
-            scout_fov=scout_fov,
-            interceptor_agent_fov=interceptor_agent_fov,
-            capture_radius=capture_radius,
-            found_radius=found_radius,
-            scout_speed=scout_speed,
-            interceptor_speed=interceptor_speed,
-            step_penalty=step_penalty,
-        )
+        if discrete:
+            self.env = vmas.make_env(
+                scenario=Scenario(),
+                num_envs=num_envs,
+                device=device,
+                continuous_actions=False,
+                max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS max_steps causes stale done=True after step 80
+                n_scouts=n_scouts,
+                n_interceptors=n_interceptors,
+                world_size=world_size,
+                scout_fov=scout_fov,
+                interceptor_agent_fov=interceptor_agent_fov,
+                capture_radius=capture_radius,
+                found_radius=found_radius,
+                scout_speed=scout_speed,
+                interceptor_speed=interceptor_speed,
+                step_penalty=step_penalty,
+            )
+        else:
+            self.env = vmas.make_env(
+                scenario=Scenario(),
+                num_envs=num_envs,
+                device=device,
+                continuous_actions=True,
+                clamp_actions=True,
+                max_steps=None,  # FIX-P1-B1: adapter owns all truncation via _step_counters; VMAS max_steps causes stale done=True after step 80
+                n_scouts=n_scouts,
+                n_interceptors=n_interceptors,
+                world_size=world_size,
+                scout_fov=scout_fov,
+                interceptor_agent_fov=interceptor_agent_fov,
+                capture_radius=capture_radius,
+                found_radius=found_radius,
+                scout_speed=scout_speed,
+                interceptor_speed=interceptor_speed,
+                step_penalty=step_penalty,
+            )
 
         self._obs_dim = get_obs_dim(n_scouts, n_interceptors)
         self._state_dim = 6   # vel(2) + pos(2) + type_oh(2)
@@ -402,6 +425,10 @@ class PredatorCapturePreyAdapter:
         self._cached_pos = None
         # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py
         self._step_counters = torch.zeros(num_envs, device=self.device, dtype=torch.long)
+
+    @property
+    def n_actions(self) -> int:
+        return self._n_actions
 
     @property
     def obs_dim(self) -> int:
@@ -437,6 +464,12 @@ class PredatorCapturePreyAdapter:
     def _make_action_list(self, defender_actions: torch.Tensor):
         return [defender_actions[:, j, :] for j in range(self.n_defenders)]
 
+    def _dispatch_actions(self, defender_actions: torch.Tensor):
+        if self.discrete:
+            return [defender_actions[:, j].long() for j in range(self.n_defenders)]
+        else:
+            return [defender_actions[:, j, :] for j in range(self.n_defenders)]
+
     # gnn-mappo / ippo interface
     def reset(self):
         all_obs = self.env.reset()
@@ -450,7 +483,7 @@ class PredatorCapturePreyAdapter:
         returns: obs (B,N,obs_dim), rewards (B,N), dones (B,), info, positions (B, N, 2)
         """
 
-        all_actions = self._make_action_list(defender_actions)
+        all_actions = self._dispatch_actions(defender_actions)
         all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
 
         # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py
@@ -536,7 +569,7 @@ class PredatorCapturePreyAdapter:
         hetnet interface takes stacked actions and returns rewards, dones, info
         """
 
-        all_actions = self._make_action_list(defender_actions)
+        all_actions = self._dispatch_actions(defender_actions)
         all_obs, all_rew, dones, all_info = self.env.step(all_actions)
 
         # FIX-P1-B1: port step-counter FIX-1B from guided_coverage.py

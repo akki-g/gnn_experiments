@@ -13,16 +13,17 @@ class MAHACBuffer:
             self,
             T: int, # rollout len
             B: int, # num envs
-            n_scouts: int, 
-            n_interc: int, 
+            n_scouts: int,
+            n_interc: int,
             obs_dim_scout: int,
             obs_dim_interc: int,
             state_dim_scout: int,
             state_dim_interc: int,
-            action_dim: int, 
-            ssn_dim: int, 
+            action_dim: int,
+            ssn_dim: int,
             hidden_dim: int,
             device: torch.device,
+            discrete: bool = False,
         ):
 
         self.T = T
@@ -30,19 +31,26 @@ class MAHACBuffer:
         self.n_s = n_scouts
         self.n_i = n_interc
         self.device = device
+        self.discrete = discrete
         self.ptr = 0 # next timestep
 
         # scout tensors
         self.scout_obs = torch.zeros(T, B, n_scouts, obs_dim_scout, device=device)
         self.scout_states = torch.zeros(T, B, n_scouts, state_dim_scout, device=device)
-        self.scout_actions = torch.zeros(T, B, n_scouts, action_dim, device=device)
+        if discrete:
+            self.scout_actions = torch.zeros(T, B, n_scouts, dtype=torch.long, device=device)
+        else:
+            self.scout_actions = torch.zeros(T, B, n_scouts, action_dim, device=device)
         self.scout_log_probs = torch.zeros(T, B, n_scouts, device=device)
         self.scout_values = torch.zeros(T, B, device=device)
 
         #interc tensors
         self.interc_obs = torch.zeros(T, B, n_interc, obs_dim_interc, device=device)
         self.interc_states = torch.zeros(T, B, n_interc, state_dim_interc, device=device)
-        self.interc_actions = torch.zeros(T, B, n_interc, action_dim, device=device)
+        if discrete:
+            self.interc_actions = torch.zeros(T, B, n_interc, dtype=torch.long, device=device)
+        else:
+            self.interc_actions = torch.zeros(T, B, n_interc, action_dim, device=device)
         self.interc_log_probs = torch.zeros(T, B, n_interc, device=device)
         self.interc_values = torch.zeros(T, B, device=device)
 

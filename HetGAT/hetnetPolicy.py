@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torch.distributions import Normal
+from torch.distributions import Normal, Categorical
 
 from HetGAT.preProcessing import ClassPreprocessor
 from HetGAT.hetgatLayer import HetGATLayer
@@ -13,18 +13,20 @@ class HetNetPolicy(nn.Module):
     does not own the critic - CTDE
     """
 
-    def __init__(self, 
-                obs_dim_scout: int, 
+    def __init__(self,
+                obs_dim_scout: int,
                 obs_dim_interc: int,
                 state_dim_scout: int,
                 state_dim_interc: int,
                 action_dim: int,
                 hidden_dim: int = 64,
                 n_heads: int = 4,
-                head_dim: int = 16, 
+                head_dim: int = 16,
                 n_layers: int = 3,
                 ssn_input_dim: int = 5,
-                r_comm: float = 1.0
+                r_comm: float = 1.0,
+                discrete: bool = False,
+                n_actions: int = 5,
                 ):
         super().__init__()
 
@@ -32,6 +34,9 @@ class HetNetPolicy(nn.Module):
         self.n_heads = n_heads
         self.head_dim = head_dim
         self.action_dim = action_dim
+        self.discrete = discrete
+        self.n_actions = n_actions
+        out_dim = n_actions if discrete else action_dim
 
         self.preprocess_scout = ClassPreprocessor(obs_dim_scout, state_dim_scout, hidden_dim)
         self.preprocess_interc = ClassPreprocessor(obs_dim_interc, state_dim_interc, hidden_dim)
@@ -64,17 +69,18 @@ class HetNetPolicy(nn.Module):
         self.action_head_scout = nn.Sequential(
             nn.Linear(final_feat_dim, final_feat_dim),
             nn.ReLU(),
-            nn.Linear(final_feat_dim, action_dim)
+            nn.Linear(final_feat_dim, out_dim)
         )
 
         self.action_head_interc = nn.Sequential(
             nn.Linear(final_feat_dim, final_feat_dim),
             nn.ReLU(),
-            nn.Linear(final_feat_dim, action_dim)
+            nn.Linear(final_feat_dim, out_dim)
         )
 
-        self.log_std_scout = nn.Parameter(torch.zeros(action_dim))
-        self.log_std_interc = nn.Parameter(torch.zeros(action_dim))
+        if not discrete:
+            self.log_std_scout = nn.Parameter(torch.zeros(action_dim))
+            self.log_std_interc = nn.Parameter(torch.zeros(action_dim))
 
     
     def forward(self,
@@ -135,27 +141,36 @@ class HetNetPolicy(nn.Module):
         h_ssn = h_ssn + self.ssn_enrich(agent_summary) # residual enrichment
 
         # action heads
-        scout_mean = self.action_head_scout(h_scout)
-        interc_mean = self.action_head_interc(h_interc)
+        scout_logits = self.action_head_scout(h_scout)
+        interc_logits = self.action_head_interc(h_interc)
 
-        scout_std = self.log_std_scout.clamp(min=-5.0, max=2.0).exp().expand_as(scout_mean)
-        interc_std = self.log_std_interc.clamp(min=-5.0, max=2.0).exp().expand_as(interc_mean)
-
-        scout_dist = Normal(scout_mean, scout_std)
-        interc_dist = Normal(interc_mean, interc_std)
+        if self.discrete:
+            scout_dist = Categorical(logits=scout_logits)
+            interc_dist = Categorical(logits=interc_logits)
+        else:
+            scout_std = self.log_std_scout.clamp(min=-5.0, max=2.0).exp().expand_as(scout_logits)
+            interc_std = self.log_std_interc.clamp(min=-5.0, max=2.0).exp().expand_as(interc_logits)
+            scout_dist = Normal(scout_logits, scout_std)
+            interc_dist = Normal(interc_logits, interc_std)
 
         return scout_dist, interc_dist, h_ssn, new_hidden_s, new_hidden_i
     
     @staticmethod
     def sample_action(dist):
-        """Sample action from Normal distribution. No tanh — VMAS clamps via max_speed.
+        """Sample action from distribution.
+
+        For Categorical: log_prob is already a scalar per agent — no sum needed.
+        For Normal: log_prob is summed over action dims -> (B, n_agents).
 
         Returns:
-            action: raw sample from distribution
-            log_prob: log probability summed over action dims -> (B, n_agents)
+            action: sample from distribution
+            log_prob: log probability -> (B, n_agents)
         """
         action = dist.sample()
-        log_prob = dist.log_prob(action).sum(dim=-1)
+        if isinstance(dist, Categorical):
+            log_prob = dist.log_prob(action)  # already scalar per agent
+        else:
+            log_prob = dist.log_prob(action).sum(dim=-1)
         return action, log_prob
 
 

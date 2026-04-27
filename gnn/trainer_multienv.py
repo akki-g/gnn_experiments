@@ -30,25 +30,33 @@ class GNNTrainerMultiEnv:
             entropy_coef,
             device,
             r_comm,
-            total_timesteps,
-            rollout_length,
+            total_timesteps=100000,
+            rollout_length=128,
+            discrete: bool = False,
+            n_actions: int = 5,
     ):
         self.device = device
         self.adapter = adapter
         self.num_agents = adapter.n_defenders
-        self.num_envs = adapter.num_envs    
+        self.num_envs = adapter.num_envs
         self.r_comm = r_comm
+        self.discrete = discrete
+
+        assert getattr(adapter, 'discrete', False) == discrete, (
+            f"adapter.discrete={getattr(adapter, 'discrete', False)} vs trainer.discrete={discrete}"
+        )
 
         self.clip_eps = clip_eps
         self.value_coef = value_coef
         self.entropy_coef = entropy_coef
-        
+
         obs_dim = adapter.obs_dim
         action_dim = adapter.action_dim
 
         self.comm_policy = CommPolicy(
             obs_dim=obs_dim, hidden_dim=hidden_dim, action_dim=action_dim,
             F_feat=F_feat, G_feat=G_feat, K=K,
+            discrete=discrete, n_actions=n_actions,
         ).to(self.device)
         self.comm_optim = Adam(self.comm_policy.parameters(), lr=lr)
 
@@ -60,7 +68,7 @@ class GNNTrainerMultiEnv:
             self.critic = torch.compile(self.critic)
 
         # lr annealing
-        total_iter = total_timesteps // rollout_length
+        total_iter = max(total_timesteps // rollout_length, 1)
         self.policy_scheduler = torch.optim.lr_scheduler.LambdaLR(
             self.comm_optim, lr_lambda=lambda it: max(1 - it / total_iter, 0.05)
         )
@@ -68,7 +76,7 @@ class GNNTrainerMultiEnv:
             self.critic_optim, lr_lambda=lambda it: max(1-it/total_iter, 0.05)
         )
 
-        self.buffer = GNNRolloutBuffer(gamma=gamma, gae_lambda=gae_lambda, device=self.device)
+        self.buffer = GNNRolloutBuffer(gamma=gamma, gae_lambda=gae_lambda, device=self.device, discrete=discrete)
 
         self._running_episode_returns = torch.zeros(self.num_envs, device=self.device)
         self.metrics_history = {
@@ -109,7 +117,10 @@ class GNNTrainerMultiEnv:
                 E, N = S.shape[0], S.shape[1]
                 S_isolated = torch.eye(N, device=self.device).unsqueeze(0).expand(E, -1, -1)
                 actions_nocm, _, _ = self.comm_policy.get_actions(obs=obs_tensor, S=S_isolated)
-                comm_saliency = (actions - actions_nocm).norm(dim=-1).mean(dim=-1)
+                if self.discrete:
+                    comm_saliency = (actions != actions_nocm).float().mean(dim=-1)
+                else:
+                    comm_saliency = (actions - actions_nocm).norm(dim=-1).mean(dim=-1)
                 comm_saliency_accum.append(comm_saliency.mean().item())
 
                 # critic (E, N, obs_dim) -> (E, N)
@@ -210,8 +221,9 @@ class GNNTrainerMultiEnv:
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.comm_policy.parameters(), max_norm=0.5)
                 self.comm_optim.step()
-                with torch.no_grad():
-                    self.comm_policy.log_std.clamp_(min=-1.5, max=0.5)
+                if not self.discrete:
+                    with torch.no_grad():
+                        self.comm_policy.log_std.clamp_(min=-1.5, max=0.5)
                 policy_losses.append(policy_loss.item())
                 entropies.append(entropy_loss.item())
 

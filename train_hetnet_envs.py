@@ -82,6 +82,7 @@ def make_adapter(args, device):
             n_scouts=args.n_scouts,
             n_interceptors=args.n_interc,
             max_steps=args.max_steps,
+            discrete=args.discrete,
         )
     else:
         return PredatorCapturePreyAdapter(
@@ -90,6 +91,7 @@ def make_adapter(args, device):
             n_scouts=args.n_scouts,
             n_interceptors=args.n_interc,
             max_steps=args.max_steps,
+            discrete=args.discrete,
         )
 
 
@@ -114,6 +116,8 @@ def run_ippo(args, device):
         value_coef=value_coef,
         entropy_coef=entropy_coef,
         device=device,
+        discrete=args.discrete,
+        n_actions=5,
     )
 
     total_steps = args.iters * args.rollout_length
@@ -191,6 +195,8 @@ def run_gnn(args, device):
         r_comm=args.r_comm,
         total_timesteps=total_steps,
         rollout_length=args.rollout_length,
+        discrete=args.discrete,
+        n_actions=5,
     )
 
     while steps_done < total_steps:
@@ -275,6 +281,8 @@ def run_hetnet(args, device):
         n_layers=HETNET_N_LAYERS,
         ssn_input_dim=HETNET_SSN_DIM,
         r_comm=args.r_comm,
+        discrete=args.discrete,
+        n_actions=5,
     ).to(device)
 
     critic = HetNetCritic(
@@ -298,6 +306,7 @@ def run_hetnet(args, device):
         max_grad_norm=0.5,
         ppo_epochs=4,
         log_std_min=-1.5,
+        discrete=args.discrete,
     )
 
     metrics_history = {
@@ -331,6 +340,7 @@ def run_hetnet(args, device):
             ssn_dim=HETNET_SSN_DIM,
             hidden_dim=hidden_dim,
             device=device,
+            discrete=args.discrete,
         )
 
         bootstrap_values = collect_rollout(
@@ -369,6 +379,12 @@ def run_hetnet(args, device):
                 metrics_history[key].append(update_metrics.get(key, 0.0))
 
         if i == 1 or i % LOG_EVERY == 0 or steps_done >= total_steps:
+            log_std_str = ""
+            if not args.discrete:
+                log_std_str = (
+                    f"log_std_s={update_metrics['log_std_scout']:.2f} "
+                    f"log_std_i={update_metrics['log_std_interc']:.2f}"
+                )
             print(
                 f"[HetNet] iter={i}/{args.iters} "
                 f"steps={steps_done}/{total_steps} | "
@@ -382,8 +398,7 @@ def run_hetnet(args, device):
                 f"ev_i_post={update_metrics['ev_interc_post']:.3f} "
                 f"r_s={update_metrics['ratio_scout_mean']:.3f} "
                 f"r_i={update_metrics['ratio_interc_mean']:.3f} "
-                f"log_std_s={update_metrics['log_std_scout']:.2f} "  # FIX-P2-B3: label matches value
-                f"log_std_i={update_metrics['log_std_interc']:.2f}",  # FIX-P2-B3
+                + log_std_str,
                 flush=True,
             )
 
@@ -424,6 +439,8 @@ def main():
     parser.add_argument("--n_epochs", type=int, default=5)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output_dir", type=str, default="outputs/hetnet_envs")
+    parser.add_argument("--discrete", action="store_true", default=False,
+                        help="Use discrete action space (5 motion primitives)")
     args = parser.parse_args()
 
     # auto-set pcp default: n_interc=2 if not explicitly set

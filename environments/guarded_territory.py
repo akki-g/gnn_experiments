@@ -257,7 +257,7 @@ class Scenario(BaseScenario):
         if hasattr(agent, "agent_type") and agent.agent_type == INTRUDER:
             agent.action.u = self._get_intruder_actions(agent)
 
-    def observation(self, agent: Agent) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
+    def observation(self, agent: Agent):
         batch = self.world.batch_dim
         device = self.world.device
 
@@ -446,6 +446,8 @@ class GuardedTerritoryAdapter:
         n_intruders: int = 3,
         n_zones: int = 2,
         max_steps: int = 200,
+        discrete: bool = False,
+        n_actions: int = 5,
         **kwargs,
     ):
         self.num_envs = num_envs
@@ -455,12 +457,14 @@ class GuardedTerritoryAdapter:
         self.n_intruders = n_intruders
         self.n_defenders = n_scouts + n_interceptors
         self.n_zones = n_zones
-        
+        self.discrete = discrete
+        self._n_actions = n_actions
+
         self.env = vmas.make_env(
             scenario=Scenario(),
             num_envs=num_envs,
             device=device,
-            continuous_actions=True,
+            continuous_actions=False if discrete else True,
             max_steps=max_steps,
             n_scouts=n_scouts,
             n_interceptors=n_interceptors,
@@ -499,21 +503,35 @@ class GuardedTerritoryAdapter:
         positions = defender_obs[:, :, 2:4].clone()
         return defender_obs, positions
 
+    def _dispatch_actions(self, defender_actions: torch.Tensor):
+        """Build the full action list for all agents (defenders + intruders).
+        Intruder actions are scripted via process_action; we still need a slot for them.
+        Discrete: defender slots get int64 indices; intruder slots get zeros (ignored).
+        Continuous: defender slots get (B, 2) float vectors; intruder slots get zeros.
+        """
+        if self.discrete:
+            # Build list of per-agent int tensors for the whole agent set
+            all_actions = [
+                torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+                for _ in range(self._n_agents_total)
+            ]
+            for local_j, global_i in enumerate(self.defender_indices):
+                all_actions[global_i] = defender_actions[:, local_j].long()
+            return all_actions
+        else:
+            all_actions_tensor = torch.zeros(
+                self.num_envs, self._n_agents_total, self._action_dim,
+                device=self.device
+            )
+            all_actions_tensor[:, self._defender_idx] = defender_actions
+            return [all_actions_tensor[:, i] for i in range(self._n_agents_total)]
+
     def step(self, defender_actions: torch.Tensor):
         """
-        Args: defender_actions (num_envs, n_defenders, 2)
+        Args: defender_actions (num_envs, n_defenders, 2) continuous or (num_envs, n_defenders) discrete
         Returns: obs, rewards, dones, info, positions
         """
-        # pre allocate full action tensor on device
-        all_actions_tensor = torch.zeros(
-            self.num_envs, self._n_agents_total, self._action_dim,
-            device=self.device
-        )
-
-        # scatter defender actions to right agent slots
-        all_actions_tensor[:, self._defender_idx] = defender_actions
-
-        all_actions = [all_actions_tensor[:, i] for i in range(self._n_agents_total)]
+        all_actions = self._dispatch_actions(defender_actions)
 
         all_obs, all_rewards, dones, all_infos = self.env.step(all_actions)
 
@@ -592,6 +610,10 @@ class GuardedTerritoryAdapter:
       return defender_obs, positions
 
     @property
+    def n_actions(self) -> int:
+        return self._n_actions
+
+    @property
     def action_dim(self) -> int:
         return 2
 
@@ -659,13 +681,7 @@ class GuardedTerritoryAdapter:
             done: (B, ) ep term
             info: dict
         """
-        # preallocate full action tensors 
-        all_actions_tensor = torch.zeros(
-            self.num_envs, self._n_agents_total, self._action_dim,
-            device=self.device
-        )
-        all_actions_tensor[:, self._defender_idx] = defender_actions
-        all_actions = [all_actions_tensor[:, i] for i in range(self._n_agents_total)]
+        all_actions = self._dispatch_actions(defender_actions)
 
         all_obs, all_rew, dones, all_infos = self.env.step(all_actions)
 

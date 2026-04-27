@@ -35,10 +35,17 @@ class IPPOTrainer:
         value_coef,
         entropy_coef,
         device,
+        discrete: bool = False,
+        n_actions: int = 5,
     ):
         self.device      = device
         self.adapter     = adapter
         self.num_agents  = adapter.n_defenders
+        self.discrete    = discrete
+
+        assert getattr(adapter, 'discrete', False) == discrete, (
+            f"adapter.discrete={getattr(adapter, 'discrete', False)} vs trainer.discrete={discrete}"
+        )
 
         self.clip_eps     = clip_eps
         self.value_coef   = value_coef
@@ -47,13 +54,13 @@ class IPPOTrainer:
         obs_dim    = adapter.obs_dim
         action_dim = adapter.action_dim
 
-        self.policy       = IPPOPolicy(obs_dim, hidden_dim, action_dim).to(self.device)
+        self.policy       = IPPOPolicy(obs_dim, hidden_dim, action_dim, discrete=discrete, n_actions=n_actions).to(self.device)
         self.policy_optim = Adam(self.policy.parameters(), lr=lr)
 
         self.critic       = CriticNetwork(obs_dim, hidden_dim, device=self.device)
         self.critic_optim = Adam(self.critic.parameters(), lr=lr)
 
-        self.buffer = IPPORolloutBuffer(gamma=gamma, gae_lambda=gae_lambda, device=self.device)
+        self.buffer = IPPORolloutBuffer(gamma=gamma, gae_lambda=gae_lambda, device=self.device, discrete=discrete)
 
         # Per-env running return tracker - shape (E,)
         self._running_episode_returns = torch.zeros(adapter.num_envs, device=self.device)
@@ -204,8 +211,9 @@ class IPPOTrainer:
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.policy.parameters(), max_norm=0.5)
                 self.policy_optim.step()
-                with torch.no_grad():
-                    self.policy.log_std.clamp_(min=-1.5, max=0.5)
+                if not self.discrete:
+                    with torch.no_grad():
+                        self.policy.log_std.clamp_(min=-1.5, max=0.5)
 
                 policy_losses.append(policy_loss.item())
                 entropies.append(entropy_loss.item())

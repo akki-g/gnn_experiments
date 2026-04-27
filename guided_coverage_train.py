@@ -91,7 +91,7 @@ def plot_and_save(metrics_history, title, output_dir, filename):
 
 
 #adapter construction
-def make_adapter(device):
+def make_adapter(device, discrete=False):
     return GuidedCoverageAdapter(
         num_envs=NUM_ENVS,
         device=device,
@@ -102,10 +102,11 @@ def make_adapter(device):
         world_size=WORLD_SIZE,
         scout_fov=SCOUT_FOV,
         interc_fov=INTERCEPTOR_FOV,
+        discrete=discrete,
     )
 
 # ippo training
-def run_ippo(device, output_dir = "ippo_gc_run"):
+def run_ippo(device, output_dir="ippo_gc_run", discrete=False):
     from baseline.trainer import IPPOTrainer
     print(f"\n=== IPPO baseline (Guided Coverage) | {NUM_ENVS} envs | "
           f"device={device} ===", flush=True)
@@ -113,7 +114,7 @@ def run_ippo(device, output_dir = "ippo_gc_run"):
     torch.manual_seed(SEED)
     np.random.seed(SEED)
 
-    adapter = make_adapter(device)
+    adapter = make_adapter(device, discrete=discrete)
 
     trainer = IPPOTrainer(
         adapter=adapter,
@@ -125,6 +126,8 @@ def run_ippo(device, output_dir = "ippo_gc_run"):
         value_coef=value_coef,
         entropy_coef=entropy_coef,
         device=device,
+        discrete=discrete,
+        n_actions=5,
     )
     
     total_steps = ITERATIONS * ROLLOUT_LENGTH   
@@ -176,16 +179,16 @@ def run_ippo(device, output_dir = "ippo_gc_run"):
 
 
 # gnn-mappo
-def run_gnn(k, r_comm, device, output_dir):
+def run_gnn(k, r_comm, device, output_dir, discrete=False):
     from gnn.trainer_multienv import GNNTrainerMultiEnv
 
     config_name = f"K{k}_r{r_comm:.1f}"
     print(f"\n=== GNN-MAPPO | K={k}, r_comm={r_comm} (Guided Coverage) | "
           f"device={device} ===", flush=True)
-    
+
     torch.manual_seed(SEED)
     np.random.seed(SEED)
-    adapter = make_adapter(device)
+    adapter = make_adapter(device, discrete=discrete)
 
     total_timesteps = ITERATIONS * ROLLOUT_LENGTH
     steps_done = 0
@@ -205,7 +208,9 @@ def run_gnn(k, r_comm, device, output_dir):
         device=device,
         r_comm=r_comm,
         total_timesteps=ITERATIONS*ROLLOUT_LENGTH,
-        rollout_length=ROLLOUT_LENGTH
+        rollout_length=ROLLOUT_LENGTH,
+        discrete=discrete,
+        n_actions=5,
     )
     
     for i in range(1, ITERATIONS+1):
@@ -253,8 +258,8 @@ def run_gnn(k, r_comm, device, output_dir):
         flush=True,
     )
 
-# hetnet 
-def run_hetnet(r_comm, device, output_dir):
+# hetnet
+def run_hetnet(r_comm, device, output_dir, discrete=False):
 
     from HetGAT.hetnetPolicy import HetNetPolicy
     from HetGAT.critic import HetNetCritic
@@ -268,7 +273,7 @@ def run_hetnet(r_comm, device, output_dir):
     torch.manual_seed(SEED)
     np.random.seed(SEED)
 
-    adapter = make_adapter(device=device)
+    adapter = make_adapter(device=device, discrete=discrete)
 
     # dims
     obs_dim_s = adapter.obs_portion_dim
@@ -293,6 +298,8 @@ def run_hetnet(r_comm, device, output_dir):
         n_layers=HETNET_N_LAYERS,
         ssn_input_dim=HETNET_SSN_DIM,
         r_comm=r_comm,
+        discrete=discrete,
+        n_actions=5,
     ).to(device)
 
     # build critic (per-class) both read only from ssn
@@ -317,7 +324,8 @@ def run_hetnet(r_comm, device, output_dir):
         value_coef=value_coef,
         max_grad_norm=0.5,
         ppo_epochs=4,
-        log_std_min=-1.5
+        log_std_min=-1.5,
+        discrete=discrete,
     )
 
     # metrics history from mahac.update()   
@@ -354,6 +362,7 @@ def run_hetnet(r_comm, device, output_dir):
             ssn_dim=HETNET_SSN_DIM,
             hidden_dim=hidden_dim,
             device=device,
+            discrete=discrete,
         )
 
         # collect T steps of experience
@@ -407,6 +416,12 @@ def run_hetnet(r_comm, device, output_dir):
                 metrics_history[key].append(update_metrics.get(key,0.0))
         
         if i == 1 or i % LOG_EVERY == 0 or steps_done >= total_steps:
+            log_std_str = ""
+            if not discrete:
+                log_std_str = (
+                    f"log_std_s={update_metrics['log_std_scout']:.2f} "
+                    f"log_std_i={update_metrics['log_std_interc']:.2f}"
+                )
             print(
                 f"[HetNet] iter={i}/{ITERATIONS} "
                 f"steps={steps_done}/{total_steps} | "
@@ -420,8 +435,7 @@ def run_hetnet(r_comm, device, output_dir):
                 f"ev_i_post={update_metrics['ev_interc_post']:.3f} "
                 f"r_s={update_metrics['ratio_scout_mean']:.3f} "
                 f"r_i={update_metrics['ratio_interc_mean']:.3f} "
-                f"log_std_s={update_metrics['log_std_scout']:.2f} "  # FIX-P2-B3: label matches value
-                f"log_std_i={update_metrics['log_std_interc']:.2f}",  # FIX-P2-B3
+                + log_std_str,
                 flush=True,
             )
  
@@ -451,6 +465,8 @@ def main():
     parser.add_argument("--k", type=int, default=2)
     parser.add_argument("--r_comm", type=float, default=1.0)
     parser.add_argument("--output_dir", type=str, default="outputs/guided_coverage")
+    parser.add_argument("--discrete", action="store_true", default=False,
+                        help="Use discrete action space (5 motion primitives)")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -469,11 +485,11 @@ def main():
           f"{N_ZONES} zones | world={WORLD_SIZE}", flush=True)
 
     if args.algo == "gnn":
-        run_gnn(args.k, args.r_comm, device, args.output_dir)
+        run_gnn(args.k, args.r_comm, device, args.output_dir, discrete=args.discrete)
     elif args.algo == "ippo":
-        run_ippo(device, args.output_dir)
+        run_ippo(device, args.output_dir, discrete=args.discrete)
     else:
-        run_hetnet(args.r_comm, device, args.output_dir)
+        run_hetnet(args.r_comm, device, args.output_dir, discrete=args.discrete)
 
 
 if __name__ == "__main__":

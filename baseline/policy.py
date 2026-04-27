@@ -1,20 +1,24 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Normal
+from torch.distributions import Normal, Categorical
 
 
 class IPPOPolicy(nn.Module):
     """Shared-weight MLP policy baseline without graph communication."""
 
-    def __init__(self, obs_dim, hidden_dim, action_dim):
+    def __init__(self, obs_dim, hidden_dim, action_dim, discrete: bool = False, n_actions: int = 5):
         super().__init__()
+        self.discrete = discrete
+        self.n_actions = n_actions
+        out_dim = n_actions if discrete else action_dim
         self.fc1 = nn.Linear(obs_dim, hidden_dim)
         self.fc2 = nn.Linear(hidden_dim, hidden_dim)
         self.fc3 = nn.Linear(hidden_dim, hidden_dim)
         self.fc4 = nn.Linear(hidden_dim, hidden_dim)
-        self.fc5 = nn.Linear(hidden_dim, action_dim)
-        self.log_std = nn.Parameter(torch.zeros(action_dim))
+        self.fc5 = nn.Linear(hidden_dim, out_dim)
+        if not discrete:
+            self.log_std = nn.Parameter(torch.zeros(action_dim))
         self._init_weights()
 
     def _init_weights(self):
@@ -38,20 +42,31 @@ class IPPOPolicy(nn.Module):
         return self.fc5(x)
 
     def get_actions(self, obs):
-        mean = self.forward(obs)
-        std = self.log_std.clamp(min=-2.0, max=0.5).exp().expand_as(mean)
-        dist = Normal(mean, std)
-        action = dist.sample()
-
-        log_prob = dist.log_prob(action).sum(dim=-1)
-        entropy = dist.entropy().sum(dim=-1)
-        return action, log_prob, entropy
+        if self.discrete:
+            logits = self.forward(obs)
+            dist = Categorical(logits=logits)
+            action = dist.sample()           # (...,) long
+            log_prob = dist.log_prob(action)  # (...,) scalar
+            entropy = dist.entropy()          # (...,) scalar
+            return action, log_prob, entropy
+        else:
+            mean = self.forward(obs)
+            std = self.log_std.clamp(min=-2.0, max=0.5).exp().expand_as(mean)
+            dist = Normal(mean, std)
+            action = dist.sample()
+            log_prob = dist.log_prob(action).sum(dim=-1)
+            entropy = dist.entropy().sum(dim=-1)
+            return action, log_prob, entropy
 
     def evaluate_actions(self, obs, actions):
-        mean = self.forward(obs)
-        std = self.log_std.clamp(min=-2.0, max=0.5).exp().expand_as(mean)
-        dist = Normal(mean, std)
-
-        log_prob = dist.log_prob(actions).sum(dim=-1)
-        entropy = dist.entropy().sum(dim=-1)
-        return log_prob, entropy
+        if self.discrete:
+            logits = self.forward(obs)
+            dist = Categorical(logits=logits)
+            return dist.log_prob(actions), dist.entropy()
+        else:
+            mean = self.forward(obs)
+            std = self.log_std.clamp(min=-2.0, max=0.5).exp().expand_as(mean)
+            dist = Normal(mean, std)
+            log_prob = dist.log_prob(actions).sum(dim=-1)
+            entropy = dist.entropy().sum(dim=-1)
+            return log_prob, entropy

@@ -1,3 +1,0 @@
-/home/ak565492/expenv/lib/python3.11/site-packages/torch/_inductor/compile_fx.py:167: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
-  warnings.warn(
-[2026-04-15T18:45:32.373] error: *** JOB 585249 ON evc39 CANCELLED AT 2026-04-15T18:45:32 DUE to SIGNAL Terminated ***
