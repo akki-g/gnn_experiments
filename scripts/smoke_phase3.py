@@ -1,4 +1,4 @@
-import sys; sys.path.insert(0, '/Users/akshatguduru/Desktop/Thesis/gnn_experiments')
+import sys, os; sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import torch
 from environments.predator_prey import PredatorPreyAdapter
 from gnn.trainer_multienv import GNNTrainerMultiEnv

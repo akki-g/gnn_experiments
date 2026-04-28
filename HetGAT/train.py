@@ -258,6 +258,7 @@ def render_evaluation(args, policy, save_dir):
         interceptor_fov=args.interceptor_fov,
         tag_radius=args.tag_radius,
         intruder_skill=args.intruder_skill,
+        discrete=args.discrete,
     )
 
     obs_s, state_s, obs_i, state_i, positions = env_adapter.hetnet_reset()
@@ -341,6 +342,7 @@ def train(args):
         interceptor_fov=args.interceptor_fov,
         tag_radius=args.tag_radius,
         intruder_skill=0.0,  # curriculum starts at 0; --intruder_skill is only used for --render eval
+        discrete=args.discrete,
     )
 
     obs_portion_dim = env_adapter.obs_portion_dim
@@ -520,6 +522,7 @@ if __name__ == "__main__":
             max_steps=args.max_steps, world_size=args.world_size,
             scout_fov=args.scout_fov, interceptor_fov=args.interceptor_fov,
             tag_radius=args.tag_radius, intruder_skill=args.intruder_skill,
+            discrete=args.discrete,
         )
         policy = HetNetPolicy(
             obs_dim_scout=env_adapter.obs_portion_dim,

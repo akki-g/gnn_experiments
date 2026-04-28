@@ -318,8 +318,10 @@ def run_hetnet(args, device):
         "ev_scout_post": [], "ev_interc_post": [],
         "msbe_scout": [], "msbe_interc": [],
         "ratio_scout_mean": [], "ratio_interc_mean": [],
-        "log_std_scout": [], "log_std_interc": [],
     }
+    if not args.discrete:
+        metrics_history["log_std_scout"] = []
+        metrics_history["log_std_interc"] = []
 
     total_steps = args.iters * args.rollout_length
     steps_done = 0
