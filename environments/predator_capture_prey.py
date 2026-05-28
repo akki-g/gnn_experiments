@@ -213,13 +213,6 @@ class Scenario(BaseScenario):
         obs_parts.append(prey_rel * prey_visible)
 
         # other agents rel pos, fov masked
-        for other in self.all_agents:
-            if other is agent:
-                continue
-            other_rel = other.state.pos - pos
-            other_dist = torch.linalg.vector_norm(other_rel, dim=-1, keepdim=True)
-            other_visible = (other_dist <= agent_fov).float()
-            obs_parts.append(other_rel * other_visible)
 
         obs_portion = torch.cat(obs_parts, dim=-1)
 
@@ -321,11 +314,7 @@ class Scenario(BaseScenario):
 def get_obs_dim(n_scouts=2, n_interceptors=2):
     n_agents = n_scouts + n_interceptors
 
-    return (
-        2+2+2               # vel + pos + type_oh (state portion)
-        +2                  # prey rel pos (zeroed for interceptors)
-        +(n_agents - 1) * 2 # other agents rel pos
-    )
+    return (6 + 2) # state: 6, prey_rel_pos: 2
 
 
 # adapter
