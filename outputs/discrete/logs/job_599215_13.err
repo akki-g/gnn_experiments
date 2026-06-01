@@ -1,3 +1,0 @@
-/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py:129: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:108.)
-  return torch._C._cuda_getDeviceCount() > 0
-[2026-04-28T23:19:35.114] error: *** JOB 599229 ON evc39 CANCELLED AT 2026-04-28T23:19:35 DUE TO TIME LIMIT ***
