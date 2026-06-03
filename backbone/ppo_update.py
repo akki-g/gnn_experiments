@@ -24,13 +24,23 @@ masked mean equals the regular mean.
 
 Returned metrics:
     policy_loss         : mean clipped surrogate loss
-    value_loss          : mean value loss
+    value_loss          : raw mean value MSE *before* multiplying by value_coef
+                          (total_loss correctly applies value_coef; this field
+                          is logged unscaled for diagnostic use)
     entropy             : mean entropy
-    total_loss          : weighted sum
-    grad_norm           : gradient norm after clipping
-    approx_kl           : mean KL approximation  (new - old log-probs).mean()
+    total_loss          : weighted sum (pol + value_coef*val - entropy_coef*ent)
+    grad_norm           : total gradient L2 norm computed BEFORE clipping;
+                          clip_grad_norm_ returns the pre-clip norm, so logged
+                          values can exceed max_grad_norm — the applied grads
+                          ARE clipped to max_grad_norm
+    approx_kl           : 0.5 * E[(log π_new - log π_old)²] — this is the
+                          squared-log-ratio approximation to KL, not the
+                          standard first-order Schulman estimator
+                          (old - new log-probs).mean(); both are valid proxies
     clipfrac            : fraction of active samples where clip was active
-    mean_ratio_epoch0   : mean ratio on first epoch (should be ≈ 1.0)
+    mean_ratio_epoch0   : mean ratio on the FIRST MINIBATCH of epoch 0 only
+                          (not the full epoch); should be ≈ 1.0 as a sanity
+                          check that old log-probs were not recomputed
     explained_variance  : fraction of return variance explained by the value fn
 """
 
@@ -100,6 +110,8 @@ def ppo_update(
             ratio = torch.exp(new_lp - old_lp)
 
             if epoch == 0 and first_mb:
+                # Sampled from first minibatch of epoch 0 only (not the full epoch).
+                # Should be ≈ 1.0; confirms old log-probs were not recomputed.
                 mean_ratio_epoch0 = ratio.mean().item()
                 first_mb = False
 
@@ -108,15 +120,20 @@ def ppo_update(
                 adv = (adv - adv.mean()) / (adv.std() + 1e-8)
 
             pol_loss, clipfrac = ppo_policy_loss(ratio, adv, clip_eps, active_masks)
+            # val_loss is raw MSE (unscaled); value_coef is applied in total only.
             val_loss = value_loss(out["value"], mb["values"], mb["returns"], value_clip_eps, active_masks)
             ent = entropy_loss(out["entropy"], active_masks)
             total = pol_loss + value_coef * val_loss - entropy_coef * ent
 
             optimizer.zero_grad()
             total.backward()
+            # clip_grad_norm_ returns the pre-clip total L2 norm;
+            # actual applied grads are clipped to max_grad_norm.
             gnorm = nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm).item()
             optimizer.step()
 
+            # Squared-log-ratio KL approximation: 0.5·E[(log r)²].
+            # Not the Schulman (old-new).mean() estimator, but a valid proxy.
             approx_kl = 0.5 * ((new_lp - old_lp) ** 2).mean().item()
             metrics["policy_loss"].append(pol_loss.item())
             metrics["value_loss"].append(val_loss.item())

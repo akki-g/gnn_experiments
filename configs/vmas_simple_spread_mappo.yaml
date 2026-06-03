@@ -1,0 +1,72 @@
+# VMAS simple_spread MAPPO config.
+#
+# For a ~1-minute local sanity run, set:
+#   runtime.num_envs=4, runtime.total_env_steps=20000, model.hidden_dim=32
+#
+# Constraint: rollout_length * num_envs must be divisible by algo.num_minibatches.
+#   100 * 32 = 3200; 3200 / 4 = 800 — satisfied.
+#
+# GPU note: set_seed() enables cudnn.deterministic=True for reproducibility.
+# For this pure-MLP backbone there are no convolutions so the speed impact is
+# negligible. If profiling shows a bottleneck, you can disable it in utils.py.
+#
+# Logged metric notes:
+#   grad_norm       : PRE-clip L2 norm (actual applied grads are clipped to max_grad_norm)
+#   value_loss      : raw MSE before value_coef scaling (total_loss applies the weight)
+#   approx_kl       : 0.5 * E[(log r)²] approximation, not the Schulman estimator
+#   mean_ratio_epoch0: first minibatch of epoch 0 only; should be ≈ 1.0
+
+algo:
+  name: "mappo"
+  lr: 5.0e-4
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_eps: 0.2
+  value_clip_eps: 0.2
+  entropy_coef: 0.01
+  value_coef: 0.5
+  max_grad_norm: 0.5
+  ppo_epochs: 4
+  num_minibatches: 4
+  normalize_advantages: true
+  share_encoder: true
+
+runtime:
+  rollout_length: 100
+  num_envs: 32
+  total_env_steps: 2000000
+  checkpoint_interval: 20
+  eval_interval: 0
+
+model:
+  hidden_dim: 64
+  encoder_layers: 2
+  actor_layers: 1
+  critic_layers: 2
+
+comm:
+  module: "identity"
+
+env:
+  name: "vmas_simple_spread"
+  scenario: "simple_spread"
+  num_agents: 3
+  max_steps: 100
+
+logging:
+  log_dir: "runs/vmas_simple_spread"
+  wandb: false
+  wandb_project: "marl-thesis"
+  console_log_interval: 1
+
+render:
+  # Batch/HPC default: no VMAS/pyglet rendering on headless compute nodes.
+  # Use --render on or experiments.render_trained_policy when video is needed.
+  mode: "off"
+  eval_seed: 1000
+  episodes: 2
+  fps: 15
+  frame_size: 512
+
+seed: 0
+device: "auto"

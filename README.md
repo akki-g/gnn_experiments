@@ -187,3 +187,125 @@ python -m experiments.train_mappo --config configs/toy_sanity.yaml \
 - Continuous action spaces are not yet supported (deferred to a later phase).
 - No W&B integration yet (config flag `logging.wandb` is parsed but ignored).
 - The evaluation script (`experiments/evaluate_mappo.py`) is a stub.
+
+---
+
+## VMAS Simple Spread Validation (MAPPO backbone smoke test)
+
+This section validates that the frozen MAPPO backbone trains, checkpoints,
+reloads, and renders correctly on a real vectorized VMAS task using IdentityComm.
+
+### Local sanity run (~1 minute)
+
+```bash
+python -m experiments.train_vmas_mappo \
+    --config configs/vmas_simple_spread_mappo.yaml \
+    --render off
+```
+
+To shrink to a ~1-minute run, override three keys in the YAML (or copy to `/tmp/`):
+- `runtime.num_envs: 4`
+- `runtime.total_env_steps: 20000`
+- `model.hidden_dim: 32`
+
+### Resume from checkpoint
+
+```bash
+python -m experiments.train_vmas_mappo \
+    --config configs/vmas_simple_spread_mappo.yaml \
+    --resume runs/vmas_simple_spread/<run_id>/ckpt/final.pt \
+    --render off
+```
+
+### Render a trained policy
+
+```bash
+python -m experiments.render_trained_policy \
+    --config configs/vmas_simple_spread_mappo.yaml \
+    --checkpoint runs/vmas_simple_spread/<run_id>/ckpt/best.pt
+```
+
+On a headless node, write deterministic evaluation metrics without video:
+
+```bash
+python -m experiments.render_trained_policy \
+    --config configs/vmas_simple_spread_mappo.yaml \
+    --checkpoint runs/vmas_simple_spread/<run_id>/ckpt/best.pt \
+    --no-video
+```
+
+### HPC dependencies
+
+For the VMAS training job on a cluster, install the minimal batch dependencies
+after loading the site Python/CUDA modules and activating your virtualenv:
+
+```bash
+pip install -r requirements-hpc.txt
+```
+
+`req.txt` remains the broader local/dev dependency list, including rendering and
+analysis packages. The HPC list intentionally omits rendering-only packages
+because the batch script runs with `--render off`.
+
+### SLURM (seeds 0, 1, 2; account cenyioha, partition normal)
+
+One-time setup before first submission from the repo root. SLURM needs the log
+directory to exist before it opens `--output` / `--error`:
+
+```bash
+cd $HOME/gnn_experiments
+mkdir -p $HOME/gnn_experiments/slurm_logs
+```
+
+Submit:
+
+```bash
+cd $HOME/gnn_experiments
+sbatch scripts/slurm/train_vmas_simple_spread.sbatch
+squeue -u $USER            # monitor
+```
+
+The script writes scheduler logs directly to
+`slurm_logs/vmas_ss_mappo_<jobid>_<arrayid>.out` and `.err`. It resolves the
+runtime repo root from `SLURM_SUBMIT_DIR` and falls back to
+`$HOME/gnn_experiments`, so submitting from the repo root remains the safest
+default. Array tasks 0/1/2 → seeds 0/1/2. The trainer writes its own
+`console.log` inside a collision-resistant run dir containing timestamp,
+seed, pid, and SLURM job/task ids when present.
+
+`CUDA_VISIBLE_DEVICES` is set by SLURM automatically — the trainer uses `cuda:0`
+which maps to the assigned GPU. No manual device override needed.
+
+The batch script disables rendering with `--render off` and sets conservative
+thread environment variables (`OMP_NUM_THREADS`, `MKL_NUM_THREADS`,
+`OPENBLAS_NUM_THREADS`, `NUMEXPR_NUM_THREADS`, `VECLIB_MAXIMUM_THREADS`) to
+avoid accidental CPU oversubscription. To get a video from a cluster checkpoint,
+run `experiments.render_trained_policy` locally, or submit the render under
+`xvfb-run`.
+
+### Artifacts produced in `runs/vmas_simple_spread/<run_id>/`
+
+| File | Description |
+|---|---|
+| `ckpt/final.pt` | Checkpoint after final iteration |
+| `ckpt/best.pt` | Checkpoint at best mean episode return |
+| `config.yaml` | Copy of the config used for this run |
+| `metrics.json` | Per-iteration metrics (JSON list of dicts) |
+| `metrics.csv` | Per-iteration metrics (CSV) |
+| `console.log` | Copy of all stdout printed during training |
+| `policy.mp4` | Optional rendered evaluation video (system ffmpeg) |
+| `policy.gif` | Optional fallback video if ffmpeg is unavailable (imageio) |
+
+### **Limitations (read before using results)**
+
+**simple_spread observations include other-agent relative positions
+(obs_dim=14). Observations are NOT isolated: each agent can observe every
+other agent's position directly. This is a backbone smoke test ONLY and
+must never be used as the IPPO-vs-GNN ablation environment, because the
+observation-isolation invariant (all inter-agent information must flow only
+through GNN graph edges) is violated.**
+
+The VMAS adapter auto-resets finished environments so rollout collection can
+continue without a trainer-side reset branch. It also preserves
+`terminal_obs`/`terminal_state` in `info`; the trainer uses that terminal state
+for the final bootstrap when a rollout ends on a time-limit boundary.

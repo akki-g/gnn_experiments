@@ -1,0 +1,7 @@
+# Minimal VMAS MAPPO batch dependencies for UCF ARCC Newton.
+# If Newton needs a CUDA-specific PyTorch wheel, install the matching torch
+# build first, then install the remaining packages from this file.
+torch==2.12.0
+numpy==2.3.5
+PyYAML==6.0.3
+vmas==1.5.2
