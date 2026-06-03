@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/lustre/fs1/home/ak565492/gnn_experiments/experiments/train_vmas_mappo.py", line 32, in <module>
+    from backbone.utils import load_yaml_config, set_seed, get_device, make_optimizer
+  File "/lustre/fs1/home/ak565492/gnn_experiments/backbone/utils.py", line 14, in <module>
+    import yaml
+ModuleNotFoundError: No module named 'yaml'
