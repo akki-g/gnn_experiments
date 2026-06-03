@@ -78,7 +78,7 @@ class VMASAdapter(VectorEnvAdapter):
     ----------
     obs_dim    : per-agent observation dimension (inferred from a probe reset).
     action_dim : number of discrete actions (inferred from env.action_space[0].n).
-    state_dim  : num_agents * obs_dim (concat fallback for critic).
+    state_dim  : num_agents * obs_dim [+ 1 if include_timestep] (concat fallback for critic).
     num_agents : N.
     B          : num_envs.
     """
@@ -92,6 +92,7 @@ class VMASAdapter(VectorEnvAdapter):
         seed: int = 0,
         device: str = "cpu",
         continuous_actions: bool = False,
+        include_timestep: bool = True,
     ):
         """
         Parameters
@@ -103,6 +104,9 @@ class VMASAdapter(VectorEnvAdapter):
         seed             : random seed passed to vmas.make_env.
         device           : torch device string ("cpu" or "cuda").
         continuous_actions: must be False for Phase 2 discrete backbone.
+        include_timestep : if True, append a scalar normalised timestep
+                           [0,1] as the last column of the critic state,
+                           making state_dim = N*obs_dim + 1.
         """
         self.B = num_envs
         self.N = n_agents
@@ -110,6 +114,7 @@ class VMASAdapter(VectorEnvAdapter):
         self.device = torch.device(device)
         self._max_steps = max_steps
         self._t = 0
+        self.include_timestep = include_timestep
 
         # Build VMAS environment
         import vmas
@@ -133,7 +138,7 @@ class VMASAdapter(VectorEnvAdapter):
         self.obs_dim = int(obs_list[0].shape[-1])
         # action_space is a list of N gym.spaces.Discrete
         self.action_dim = int(self.env.action_space[0].n)
-        self.state_dim = self.num_agents * self.obs_dim
+        self.state_dim = self.num_agents * self.obs_dim + (1 if self.include_timestep else 0)
 
         # Reset internal step counter (probe used one reset call)
         self._t = 0
@@ -154,12 +159,37 @@ class VMASAdapter(VectorEnvAdapter):
         return obs
 
     def _state_from_obs(self, obs: Tensor) -> Tensor:
-        """Build concat-observation critic state [B, N * obs_dim]."""
-        state = obs.reshape(self.B, self.N * self.obs_dim)
-        assert state.shape == (self.B, self.state_dim), (
-            f"state shape {state.shape} != ({self.B}, {self.state_dim})"
+        """Build concat-observation critic state [B, N * obs_dim] (no timestep column)."""
+        base_width = self.num_agents * self.obs_dim
+        state = obs.reshape(self.B, base_width)
+        assert state.shape == (self.B, base_width), (
+            f"state shape {state.shape} != ({self.B}, {base_width})"
         )
         return state
+
+    def _append_timestep(self, state: Tensor, t_norm) -> Tensor:
+        """
+        Append a normalised timestep scalar as the last column of state.
+
+        If self.include_timestep is False, returns state unchanged.
+
+        Parameters
+        ----------
+        state  : [B, N*obs_dim] tensor (base width, no timestep column yet).
+        t_norm : float or [B] tensor — normalised time in [0, 1].
+                 scalar self._t is a pre-existing lockstep assumption.
+
+        Returns
+        -------
+        state with shape [B, N*obs_dim+1] (or unchanged if not include_timestep).
+        """
+        if not self.include_timestep:
+            return state
+        if isinstance(t_norm, torch.Tensor):
+            col = t_norm.reshape(self.B, 1).to(dtype=state.dtype, device=state.device)
+        else:
+            col = torch.full((self.B, 1), float(t_norm), dtype=state.dtype, device=state.device)
+        return torch.cat([state, col], dim=1)
 
     def _normalise_dones(self, dones) -> Tensor:
         """Convert VMAS done output to a bool tensor shaped [B] on self.device."""
@@ -178,13 +208,14 @@ class VMASAdapter(VectorEnvAdapter):
         Returns
         -------
         obs   : [B, N, obs_dim]  on self.device
-        state : [B, N*obs_dim]   on self.device (concat fallback for critic)
+        state : [B, state_dim]   on self.device (N*obs_dim [+1 timestep])
         """
         obs_list = self.env.reset()
         self._t = 0
 
         obs = self._stack_obs(obs_list)
         state = self._state_from_obs(obs)
+        state = self._append_timestep(state, 0.0)
         return obs, state
 
     def step(
@@ -207,7 +238,7 @@ class VMASAdapter(VectorEnvAdapter):
         -------
         obs    : [B, N, obs_dim]  — next obs on self.device. Finished envs
                  contain fresh reset observations.
-        state  : [B, N*obs_dim]  — next state on self.device.
+        state  : [B, state_dim]  — next state on self.device (N*obs_dim [+1 timestep]).
         reward : [B, N]          — on self.device.
         done   : [B, N] float    — 1.0 at VMAS done boundary, else 0.0.
         info   : dict with keys "truncated" [B] bool, "terminated" [B] bool,
@@ -243,8 +274,11 @@ class VMASAdapter(VectorEnvAdapter):
         done = truncated_env.float().unsqueeze(1).expand(self.B, self.N).clone()
 
         # Terminal obs/state are from the VMAS step before any reset.
+        # LOAD-BEARING: terminal_state timestep must be self._t/max_steps, captured
+        # AFTER the _t += 1 increment. At truncation this equals max_steps/max_steps = 1.0.
         terminal_obs = self._stack_obs(obs_list)
         terminal_state = self._state_from_obs(terminal_obs)
+        terminal_state = self._append_timestep(terminal_state, self._t / self._max_steps)
 
         obs = terminal_obs
         if truncated_env.any():
@@ -258,7 +292,16 @@ class VMASAdapter(VectorEnvAdapter):
                 assert fresh_obs_list is not None
             obs = self._stack_obs(fresh_obs_list)
 
-        state = self._state_from_obs(obs)
+        # Build per-env t_norm: 0.0 for envs that just truncated+reset (new episode
+        # start); self._t/max_steps for non-truncated envs. Under enforced
+        # rollout_length==max_steps all envs truncate in lockstep, but the per-env
+        # vector keeps the mixed/reset_at branch correct.
+        t_norm_vec = torch.where(
+            truncated_env,
+            torch.zeros(self.B, device=self.device),
+            torch.full((self.B,), self._t / self._max_steps, device=self.device),
+        )
+        state = self._append_timestep(self._state_from_obs(obs), t_norm_vec)
 
         assert obs.shape == (self.B, self.N, self.obs_dim), (
             f"step obs shape {obs.shape} != ({self.B}, {self.N}, {self.obs_dim})"
@@ -268,6 +311,9 @@ class VMASAdapter(VectorEnvAdapter):
         )
         assert done.shape == (self.B, self.N), (
             f"step done shape {done.shape} != ({self.B}, {self.N})"
+        )
+        assert state.shape == (self.B, self.state_dim), (
+            f"step state shape {state.shape} != ({self.B}, {self.state_dim})"
         )
 
         info = {

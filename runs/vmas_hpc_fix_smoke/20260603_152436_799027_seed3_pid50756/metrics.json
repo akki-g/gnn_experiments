@@ -1,0 +1,20 @@
+[
+  {
+    "iter": 0,
+    "global_step": 20,
+    "episode_return": 0.0,
+    "mean_step_reward": -6.405258846282959,
+    "episodes_completed": 0,
+    "policy_loss": -0.0033277321262477066,
+    "value_loss": 529.1045989990234,
+    "entropy": 2.1971855461597443,
+    "total_loss": 264.5270004272461,
+    "grad_norm": 24.620471239089966,
+    "approx_kl": 2.9183498270531536e-05,
+    "clipfrac": 0.0,
+    "explained_variance": -0.004003763198852539,
+    "mean_ratio_epoch0": 1.0,
+    "lr": 0.0005,
+    "seed": 3
+  }
+]

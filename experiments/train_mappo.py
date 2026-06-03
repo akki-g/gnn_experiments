@@ -59,6 +59,8 @@ def main(config_path: str, resume: str = None) -> None:
         device=str(device),
     )
     optimizer = make_optimizer(model.parameters(), lr=cfg["algo"]["lr"])
+    use_value_norm = cfg["algo"].get("use_value_norm", False)
+    value_normalizer = model.value_normalizer if use_value_norm else None
     buffer = RolloutBuffer(
         rollout_length=cfg["runtime"]["rollout_length"],
         num_envs=cfg["runtime"]["num_envs"],
@@ -134,7 +136,8 @@ def main(config_path: str, resume: str = None) -> None:
             last_value = model.critic(state)
 
         buffer.compute_returns_and_advantages(
-            last_value, cfg["algo"]["gamma"], cfg["algo"]["gae_lambda"]
+            last_value, cfg["algo"]["gamma"], cfg["algo"]["gae_lambda"],
+            value_normalizer=value_normalizer,
         )
 
         # ---- PPO update: model.train() is called inside ppo_update() ----
@@ -150,6 +153,7 @@ def main(config_path: str, resume: str = None) -> None:
             value_coef=cfg["algo"]["value_coef"],
             max_grad_norm=cfg["algo"]["max_grad_norm"],
             normalize_advantages=cfg["algo"]["normalize_advantages"],
+            value_normalizer=value_normalizer,
         )
 
         # NaN guards

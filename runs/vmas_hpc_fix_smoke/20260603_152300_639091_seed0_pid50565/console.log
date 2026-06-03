@@ -1,0 +1,6 @@
+[env] scenario=simple_spread n_agents=3 obs_dim=14 action_dim=9 state_dim=42 num_envs=2
+[train] Starting: total_iters=1 T=10 B=2 device=cpu seed=0 render=off
+iter=   0 step=     20 ep_ret=+0.000 step_rew=-4.9456 pol=-0.0038 val=319.2319 ent=2.1972 tot=+159.5902 gnorm=20.485 kl=0.0000 clipf=0.000 ev=-0.027 r0=1.0000 lr=5.0e-04 seed=0
+[train] Final checkpoint saved to runs/vmas_hpc_fix_smoke/20260603_152300_639091_seed0_pid50565/ckpt/final.pt
+[train] Run artifacts in runs/vmas_hpc_fix_smoke/20260603_152300_639091_seed0_pid50565
+[render] Skipped post-train render (mode=off).

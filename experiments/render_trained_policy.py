@@ -162,6 +162,7 @@ def render_trained_policy(
         max_steps=cfg["env"]["max_steps"],
         seed=eval_seed,
         device=str(device),
+        include_timestep=cfg.get("env", {}).get("include_timestep_in_state", True),
     )
 
     frames = []

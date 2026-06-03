@@ -4,7 +4,7 @@
 #   runtime.num_envs=4, runtime.total_env_steps=20000, model.hidden_dim=32
 #
 # Constraint: rollout_length * num_envs must be divisible by algo.num_minibatches.
-#   100 * 32 = 3200; 3200 / 4 = 800 — satisfied.
+#   100 * 32 = 3200; 3200 / 1 = 3200 — satisfied.
 #
 # GPU note: set_seed() enables cudnn.deterministic=True for reproducibility.
 # For this pure-MLP backbone there are no convolutions so the speed impact is
@@ -18,18 +18,19 @@
 
 algo:
   name: "mappo"
-  lr: 5.0e-4
+  lr: 7.0e-4
   gamma: 0.99
   gae_lambda: 0.95
   clip_eps: 0.2
   value_clip_eps: 0.2
   entropy_coef: 0.01
   value_coef: 0.5
-  max_grad_norm: 0.5
-  ppo_epochs: 4
-  num_minibatches: 4
+  max_grad_norm: 10.0
+  ppo_epochs: 10
+  num_minibatches: 1
   normalize_advantages: true
   share_encoder: true
+  use_value_norm: true
 
 runtime:
   rollout_length: 100
@@ -52,6 +53,7 @@ env:
   scenario: "simple_spread"
   num_agents: 3
   max_steps: 100
+  include_timestep_in_state: true
 
 logging:
   log_dir: "runs/vmas_simple_spread"

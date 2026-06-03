@@ -19,6 +19,7 @@ CRITICAL (Q5 isolation):
 """
 
 from typing import Dict, Optional
+import itertools
 
 import torch
 import torch.nn as nn
@@ -27,6 +28,7 @@ from torch import Tensor
 from backbone.encoder import SharedMLPEncoder
 from backbone.actor import Actor
 from backbone.critic import CentralCritic
+from backbone.value_norm import ValueNorm
 from comm.identity import IdentityComm
 from comm.base import CommModule
 
@@ -103,6 +105,8 @@ class MAPPO(nn.Module):
 
         # Critic reads RAW state — completely separate from comm output (Q5)
         self.critic = CentralCritic(state_dim, hidden_dim, num_agents, num_layers=critic_layers)
+
+        self.value_normalizer = ValueNorm(input_dim=1)
 
         self.to(self.device)
 
@@ -206,6 +210,16 @@ class MAPPO(nn.Module):
         value = self.critic(state)
         return {"log_prob": log_prob, "entropy": entropy, "value": value}
 
+    def actor_parameters(self):
+        """Encoder + comm + actor params (the actor optimization group)."""
+        return itertools.chain(
+            self.encoder.parameters(), self.comm.parameters(), self.actor.parameters()
+        )
+
+    def critic_parameters(self):
+        """Critic params only (Q5: critic reads raw state, isolated group)."""
+        return self.critic.parameters()
+
     # ------------------------------------------------------------------
     # State construction fallback
     # ------------------------------------------------------------------
@@ -260,6 +274,7 @@ class MAPPO(nn.Module):
             "global_step": global_step,
             "optimizer": optimizer.state_dict() if optimizer is not None else None,
             "extra": extra,
+            "value_normalizer": self.value_normalizer.state_dict(),
         }
         torch.save(ckpt, path)
 
@@ -277,4 +292,8 @@ class MAPPO(nn.Module):
         self.actor.load_state_dict(ckpt["actor"])
         self.critic.load_state_dict(ckpt["critic"])
         self.comm.load_state_dict(ckpt["comm"])
+        if "value_normalizer" in ckpt and ckpt["value_normalizer"] is not None:
+            self.value_normalizer.load_state_dict(ckpt["value_normalizer"])
+        else:
+            print("[load] checkpoint has no value_normalizer; using fresh stats.")
         return ckpt

@@ -228,6 +228,7 @@ class RolloutBuffer:
         last_value: Tensor,
         gamma: float,
         gae_lambda: float,
+        value_normalizer=None,
     ) -> None:
         """
         Compute GAE advantages and discounted returns in-place.
@@ -245,12 +246,21 @@ class RolloutBuffer:
         The GAE lambda trace stops at any episode boundary (1-dones[t]),
         regardless of whether the episode ended due to truncation or true termination.
 
+        When value_normalizer is provided, self.values (stored normalized) are
+        denormalized to raw reward space for GAE computation. self.values is NOT
+        mutated; only a local denormalized copy is used. self.returns is in raw
+        reward space when value_normalizer is provided (self.values stays normalized).
+
         Parameters
         ----------
-        last_value : [B, N]  — value estimate for the state AFTER the last step;
-                     used to bootstrap non-terminal (or truncated) final states.
-        gamma      : discount factor.
-        gae_lambda : GAE smoothing parameter.
+        last_value       : [B, N]  — value estimate for the state AFTER the last step;
+                           used to bootstrap non-terminal (or truncated) final states.
+        gamma            : discount factor.
+        gae_lambda       : GAE smoothing parameter.
+        value_normalizer : optional ValueNorm instance; if provided, values and
+                           last_value are denormalized before GAE computation so
+                           that advantages and returns are in raw reward space.
+                           If None (default), raw self.values are used directly.
         """
         assert self.is_full, (
             f"Buffer not full (step={self.step}, T={self.T}). "
@@ -260,17 +270,21 @@ class RolloutBuffer:
             f"last_value shape {last_value.shape} != ({self.B}, {self.N})"
         )
         T = self.T
-        gae = torch.zeros_like(last_value)
+        if value_normalizer is None:
+            values_for_gae = self.values
+            last_value_for_gae = last_value
+        else:
+            values_for_gae = value_normalizer.denormalize(self.values)
+            last_value_for_gae = value_normalizer.denormalize(last_value)
+        gae = torch.zeros_like(last_value_for_gae)
         for t in reversed(range(T)):
-            next_values = last_value if t == T - 1 else self.values[t + 1]
-            # bootstrap_coef: 1 unless truly terminal (done=1 AND bad_mask=1)
+            next_values = last_value_for_gae if t == T - 1 else values_for_gae[t + 1]
             bootstrap_coef = 1.0 - self.dones[t] * self.bad_masks[t]
-            # gae_cont: stop lambda trace at any episode boundary
             gae_cont = 1.0 - self.dones[t]
-            delta = self.rewards[t] + gamma * next_values * bootstrap_coef - self.values[t]
+            delta = self.rewards[t] + gamma * next_values * bootstrap_coef - values_for_gae[t]
             gae = delta + gamma * gae_lambda * gae_cont * gae
             self.advantages[t] = gae
-        self.returns = self.advantages + self.values
+        self.returns = self.advantages + values_for_gae
 
     def get_minibatches(self, num_minibatches: int):
         """

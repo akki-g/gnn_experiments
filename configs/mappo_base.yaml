@@ -7,7 +7,7 @@ algo:
   value_clip_eps: 0.2
   entropy_coef: 0.01
   value_coef: 0.5
-  max_grad_norm: 0.5
+  max_grad_norm: 10.0
   ppo_epochs: 4
   num_minibatches: 4
   normalize_advantages: true

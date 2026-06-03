@@ -29,7 +29,9 @@ Returned metrics:
                           is logged unscaled for diagnostic use)
     entropy             : mean entropy
     total_loss          : weighted sum (pol + value_coef*val - entropy_coef*ent)
-    grad_norm           : total gradient L2 norm computed BEFORE clipping;
+    actor_grad_norm     : L2 norm of encoder+comm+actor gradients BEFORE clipping
+    critic_grad_norm    : L2 norm of critic gradients BEFORE clipping
+    grad_norm           : alias for actor_grad_norm (kept for backward compat);
                           clip_grad_norm_ returns the pre-clip norm, so logged
                           values can exceed max_grad_norm — the applied grads
                           ARE clipped to max_grad_norm
@@ -41,7 +43,9 @@ Returned metrics:
     mean_ratio_epoch0   : mean ratio on the FIRST MINIBATCH of epoch 0 only
                           (not the full epoch); should be ≈ 1.0 as a sanity
                           check that old log-probs were not recomputed
-    explained_variance  : fraction of return variance explained by the value fn
+    explained_variance  : fraction of return variance explained by the value fn;
+                          computed in raw reward space (denormalized when
+                          value_normalizer is provided)
 """
 
 from typing import Dict
@@ -65,6 +69,7 @@ def ppo_update(
     value_coef: float,
     max_grad_norm: float,
     normalize_advantages: bool = True,
+    value_normalizer=None,
 ) -> Dict[str, float]:
     """
     Run PPO mini-batch update over the filled rollout buffer.
@@ -93,9 +98,13 @@ def ppo_update(
     # Ensure training mode so future layers (dropout, batchnorm, attention) behave correctly
     model.train()
 
+    if value_normalizer is not None:
+        value_normalizer.update(buffer.returns)
+
     metrics = {
         "policy_loss": [], "value_loss": [], "entropy": [], "total_loss": [],
-        "grad_norm": [], "approx_kl": [], "clipfrac": [],
+        "grad_norm": [], "actor_grad_norm": [], "critic_grad_norm": [],
+        "approx_kl": [], "clipfrac": [],
     }
     mean_ratio_epoch0 = None
 
@@ -121,15 +130,18 @@ def ppo_update(
 
             pol_loss, clipfrac = ppo_policy_loss(ratio, adv, clip_eps, active_masks)
             # val_loss is raw MSE (unscaled); value_coef is applied in total only.
-            val_loss = value_loss(out["value"], mb["values"], mb["returns"], value_clip_eps, active_masks)
+            if value_normalizer is not None:
+                returns_target = value_normalizer.normalize(mb["returns"]).detach()
+            else:
+                returns_target = mb["returns"]
+            val_loss = value_loss(out["value"], mb["values"], returns_target, value_clip_eps, active_masks)
             ent = entropy_loss(out["entropy"], active_masks)
             total = pol_loss + value_coef * val_loss - entropy_coef * ent
 
             optimizer.zero_grad()
             total.backward()
-            # clip_grad_norm_ returns the pre-clip total L2 norm;
-            # actual applied grads are clipped to max_grad_norm.
-            gnorm = nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm).item()
+            actor_gnorm = nn.utils.clip_grad_norm_(model.actor_parameters(), max_grad_norm).item()
+            critic_gnorm = nn.utils.clip_grad_norm_(model.critic_parameters(), max_grad_norm).item()
             optimizer.step()
 
             # Squared-log-ratio KL approximation: 0.5·E[(log r)²].
@@ -139,16 +151,24 @@ def ppo_update(
             metrics["value_loss"].append(val_loss.item())
             metrics["entropy"].append(ent.item())
             metrics["total_loss"].append(total.item())
-            metrics["grad_norm"].append(gnorm)
+            metrics["actor_grad_norm"].append(actor_gnorm)
+            metrics["critic_grad_norm"].append(critic_gnorm)
+            metrics["grad_norm"].append(actor_gnorm)  # alias for backward compat
             metrics["approx_kl"].append(approx_kl)
             metrics["clipfrac"].append(clipfrac.item())
 
-    ev = explained_variance(buffer.values.flatten(), buffer.returns.flatten()).item()
+    if value_normalizer is not None:
+        ev_values = value_normalizer.denormalize(buffer.values).flatten()
+    else:
+        ev_values = buffer.values.flatten()
+    ev = explained_variance(ev_values, buffer.returns.flatten()).item()
     return {
         "policy_loss": sum(metrics["policy_loss"]) / len(metrics["policy_loss"]),
         "value_loss": sum(metrics["value_loss"]) / len(metrics["value_loss"]),
         "entropy": sum(metrics["entropy"]) / len(metrics["entropy"]),
         "total_loss": sum(metrics["total_loss"]) / len(metrics["total_loss"]),
+        "actor_grad_norm": sum(metrics["actor_grad_norm"]) / len(metrics["actor_grad_norm"]),
+        "critic_grad_norm": sum(metrics["critic_grad_norm"]) / len(metrics["critic_grad_norm"]),
         "grad_norm": sum(metrics["grad_norm"]) / len(metrics["grad_norm"]),
         "approx_kl": sum(metrics["approx_kl"]) / len(metrics["approx_kl"]),
         "clipfrac": sum(metrics["clipfrac"]) / len(metrics["clipfrac"]),

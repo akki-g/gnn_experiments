@@ -214,6 +214,7 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
         max_steps=env_cfg["max_steps"],
         seed=cfg["seed"],
         device=str(device),
+        include_timestep=env_cfg.get("include_timestep_in_state", True),
     )
     print(
         f"[env] scenario={env_cfg['scenario']} n_agents={env.num_agents} "
@@ -281,6 +282,8 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
     value_coef = algo_cfg["value_coef"]
     max_grad_norm = algo_cfg["max_grad_norm"]
     normalize_advantages = algo_cfg["normalize_advantages"]
+    use_value_norm = algo_cfg.get("use_value_norm", True)
+    value_normalizer = model.value_normalizer if use_value_norm else None
 
     obs, state = env.reset()
     obs, state = obs.to(device), state.to(device)
@@ -351,7 +354,7 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
             )
             last_value = model.critic(bootstrap_state)  # [B, N]
 
-        buffer.compute_returns_and_advantages(last_value, gamma, gae_lambda)
+        buffer.compute_returns_and_advantages(last_value, gamma, gae_lambda, value_normalizer=value_normalizer)
 
         # ------------------------------------------------------------------ #
         # PPO update (model.train() called inside ppo_update)                 #
@@ -368,6 +371,7 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
             value_coef=value_coef,
             max_grad_norm=max_grad_norm,
             normalize_advantages=normalize_advantages,
+            value_normalizer=value_normalizer,
         )
 
         # NaN guards on float metrics
@@ -399,6 +403,8 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
             "entropy": metrics["entropy"],
             "total_loss": metrics["total_loss"],
             "grad_norm": metrics["grad_norm"],
+            "actor_grad_norm": metrics["actor_grad_norm"],
+            "critic_grad_norm": metrics["critic_grad_norm"],
             "approx_kl": metrics["approx_kl"],
             "clipfrac": metrics["clipfrac"],
             "explained_variance": metrics["explained_variance"],
@@ -414,7 +420,8 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
                 f"step_rew={mean_step_rew:.4f} "
                 f"pol={metrics['policy_loss']:+.4f} val={metrics['value_loss']:.4f} "
                 f"ent={metrics['entropy']:.4f} tot={metrics['total_loss']:+.4f} "
-                f"gnorm={metrics['grad_norm']:.3f} kl={metrics['approx_kl']:.4f} "
+                f"agnorm={metrics['actor_grad_norm']:.3f} cgnorm={metrics['critic_grad_norm']:.3f} "
+                f"kl={metrics['approx_kl']:.4f} "
                 f"clipf={metrics['clipfrac']:.3f} "
                 f"ev={metrics['explained_variance']:+.3f} "
                 f"r0={metrics['mean_ratio_epoch0']:.4f} "

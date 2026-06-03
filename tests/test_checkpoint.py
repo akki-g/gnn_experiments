@@ -66,3 +66,54 @@ def test_loaded_params_match(tmp_path):
             f"  original: {p1.flatten()[:4]}\n"
             f"  loaded:   {p2.flatten()[:4]}"
         )
+
+
+def test_value_normalizer_roundtrip(tmp_path):
+    """ValueNorm buffers survive a save/load round-trip without loss of stats."""
+    model = make_model()
+
+    # Warm up value_normalizer so its buffers are non-trivial
+    for _ in range(5):
+        x = torch.randn(1000, 1) * 2.0 + 3.0
+        model.value_normalizer.update(x)
+
+    ckpt_path = str(tmp_path / "vn_roundtrip.pt")
+    model.save(ckpt_path, global_step=100)
+
+    model2 = make_model()
+    model2.load(ckpt_path)
+
+    assert torch.allclose(
+        model.value_normalizer.running_mean,
+        model2.value_normalizer.running_mean,
+        atol=1e-6,
+    ), "running_mean mismatch after load"
+
+    assert torch.allclose(
+        model.value_normalizer.running_mean_sq,
+        model2.value_normalizer.running_mean_sq,
+        atol=1e-6,
+    ), "running_mean_sq mismatch after load"
+
+    assert torch.allclose(
+        model.value_normalizer.debiasing_term,
+        model2.value_normalizer.debiasing_term,
+        atol=1e-6,
+    ), "debiasing_term mismatch after load"
+
+
+def test_value_normalizer_old_checkpoint_tolerance(tmp_path):
+    """Loading a checkpoint that lacks 'value_normalizer' must not raise."""
+    model = make_model()
+    ckpt_path = str(tmp_path / "old_ckpt.pt")
+    model.save(ckpt_path, global_step=0)
+
+    # Simulate an old checkpoint without value_normalizer key
+    ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
+    del ckpt["value_normalizer"]
+    stripped_path = str(tmp_path / "old_ckpt_stripped.pt")
+    torch.save(ckpt, stripped_path)
+
+    # Loading must succeed without raising
+    model2 = make_model()
+    model2.load(stripped_path)  # Should print a warning but not raise
