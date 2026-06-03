@@ -236,16 +236,19 @@ python -m experiments.render_trained_policy \
 
 ### HPC dependencies
 
-For the VMAS training job on a cluster, install the minimal batch dependencies
-after loading the site Python/CUDA modules and activating your virtualenv:
+For the VMAS training job on a cluster, use the minimal pinned batch
+dependencies:
 
 ```bash
 pip install -r requirements-hpc.txt
 ```
 
-`req.txt` remains the broader local/dev dependency list, including rendering and
-analysis packages. The HPC list intentionally omits rendering-only packages
-because the batch script runs with `--render off`.
+The SLURM script also activates `~/expenv`, creates it if it does not exist,
+checks for `yaml`, `numpy`, `torch`, and `vmas`, and installs any missing pinned
+packages under a simple lock so array tasks do not write to the venv at the same
+time. `req.txt` remains the broader local/dev dependency list, including
+rendering and analysis packages. The HPC list intentionally omits rendering-only
+packages because the batch script runs with `--render off`.
 
 ### SLURM (seeds 0, 1, 2; account cenyioha, partition normal)
 

@@ -16,7 +16,6 @@ set -euo pipefail
 
 module load python/python-3.11.4-gcc-12.2.0
 module load cuda/cuda-12.1.0
-source ~/expenv/bin/activate
 
 export PYTHONUNBUFFERED=1
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
@@ -34,6 +33,101 @@ cd "${REPO_ROOT}"
 
 mkdir -p runs/vmas_simple_spread
 
+VENV_DIR="${VENV_DIR:-${HOME}/expenv}"
+REQ_FILE="${REQ_FILE:-${REPO_ROOT}/requirements-hpc.txt}"
+HPC_REQUIREMENTS=(
+    "torch==2.12.0"
+    "numpy==2.3.5"
+    "PyYAML==6.0.3"
+    "vmas==1.5.2"
+)
+if [[ ! -d "${VENV_DIR}" ]]; then
+    echo "[setup] Creating virtualenv at ${VENV_DIR}"
+    python -m venv "${VENV_DIR}"
+fi
+source "${VENV_DIR}/bin/activate"
+
+check_hpc_imports() {
+    python - <<'PY'
+import importlib
+import sys
+
+required = {
+    "yaml": "PyYAML",
+    "numpy": "numpy",
+    "torch": "torch",
+    "vmas": "vmas",
+}
+failed = []
+for module, package in required.items():
+    try:
+        importlib.import_module(module)
+    except Exception as exc:
+        failed.append((package, f"{exc.__class__.__name__}: {exc}"))
+if failed:
+    print("[setup] Missing or failing Python packages:")
+    for package, reason in failed:
+        print(f"[setup]   {package}: {reason}")
+    sys.exit(1)
+print("[setup] Required Python imports are available.")
+PY
+}
+
+write_missing_requirements() {
+    python - "$1" <<'PY'
+import importlib
+import pathlib
+import sys
+
+out_path = pathlib.Path(sys.argv[1])
+required = {
+    "yaml": "PyYAML==6.0.3",
+    "numpy": "numpy==2.3.5",
+    "torch": "torch==2.12.0",
+    "vmas": "vmas==1.5.2",
+}
+missing = []
+for module, spec in required.items():
+    try:
+        importlib.import_module(module)
+    except Exception:
+        missing.append(spec)
+out_path.write_text("\n".join(missing) + ("\n" if missing else ""))
+PY
+}
+
+if ! check_hpc_imports; then
+    LOCK_DIR="${HOME}/.gnn_experiments_pip_install.lock"
+    until mkdir "${LOCK_DIR}" 2>/dev/null; do
+        echo "[setup] Waiting for dependency install lock ${LOCK_DIR}"
+        sleep 10
+    done
+    cleanup_lock() {
+        rmdir "${LOCK_DIR}" 2>/dev/null || true
+    }
+    trap cleanup_lock EXIT
+
+    if ! check_hpc_imports; then
+        MISSING_REQ="$(mktemp)"
+        write_missing_requirements "${MISSING_REQ}"
+        echo "[setup] Installing missing HPC Python dependencies:"
+        cat "${MISSING_REQ}"
+        python -m pip install --upgrade pip
+        if [[ -s "${MISSING_REQ}" ]]; then
+            python -m pip install -r "${MISSING_REQ}"
+        elif [[ -f "${REQ_FILE}" ]]; then
+            python -m pip install -r "${REQ_FILE}"
+        else
+            python -m pip install "${HPC_REQUIREMENTS[@]}"
+        fi
+        rm -f "${MISSING_REQ}"
+    fi
+    cleanup_lock
+    trap - EXIT
+fi
+
+check_hpc_imports
+
 # Confirm GPU assignment (SLURM sets CUDA_VISIBLE_DEVICES for us)
 echo "=== Job info ==="
 echo "Job      : ${SLURM_JOB_ID:-unset}  array=${SLURM_ARRAY_TASK_ID:-0}"
@@ -43,6 +137,23 @@ echo "Repo     : $(pwd)"
 echo "Git rev  : $(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 echo "Python   : $(command -v python)"
 python --version
+python - <<'PY'
+import importlib.metadata as md
+import torch
+import yaml
+import vmas
+
+def version(name):
+    try:
+        return md.version(name)
+    except md.PackageNotFoundError:
+        return "unknown"
+
+print(f"PyYAML   : {yaml.__version__}")
+print(f"NumPy    : {version('numpy')}")
+print(f"Torch    : {torch.__version__} cuda_available={torch.cuda.is_available()} torch_cuda={torch.version.cuda}")
+print(f"VMAS     : {getattr(vmas, '__version__', version('vmas'))}")
+PY
 echo "CUDA_VIS : ${CUDA_VISIBLE_DEVICES:-unset}"
 echo "Threads  : OMP=${OMP_NUM_THREADS} MKL=${MKL_NUM_THREADS} OPENBLAS=${OPENBLAS_NUM_THREADS}"
 echo "Seed     : ${SLURM_ARRAY_TASK_ID:-0}"
