@@ -1,5 +1,41 @@
-expenv/
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
 
+# Virtual environments
+expenv/
+venv/
+.venv/
+env/
+
+# Pytest / testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Training artifacts
+runs/
+*.pt
+*.ckpt
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Claude Code / project tooling
 .claude/
 CLAUDE.md
 old/
