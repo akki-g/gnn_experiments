@@ -1,0 +1,630 @@
+[env] scenario=simple_spread n_agents=3 obs_dim=14 action_dim=9 state_dim=42 num_envs=32
+[train] Starting: total_iters=625 T=100 B=32 device=cuda:0 seed=1 render=off
+iter=   0 step=   3200 ep_ret=-608.537 step_rew=-6.0854 pol=-0.0019 val=4348.4712 ent=2.1968 tot=+2174.2117 gnorm=30.859 kl=0.0004 clipf=0.000 ev=+0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=   1 step=   6400 ep_ret=-578.883 step_rew=-5.7888 pol=-0.0005 val=3892.1068 ent=2.1951 tot=+1946.0310 gnorm=37.096 kl=0.0002 clipf=0.000 ev=+0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=   2 step=   9600 ep_ret=-581.863 step_rew=-5.8186 pol=-0.0008 val=4013.1510 ent=2.1935 tot=+2006.5528 gnorm=38.680 kl=0.0001 clipf=0.000 ev=+0.005 r0=1.0000 lr=5.0e-04 seed=1
+iter=   3 step=  12800 ep_ret=-561.969 step_rew=-5.6197 pol=-0.0004 val=3696.3530 ent=2.1923 tot=+1848.1541 gnorm=35.139 kl=0.0001 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=   4 step=  16000 ep_ret=-664.084 step_rew=-6.6408 pol=-0.0004 val=5365.1509 ent=2.1914 tot=+2682.5531 gnorm=46.175 kl=0.0001 clipf=0.000 ev=+0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=   5 step=  19200 ep_ret=-623.538 step_rew=-6.2354 pol=-0.0005 val=4711.3182 ent=2.1913 tot=+2355.6366 gnorm=43.746 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter=   6 step=  22400 ep_ret=-523.903 step_rew=-5.2390 pol=-0.0002 val=3189.5070 ent=2.1911 tot=+1594.7314 gnorm=36.693 kl=0.0001 clipf=0.000 ev=-0.009 r0=1.0000 lr=5.0e-04 seed=1
+iter=   7 step=  25600 ep_ret=-576.181 step_rew=-5.7618 pol=-0.0003 val=4038.1973 ent=2.1910 tot=+2019.0764 gnorm=38.539 kl=0.0001 clipf=0.000 ev=+0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=   8 step=  28800 ep_ret=-553.120 step_rew=-5.5312 pol=-0.0004 val=3624.2460 ent=2.1907 tot=+1812.1008 gnorm=38.965 kl=0.0001 clipf=0.000 ev=-0.008 r0=1.0000 lr=5.0e-04 seed=1
+iter=   9 step=  32000 ep_ret=-554.777 step_rew=-5.5478 pol=-0.0003 val=3561.0104 ent=2.1904 tot=+1780.4831 gnorm=43.705 kl=0.0001 clipf=0.000 ev=+0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  10 step=  35200 ep_ret=-502.511 step_rew=-5.0251 pol=-0.0003 val=3010.3042 ent=2.1903 tot=+1505.1300 gnorm=43.011 kl=0.0001 clipf=0.000 ev=+0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  11 step=  38400 ep_ret=-561.230 step_rew=-5.6123 pol=-0.0010 val=3746.3139 ent=2.1876 tot=+1873.1340 gnorm=46.812 kl=0.0003 clipf=0.000 ev=-0.014 r0=1.0000 lr=5.0e-04 seed=1
+iter=  12 step=  41600 ep_ret=-553.631 step_rew=-5.5363 pol=+0.0001 val=3638.7168 ent=2.1850 tot=+1819.3366 gnorm=52.035 kl=0.0001 clipf=0.000 ev=+0.016 r0=1.0000 lr=5.0e-04 seed=1
+iter=  13 step=  44800 ep_ret=-615.296 step_rew=-6.1530 pol=-0.0002 val=4414.7527 ent=2.1850 tot=+2207.3544 gnorm=57.910 kl=0.0006 clipf=0.000 ev=-0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  14 step=  48000 ep_ret=-560.141 step_rew=-5.6014 pol=-0.0004 val=3574.1869 ent=2.1857 tot=+1787.0711 gnorm=52.315 kl=0.0001 clipf=0.000 ev=-0.006 r0=1.0000 lr=5.0e-04 seed=1
+iter=  15 step=  51200 ep_ret=-533.113 step_rew=-5.3311 pol=-0.0002 val=3251.0226 ent=2.1834 tot=+1625.4892 gnorm=54.076 kl=0.0006 clipf=0.000 ev=-0.013 r0=1.0000 lr=5.0e-04 seed=1
+iter=  16 step=  54400 ep_ret=-614.599 step_rew=-6.1460 pol=+0.0005 val=4304.3244 ent=2.1800 tot=+2152.1410 gnorm=66.205 kl=0.0015 clipf=0.003 ev=-0.011 r0=1.0000 lr=5.0e-04 seed=1
+iter=  17 step=  57600 ep_ret=-538.574 step_rew=-5.3857 pol=-0.0001 val=3378.4515 ent=2.1784 tot=+1689.2039 gnorm=52.995 kl=0.0005 clipf=0.000 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  18 step=  60800 ep_ret=-526.936 step_rew=-5.2694 pol=+0.0001 val=3284.5069 ent=2.1788 tot=+1642.2318 gnorm=57.699 kl=0.0010 clipf=0.000 ev=-0.026 r0=1.0000 lr=5.0e-04 seed=1
+iter=  19 step=  64000 ep_ret=-541.723 step_rew=-5.4172 pol=-0.0001 val=3459.4174 ent=2.1732 tot=+1729.6869 gnorm=56.145 kl=0.0007 clipf=0.000 ev=-0.006 r0=1.0000 lr=5.0e-04 seed=1
+iter=  20 step=  67200 ep_ret=-558.682 step_rew=-5.5868 pol=-0.0010 val=3705.2177 ent=2.1697 tot=+1852.5862 gnorm=55.172 kl=0.0006 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  21 step=  70400 ep_ret=-552.207 step_rew=-5.5221 pol=-0.0006 val=3386.2462 ent=2.1618 tot=+1693.1009 gnorm=58.571 kl=0.0021 clipf=0.008 ev=+0.007 r0=1.0000 lr=5.0e-04 seed=1
+iter=  22 step=  73600 ep_ret=-583.950 step_rew=-5.8395 pol=+0.0001 val=3913.6748 ent=2.1548 tot=+1956.8160 gnorm=72.312 kl=0.0013 clipf=0.001 ev=-0.005 r0=1.0000 lr=5.0e-04 seed=1
+iter=  23 step=  76800 ep_ret=-568.084 step_rew=-5.6808 pol=+0.0001 val=3804.4734 ent=2.1588 tot=+1902.2152 gnorm=61.515 kl=0.0007 clipf=0.000 ev=+0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=  24 step=  80000 ep_ret=-535.142 step_rew=-5.3514 pol=-0.0003 val=3313.3144 ent=2.1563 tot=+1656.6353 gnorm=61.856 kl=0.0010 clipf=0.001 ev=-0.011 r0=1.0000 lr=5.0e-04 seed=1
+iter=  25 step=  83200 ep_ret=-552.906 step_rew=-5.5291 pol=-0.0004 val=3587.9439 ent=2.1498 tot=+1793.9501 gnorm=63.463 kl=0.0008 clipf=0.000 ev=-0.016 r0=1.0000 lr=5.0e-04 seed=1
+iter=  26 step=  86400 ep_ret=-510.010 step_rew=-5.1001 pol=-0.0005 val=2923.2696 ent=2.1480 tot=+1461.6128 gnorm=60.500 kl=0.0013 clipf=0.003 ev=+0.012 r0=1.0000 lr=5.0e-04 seed=1
+iter=  27 step=  89600 ep_ret=-541.920 step_rew=-5.4192 pol=-0.0005 val=3423.4096 ent=2.1441 tot=+1711.6828 gnorm=65.679 kl=0.0005 clipf=0.000 ev=-0.019 r0=1.0000 lr=5.0e-04 seed=1
+iter=  28 step=  92800 ep_ret=-565.049 step_rew=-5.6505 pol=-0.0004 val=3502.4516 ent=2.1501 tot=+1751.2039 gnorm=67.028 kl=0.0008 clipf=0.000 ev=-0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=  29 step=  96000 ep_ret=-552.067 step_rew=-5.5207 pol=-0.0001 val=3385.5321 ent=2.1490 tot=+1692.7444 gnorm=62.972 kl=0.0010 clipf=0.001 ev=-0.012 r0=1.0000 lr=5.0e-04 seed=1
+iter=  30 step=  99200 ep_ret=-519.251 step_rew=-5.1925 pol=-0.0006 val=3027.8447 ent=2.1606 tot=+1513.9001 gnorm=59.372 kl=0.0007 clipf=0.000 ev=-0.011 r0=1.0000 lr=5.0e-04 seed=1
+iter=  31 step= 102400 ep_ret=-613.725 step_rew=-6.1373 pol=-0.0000 val=4240.1147 ent=2.1538 tot=+2120.0358 gnorm=69.472 kl=0.0007 clipf=0.000 ev=-0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  32 step= 105600 ep_ret=-552.121 step_rew=-5.5212 pol=-0.0005 val=3429.5421 ent=2.1563 tot=+1714.7489 gnorm=66.387 kl=0.0005 clipf=0.000 ev=+0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  33 step= 108800 ep_ret=-555.781 step_rew=-5.5578 pol=-0.0001 val=3405.3973 ent=2.1517 tot=+1702.6771 gnorm=63.654 kl=0.0004 clipf=0.000 ev=-0.008 r0=1.0000 lr=5.0e-04 seed=1
+iter=  34 step= 112000 ep_ret=-554.101 step_rew=-5.5410 pol=-0.0004 val=3397.2652 ent=2.1484 tot=+1698.6107 gnorm=62.394 kl=0.0009 clipf=0.001 ev=-0.008 r0=1.0000 lr=5.0e-04 seed=1
+iter=  35 step= 115200 ep_ret=-571.939 step_rew=-5.7194 pol=-0.0004 val=3549.8921 ent=2.1425 tot=+1774.9242 gnorm=65.851 kl=0.0007 clipf=0.000 ev=-0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  36 step= 118400 ep_ret=-533.263 step_rew=-5.3326 pol=-0.0004 val=3057.1586 ent=2.1499 tot=+1528.5573 gnorm=63.555 kl=0.0005 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  37 step= 121600 ep_ret=-527.882 step_rew=-5.2788 pol=-0.0002 val=3013.3625 ent=2.1415 tot=+1506.6597 gnorm=61.522 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter=  38 step= 124800 ep_ret=-521.754 step_rew=-5.2175 pol=-0.0008 val=2991.6484 ent=2.1367 tot=+1495.8020 gnorm=65.072 kl=0.0005 clipf=0.001 ev=-0.011 r0=1.0000 lr=5.0e-04 seed=1
+iter=  39 step= 128000 ep_ret=-471.854 step_rew=-4.7185 pol=-0.0006 val=2398.7084 ent=2.1531 tot=+1199.3321 gnorm=53.611 kl=0.0015 clipf=0.011 ev=-0.005 r0=1.0000 lr=5.0e-04 seed=1
+iter=  40 step= 131200 ep_ret=-495.254 step_rew=-4.9525 pol=-0.0004 val=2682.9315 ent=2.1554 tot=+1341.4438 gnorm=59.530 kl=0.0006 clipf=0.000 ev=-0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  41 step= 134400 ep_ret=-517.548 step_rew=-5.1755 pol=-0.0003 val=2808.4705 ent=2.1478 tot=+1404.2135 gnorm=62.303 kl=0.0006 clipf=0.000 ev=-0.010 r0=1.0000 lr=5.0e-04 seed=1
+iter=  42 step= 137600 ep_ret=-528.807 step_rew=-5.2881 pol=-0.0009 val=3069.3613 ent=2.1464 tot=+1534.6583 gnorm=62.910 kl=0.0007 clipf=0.000 ev=-0.005 r0=1.0000 lr=5.0e-04 seed=1
+iter=  43 step= 140800 ep_ret=-514.050 step_rew=-5.1405 pol=-0.0006 val=2964.0356 ent=2.1569 tot=+1481.9956 gnorm=62.311 kl=0.0006 clipf=0.000 ev=-0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  44 step= 144000 ep_ret=-486.711 step_rew=-4.8671 pol=-0.0010 val=2513.4451 ent=2.1568 tot=+1256.6999 gnorm=60.632 kl=0.0006 clipf=0.000 ev=-0.005 r0=1.0000 lr=5.0e-04 seed=1
+iter=  45 step= 147200 ep_ret=-474.300 step_rew=-4.7430 pol=-0.0001 val=2406.0150 ent=2.1615 tot=+1202.9858 gnorm=59.994 kl=0.0006 clipf=0.000 ev=-0.010 r0=1.0000 lr=5.0e-04 seed=1
+iter=  46 step= 150400 ep_ret=-500.615 step_rew=-5.0062 pol=-0.0006 val=2739.5979 ent=2.1525 tot=+1369.7768 gnorm=59.220 kl=0.0004 clipf=0.000 ev=-0.005 r0=1.0000 lr=5.0e-04 seed=1
+iter=  47 step= 153600 ep_ret=-530.174 step_rew=-5.3017 pol=-0.0005 val=3002.5504 ent=2.1416 tot=+1501.2533 gnorm=65.993 kl=0.0009 clipf=0.000 ev=-0.007 r0=1.0000 lr=5.0e-04 seed=1
+iter=  48 step= 156800 ep_ret=-525.316 step_rew=-5.2532 pol=-0.0001 val=2974.4650 ent=2.1332 tot=+1487.2110 gnorm=63.075 kl=0.0010 clipf=0.001 ev=-0.007 r0=1.0000 lr=5.0e-04 seed=1
+iter=  49 step= 160000 ep_ret=-523.210 step_rew=-5.2321 pol=+0.0002 val=2940.6963 ent=2.1342 tot=+1470.3269 gnorm=66.019 kl=0.0006 clipf=0.000 ev=-0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=  50 step= 163200 ep_ret=-513.973 step_rew=-5.1397 pol=-0.0000 val=2774.8163 ent=2.1288 tot=+1387.3868 gnorm=66.698 kl=0.0006 clipf=0.000 ev=-0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  51 step= 166400 ep_ret=-486.332 step_rew=-4.8633 pol=-0.0010 val=2433.2717 ent=2.1223 tot=+1216.6136 gnorm=61.493 kl=0.0008 clipf=0.000 ev=-0.004 r0=1.0000 lr=5.0e-04 seed=1
+iter=  52 step= 169600 ep_ret=-502.351 step_rew=-5.0235 pol=+0.0003 val=2641.2610 ent=2.1324 tot=+1320.6095 gnorm=63.805 kl=0.0009 clipf=0.000 ev=-0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=  53 step= 172800 ep_ret=-504.396 step_rew=-5.0440 pol=-0.0006 val=2619.0594 ent=2.1261 tot=+1309.5079 gnorm=65.646 kl=0.0006 clipf=0.000 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  54 step= 176000 ep_ret=-514.323 step_rew=-5.1432 pol=-0.0003 val=2799.7105 ent=2.1160 tot=+1399.8338 gnorm=67.427 kl=0.0005 clipf=0.000 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  55 step= 179200 ep_ret=-552.459 step_rew=-5.5246 pol=-0.0001 val=3158.5635 ent=2.1062 tot=+1579.2606 gnorm=71.853 kl=0.0006 clipf=0.000 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  56 step= 182400 ep_ret=-529.514 step_rew=-5.2951 pol=-0.0002 val=2891.8529 ent=2.1085 tot=+1445.9052 gnorm=69.956 kl=0.0009 clipf=0.001 ev=-0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=  57 step= 185600 ep_ret=-466.323 step_rew=-4.6632 pol=-0.0002 val=2293.4601 ent=2.1267 tot=+1146.7086 gnorm=62.555 kl=0.0006 clipf=0.000 ev=-0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=  58 step= 188800 ep_ret=-454.519 step_rew=-4.5452 pol=-0.0002 val=2098.1645 ent=2.1132 tot=+1049.0609 gnorm=60.271 kl=0.0009 clipf=0.001 ev=-0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=  59 step= 192000 ep_ret=-528.167 step_rew=-5.2817 pol=-0.0005 val=2763.3698 ent=2.1113 tot=+1381.6633 gnorm=70.297 kl=0.0006 clipf=0.001 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  60 step= 195200 ep_ret=-457.774 step_rew=-4.5777 pol=-0.0009 val=2212.6261 ent=2.0997 tot=+1106.2912 gnorm=61.083 kl=0.0012 clipf=0.008 ev=-0.003 r0=1.0000 lr=5.0e-04 seed=1
+iter=  61 step= 198400 ep_ret=-494.820 step_rew=-4.9482 pol=-0.0001 val=2568.6068 ent=2.1020 tot=+1284.2823 gnorm=66.665 kl=0.0009 clipf=0.001 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  62 step= 201600 ep_ret=-496.174 step_rew=-4.9617 pol=-0.0006 val=2506.7128 ent=2.0995 tot=+1253.3348 gnorm=69.001 kl=0.0014 clipf=0.004 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  63 step= 204800 ep_ret=-480.736 step_rew=-4.8074 pol=-0.0001 val=2350.4687 ent=2.1038 tot=+1175.2132 gnorm=64.848 kl=0.0012 clipf=0.003 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  64 step= 208000 ep_ret=-506.473 step_rew=-5.0647 pol=-0.0004 val=2699.1910 ent=2.0923 tot=+1349.5742 gnorm=69.315 kl=0.0006 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  65 step= 211200 ep_ret=-472.360 step_rew=-4.7236 pol=-0.0004 val=2230.2841 ent=2.0780 tot=+1115.1209 gnorm=63.706 kl=0.0012 clipf=0.002 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  66 step= 214400 ep_ret=-436.965 step_rew=-4.3696 pol=-0.0004 val=1949.9989 ent=2.0852 tot=+974.9782 gnorm=60.291 kl=0.0007 clipf=0.001 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  67 step= 217600 ep_ret=-468.584 step_rew=-4.6858 pol=-0.0006 val=2168.7838 ent=2.0751 tot=+1084.3705 gnorm=63.890 kl=0.0010 clipf=0.003 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  68 step= 220800 ep_ret=-522.783 step_rew=-5.2278 pol=-0.0000 val=2669.5386 ent=2.0710 tot=+1334.7486 gnorm=72.957 kl=0.0013 clipf=0.004 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  69 step= 224000 ep_ret=-496.147 step_rew=-4.9615 pol=+0.0001 val=2429.4408 ent=2.0840 tot=+1214.6997 gnorm=69.283 kl=0.0008 clipf=0.002 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  70 step= 227200 ep_ret=-403.863 step_rew=-4.0386 pol=+0.0000 val=1668.0475 ent=2.0831 tot=+834.0029 gnorm=56.380 kl=0.0006 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  71 step= 230400 ep_ret=-486.103 step_rew=-4.8610 pol=-0.0002 val=2413.5467 ent=2.0779 tot=+1206.7524 gnorm=68.231 kl=0.0008 clipf=0.001 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  72 step= 233600 ep_ret=-462.299 step_rew=-4.6230 pol=-0.0006 val=2150.8558 ent=2.0789 tot=+1075.4065 gnorm=63.524 kl=0.0010 clipf=0.005 ev=-0.002 r0=1.0000 lr=5.0e-04 seed=1
+iter=  73 step= 236800 ep_ret=-487.543 step_rew=-4.8754 pol=-0.0003 val=2442.3563 ent=2.0731 tot=+1221.1572 gnorm=69.753 kl=0.0009 clipf=0.002 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  74 step= 240000 ep_ret=-478.895 step_rew=-4.7889 pol=-0.0005 val=2298.6194 ent=2.0706 tot=+1149.2885 gnorm=67.478 kl=0.0014 clipf=0.006 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  75 step= 243200 ep_ret=-468.539 step_rew=-4.6854 pol=-0.0010 val=2198.9956 ent=2.0865 tot=+1099.4759 gnorm=66.904 kl=0.0011 clipf=0.005 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  76 step= 246400 ep_ret=-444.482 step_rew=-4.4448 pol=-0.0010 val=1958.6961 ent=2.0929 tot=+979.3261 gnorm=63.110 kl=0.0010 clipf=0.002 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  77 step= 249600 ep_ret=-428.006 step_rew=-4.2801 pol=-0.0003 val=1790.6794 ent=2.0834 tot=+895.3186 gnorm=60.907 kl=0.0018 clipf=0.006 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  78 step= 252800 ep_ret=-439.425 step_rew=-4.3942 pol=-0.0004 val=1919.3966 ent=2.0684 tot=+959.6772 gnorm=62.442 kl=0.0008 clipf=0.001 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  79 step= 256000 ep_ret=-446.835 step_rew=-4.4684 pol=-0.0002 val=1906.1654 ent=2.0604 tot=+953.0619 gnorm=63.639 kl=0.0011 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  80 step= 259200 ep_ret=-426.426 step_rew=-4.2643 pol=+0.0001 val=1739.4464 ent=2.0394 tot=+869.7029 gnorm=59.474 kl=0.0009 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter=  81 step= 262400 ep_ret=-472.097 step_rew=-4.7210 pol=-0.0005 val=2214.6042 ent=2.0564 tot=+1107.2810 gnorm=66.591 kl=0.0017 clipf=0.006 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  82 step= 265600 ep_ret=-476.325 step_rew=-4.7632 pol=-0.0001 val=2259.2422 ent=2.0643 tot=+1129.6003 gnorm=69.885 kl=0.0008 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  83 step= 268800 ep_ret=-455.948 step_rew=-4.5595 pol=-0.0006 val=2035.7146 ent=2.0843 tot=+1017.8358 gnorm=65.354 kl=0.0008 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  84 step= 272000 ep_ret=-445.054 step_rew=-4.4505 pol=-0.0003 val=1954.2226 ent=2.0797 tot=+977.0902 gnorm=65.799 kl=0.0012 clipf=0.002 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  85 step= 275200 ep_ret=-469.944 step_rew=-4.6994 pol=-0.0011 val=2240.0240 ent=2.0593 tot=+1119.9904 gnorm=67.000 kl=0.0018 clipf=0.008 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  86 step= 278400 ep_ret=-517.269 step_rew=-5.1727 pol=-0.0002 val=2695.1874 ent=2.0560 tot=+1347.5729 gnorm=76.387 kl=0.0010 clipf=0.001 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  87 step= 281600 ep_ret=-498.697 step_rew=-4.9870 pol=+0.0005 val=2476.8384 ent=2.0636 tot=+1238.3991 gnorm=73.478 kl=0.0006 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  88 step= 284800 ep_ret=-509.580 step_rew=-5.0958 pol=-0.0005 val=2489.5027 ent=2.0658 tot=+1244.7302 gnorm=74.583 kl=0.0008 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  89 step= 288000 ep_ret=-506.121 step_rew=-5.0612 pol=-0.0005 val=2451.6966 ent=2.0500 tot=+1225.8273 gnorm=74.683 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter=  90 step= 291200 ep_ret=-458.456 step_rew=-4.5846 pol=-0.0002 val=2028.3371 ent=2.0548 tot=+1014.1478 gnorm=67.140 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter=  91 step= 294400 ep_ret=-486.779 step_rew=-4.8678 pol=-0.0005 val=2292.6545 ent=2.0667 tot=+1146.3061 gnorm=72.464 kl=0.0009 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter=  92 step= 297600 ep_ret=-501.981 step_rew=-5.0198 pol=+0.0003 val=2444.7443 ent=2.0356 tot=+1222.3521 gnorm=74.153 kl=0.0018 clipf=0.005 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  93 step= 300800 ep_ret=-492.196 step_rew=-4.9220 pol=+0.0001 val=2320.6752 ent=2.0361 tot=+1160.3173 gnorm=73.609 kl=0.0008 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  94 step= 304000 ep_ret=-477.285 step_rew=-4.7729 pol=+0.0005 val=2214.3163 ent=2.0346 tot=+1107.1383 gnorm=69.887 kl=0.0015 clipf=0.004 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter=  95 step= 307200 ep_ret=-451.659 step_rew=-4.5166 pol=-0.0003 val=1918.1751 ent=2.0450 tot=+959.0668 gnorm=66.742 kl=0.0010 clipf=0.002 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  96 step= 310400 ep_ret=-524.123 step_rew=-5.2412 pol=-0.0002 val=2640.8868 ent=2.0444 tot=+1320.4228 gnorm=77.389 kl=0.0006 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  97 step= 313600 ep_ret=-444.838 step_rew=-4.4484 pol=-0.0006 val=1957.7972 ent=2.0489 tot=+978.8774 gnorm=64.234 kl=0.0012 clipf=0.001 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter=  98 step= 316800 ep_ret=-467.551 step_rew=-4.6755 pol=+0.0001 val=2141.6857 ent=2.0276 tot=+1070.8227 gnorm=68.919 kl=0.0007 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter=  99 step= 320000 ep_ret=-463.247 step_rew=-4.6325 pol=+0.0004 val=2011.2039 ent=2.0436 tot=+1005.5819 gnorm=67.274 kl=0.0023 clipf=0.015 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 100 step= 323200 ep_ret=-415.597 step_rew=-4.1560 pol=-0.0005 val=1577.9200 ent=2.0395 tot=+788.9391 gnorm=59.815 kl=0.0023 clipf=0.011 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 101 step= 326400 ep_ret=-475.367 step_rew=-4.7537 pol=-0.0006 val=2154.4408 ent=2.0482 tot=+1077.1993 gnorm=69.785 kl=0.0006 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 102 step= 329600 ep_ret=-489.864 step_rew=-4.8986 pol=-0.0008 val=2310.3602 ent=2.0431 tot=+1155.1589 gnorm=71.103 kl=0.0012 clipf=0.003 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 103 step= 332800 ep_ret=-477.985 step_rew=-4.7799 pol=-0.0003 val=2152.6079 ent=2.0463 tot=+1076.2831 gnorm=69.243 kl=0.0006 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 104 step= 336000 ep_ret=-431.529 step_rew=-4.3153 pol=-0.0003 val=1728.1019 ent=2.0386 tot=+864.0303 gnorm=62.239 kl=0.0009 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 105 step= 339200 ep_ret=-455.152 step_rew=-4.5515 pol=-0.0003 val=2039.9579 ent=2.0141 tot=+1019.9585 gnorm=65.166 kl=0.0014 clipf=0.003 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter= 106 step= 342400 ep_ret=-456.183 step_rew=-4.5618 pol=-0.0003 val=1919.1129 ent=2.0175 tot=+959.5360 gnorm=66.135 kl=0.0008 clipf=0.003 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 107 step= 345600 ep_ret=-440.005 step_rew=-4.4000 pol=-0.0008 val=1801.9390 ent=2.0226 tot=+900.9485 gnorm=63.172 kl=0.0008 clipf=0.004 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 108 step= 348800 ep_ret=-437.153 step_rew=-4.3715 pol=-0.0004 val=1729.0270 ent=2.0343 tot=+864.4927 gnorm=63.055 kl=0.0014 clipf=0.006 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 109 step= 352000 ep_ret=-452.734 step_rew=-4.5273 pol=-0.0000 val=1867.3171 ent=2.0533 tot=+933.6380 gnorm=65.336 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 110 step= 355200 ep_ret=-453.189 step_rew=-4.5319 pol=-0.0003 val=1935.0211 ent=2.0595 tot=+967.4896 gnorm=65.118 kl=0.0005 clipf=0.000 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter= 111 step= 358400 ep_ret=-500.501 step_rew=-5.0050 pol=-0.0005 val=2424.2616 ent=2.0641 tot=+1212.1097 gnorm=72.463 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 112 step= 361600 ep_ret=-460.821 step_rew=-4.6082 pol=-0.0003 val=1937.0415 ent=2.0660 tot=+968.4999 gnorm=66.641 kl=0.0004 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 113 step= 364800 ep_ret=-454.953 step_rew=-4.5495 pol=-0.0000 val=1961.8407 ent=2.0584 tot=+980.8998 gnorm=65.525 kl=0.0009 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 114 step= 368000 ep_ret=-445.296 step_rew=-4.4530 pol=-0.0007 val=1826.4854 ent=2.0543 tot=+913.2215 gnorm=63.601 kl=0.0007 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 115 step= 371200 ep_ret=-474.420 step_rew=-4.7442 pol=+0.0000 val=2085.8330 ent=2.0547 tot=+1042.8960 gnorm=68.268 kl=0.0011 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 116 step= 374400 ep_ret=-445.533 step_rew=-4.4553 pol=-0.0001 val=1810.1870 ent=2.0527 tot=+905.0728 gnorm=63.708 kl=0.0012 clipf=0.007 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 117 step= 377600 ep_ret=-438.422 step_rew=-4.3842 pol=-0.0002 val=1712.2657 ent=2.0454 tot=+856.1122 gnorm=61.565 kl=0.0010 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 118 step= 380800 ep_ret=-477.686 step_rew=-4.7769 pol=-0.0007 val=2125.4091 ent=2.0541 tot=+1062.6833 gnorm=68.843 kl=0.0005 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 119 step= 384000 ep_ret=-482.085 step_rew=-4.8209 pol=-0.0005 val=2197.7964 ent=2.0590 tot=+1098.8772 gnorm=69.477 kl=0.0015 clipf=0.006 ev=-0.001 r0=1.0000 lr=5.0e-04 seed=1
+iter= 120 step= 387200 ep_ret=-504.062 step_rew=-5.0406 pol=-0.0015 val=2356.3178 ent=2.0819 tot=+1178.1366 gnorm=72.392 kl=0.0017 clipf=0.008 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 121 step= 390400 ep_ret=-475.486 step_rew=-4.7549 pol=-0.0003 val=2110.5024 ent=2.0808 tot=+1055.2301 gnorm=68.020 kl=0.0007 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 122 step= 393600 ep_ret=-488.982 step_rew=-4.8898 pol=-0.0004 val=2190.3533 ent=2.0753 tot=+1095.1555 gnorm=69.990 kl=0.0011 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 123 step= 396800 ep_ret=-451.766 step_rew=-4.5177 pol=-0.0004 val=1885.9114 ent=2.0610 tot=+942.9347 gnorm=64.212 kl=0.0007 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 124 step= 400000 ep_ret=-462.287 step_rew=-4.6229 pol=-0.0002 val=1996.0042 ent=2.0753 tot=+997.9811 gnorm=66.386 kl=0.0009 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 125 step= 403200 ep_ret=-467.900 step_rew=-4.6790 pol=+0.0000 val=1934.4580 ent=2.0742 tot=+967.2083 gnorm=66.721 kl=0.0007 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 126 step= 406400 ep_ret=-453.698 step_rew=-4.5370 pol=-0.0005 val=1840.0698 ent=2.0670 tot=+920.0137 gnorm=63.588 kl=0.0005 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 127 step= 409600 ep_ret=-429.429 step_rew=-4.2943 pol=-0.0009 val=1674.7061 ent=2.0827 tot=+837.3314 gnorm=59.676 kl=0.0011 clipf=0.006 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 128 step= 412800 ep_ret=-456.187 step_rew=-4.5619 pol=-0.0002 val=1881.2219 ent=2.0677 tot=+940.5900 gnorm=63.452 kl=0.0007 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 129 step= 416000 ep_ret=-444.000 step_rew=-4.4400 pol=-0.0002 val=1751.3486 ent=2.0832 tot=+875.6533 gnorm=62.264 kl=0.0010 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 130 step= 419200 ep_ret=-480.810 step_rew=-4.8081 pol=-0.0006 val=2099.2104 ent=2.0785 tot=+1049.5839 gnorm=67.864 kl=0.0007 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 131 step= 422400 ep_ret=-439.701 step_rew=-4.3970 pol=-0.0007 val=1673.7840 ent=2.0558 tot=+836.8707 gnorm=60.982 kl=0.0011 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 132 step= 425600 ep_ret=-463.041 step_rew=-4.6304 pol=-0.0001 val=1901.2778 ent=2.0487 tot=+950.6183 gnorm=64.959 kl=0.0007 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 133 step= 428800 ep_ret=-439.979 step_rew=-4.3998 pol=+0.0001 val=1663.3785 ent=2.0480 tot=+831.6689 gnorm=60.514 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 134 step= 432000 ep_ret=-475.818 step_rew=-4.7582 pol=+0.0004 val=1964.9643 ent=2.0438 tot=+982.4621 gnorm=67.218 kl=0.0009 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 135 step= 435200 ep_ret=-423.191 step_rew=-4.2319 pol=+0.0005 val=1527.4377 ent=2.0723 tot=+763.6986 gnorm=59.238 kl=0.0013 clipf=0.004 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 136 step= 438400 ep_ret=-464.997 step_rew=-4.6500 pol=-0.0000 val=1948.0306 ent=2.0731 tot=+973.9946 gnorm=65.224 kl=0.0012 clipf=0.003 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 137 step= 441600 ep_ret=-428.348 step_rew=-4.2835 pol=-0.0006 val=1615.1236 ent=2.0738 tot=+807.5405 gnorm=59.189 kl=0.0005 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 138 step= 444800 ep_ret=-464.541 step_rew=-4.6454 pol=+0.0003 val=1910.8700 ent=2.0798 tot=+955.4145 gnorm=64.768 kl=0.0004 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 139 step= 448000 ep_ret=-457.307 step_rew=-4.5731 pol=-0.0008 val=1805.8317 ent=2.0647 tot=+902.8944 gnorm=64.300 kl=0.0009 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 140 step= 451200 ep_ret=-451.104 step_rew=-4.5110 pol=+0.0003 val=1733.0028 ent=2.0662 tot=+866.4811 gnorm=61.943 kl=0.0013 clipf=0.005 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 141 step= 454400 ep_ret=-437.492 step_rew=-4.3749 pol=-0.0002 val=1663.8072 ent=2.0716 tot=+831.8827 gnorm=60.691 kl=0.0007 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 142 step= 457600 ep_ret=-432.793 step_rew=-4.3279 pol=+0.0000 val=1640.2117 ent=2.0736 tot=+820.0851 gnorm=59.919 kl=0.0006 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 143 step= 460800 ep_ret=-458.405 step_rew=-4.5840 pol=-0.0001 val=1862.1298 ent=2.0756 tot=+931.0440 gnorm=64.431 kl=0.0005 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 144 step= 464000 ep_ret=-455.416 step_rew=-4.5542 pol=-0.0002 val=1732.6755 ent=2.0707 tot=+866.3169 gnorm=62.650 kl=0.0008 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 145 step= 467200 ep_ret=-447.840 step_rew=-4.4784 pol=-0.0004 val=1725.5987 ent=2.0690 tot=+862.7782 gnorm=61.769 kl=0.0008 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 146 step= 470400 ep_ret=-454.570 step_rew=-4.5457 pol=+0.0004 val=1839.1837 ent=2.0733 tot=+919.5715 gnorm=62.477 kl=0.0006 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 147 step= 473600 ep_ret=-462.821 step_rew=-4.6282 pol=-0.0003 val=1911.9642 ent=2.0883 tot=+955.9609 gnorm=64.540 kl=0.0004 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 148 step= 476800 ep_ret=-481.348 step_rew=-4.8135 pol=+0.0001 val=2002.6447 ent=2.0724 tot=+1001.3017 gnorm=67.160 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 149 step= 480000 ep_ret=-443.123 step_rew=-4.4312 pol=+0.0001 val=1666.1487 ent=2.0799 tot=+833.0536 gnorm=60.858 kl=0.0011 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 150 step= 483200 ep_ret=-454.738 step_rew=-4.5474 pol=-0.0006 val=1761.3146 ent=2.0844 tot=+880.6359 gnorm=62.337 kl=0.0007 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 151 step= 486400 ep_ret=-448.232 step_rew=-4.4823 pol=-0.0001 val=1754.1888 ent=2.0600 tot=+877.0737 gnorm=61.592 kl=0.0010 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 152 step= 489600 ep_ret=-493.481 step_rew=-4.9348 pol=-0.0004 val=2179.8329 ent=2.0814 tot=+1089.8952 gnorm=69.012 kl=0.0013 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 153 step= 492800 ep_ret=-475.969 step_rew=-4.7597 pol=+0.0004 val=2017.9020 ent=2.0864 tot=+1008.9305 gnorm=65.796 kl=0.0012 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 154 step= 496000 ep_ret=-452.890 step_rew=-4.5289 pol=-0.0006 val=1755.3256 ent=2.0787 tot=+877.6414 gnorm=61.900 kl=0.0017 clipf=0.007 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 155 step= 499200 ep_ret=-447.171 step_rew=-4.4717 pol=-0.0002 val=1648.8742 ent=2.0752 tot=+824.4162 gnorm=60.805 kl=0.0012 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 156 step= 502400 ep_ret=-484.844 step_rew=-4.8484 pol=-0.0001 val=2043.3694 ent=2.0668 tot=+1021.6640 gnorm=68.219 kl=0.0004 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 157 step= 505600 ep_ret=-509.533 step_rew=-5.0953 pol=-0.0011 val=2287.8453 ent=2.0762 tot=+1143.9008 gnorm=71.079 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 158 step= 508800 ep_ret=-442.972 step_rew=-4.4297 pol=-0.0004 val=1646.0352 ent=2.0465 tot=+822.9968 gnorm=59.685 kl=0.0007 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 159 step= 512000 ep_ret=-459.308 step_rew=-4.5931 pol=-0.0004 val=1715.8204 ent=2.0468 tot=+857.8893 gnorm=62.365 kl=0.0008 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 160 step= 515200 ep_ret=-443.958 step_rew=-4.4396 pol=-0.0006 val=1708.4588 ent=2.0335 tot=+854.2085 gnorm=60.549 kl=0.0007 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 161 step= 518400 ep_ret=-440.108 step_rew=-4.4011 pol=-0.0009 val=1592.9716 ent=2.0397 tot=+796.4645 gnorm=59.390 kl=0.0012 clipf=0.008 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 162 step= 521600 ep_ret=-443.373 step_rew=-4.4337 pol=-0.0004 val=1671.9178 ent=2.0380 tot=+835.9381 gnorm=60.598 kl=0.0009 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 163 step= 524800 ep_ret=-514.888 step_rew=-5.1489 pol=-0.0003 val=2254.3673 ent=2.0327 tot=+1127.1630 gnorm=71.838 kl=0.0007 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 164 step= 528000 ep_ret=-493.096 step_rew=-4.9310 pol=+0.0003 val=2151.1856 ent=2.0423 tot=+1075.5727 gnorm=69.046 kl=0.0009 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 165 step= 531200 ep_ret=-485.768 step_rew=-4.8577 pol=+0.0001 val=1990.8105 ent=2.0243 tot=+995.3851 gnorm=66.209 kl=0.0004 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 166 step= 534400 ep_ret=-424.398 step_rew=-4.2440 pol=-0.0004 val=1475.4921 ent=2.0408 tot=+737.7252 gnorm=56.838 kl=0.0010 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 167 step= 537600 ep_ret=-451.691 step_rew=-4.5169 pol=+0.0005 val=1771.5216 ent=2.0441 tot=+885.7409 gnorm=61.132 kl=0.0007 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 168 step= 540800 ep_ret=-466.610 step_rew=-4.6661 pol=-0.0007 val=1827.8661 ent=2.0344 tot=+913.9119 gnorm=64.313 kl=0.0008 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 169 step= 544000 ep_ret=-450.441 step_rew=-4.5044 pol=-0.0001 val=1695.0324 ent=2.0532 tot=+847.4955 gnorm=60.627 kl=0.0012 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 170 step= 547200 ep_ret=-445.174 step_rew=-4.4517 pol=+0.0000 val=1669.3922 ent=2.0427 tot=+834.6757 gnorm=60.082 kl=0.0005 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 171 step= 550400 ep_ret=-467.668 step_rew=-4.6767 pol=-0.0003 val=1934.1811 ent=2.0372 tot=+967.0699 gnorm=63.738 kl=0.0005 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 172 step= 553600 ep_ret=-500.368 step_rew=-5.0037 pol=-0.0003 val=2165.0484 ent=2.0488 tot=+1082.5034 gnorm=70.094 kl=0.0015 clipf=0.006 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 173 step= 556800 ep_ret=-470.445 step_rew=-4.7045 pol=-0.0003 val=1810.0527 ent=2.0431 tot=+905.0056 gnorm=63.980 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 174 step= 560000 ep_ret=-444.227 step_rew=-4.4423 pol=-0.0003 val=1576.9332 ent=2.0358 tot=+788.4460 gnorm=58.920 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 175 step= 563200 ep_ret=-431.277 step_rew=-4.3128 pol=+0.0000 val=1496.9515 ent=2.0578 tot=+748.4552 gnorm=57.460 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 176 step= 566400 ep_ret=-438.440 step_rew=-4.3844 pol=-0.0003 val=1606.0009 ent=2.0576 tot=+802.9796 gnorm=59.476 kl=0.0009 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 177 step= 569600 ep_ret=-479.202 step_rew=-4.7920 pol=-0.0006 val=1899.3403 ent=2.0468 tot=+949.6491 gnorm=64.404 kl=0.0012 clipf=0.002 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 178 step= 572800 ep_ret=-453.320 step_rew=-4.5332 pol=-0.0003 val=1663.7731 ent=2.0530 tot=+831.8658 gnorm=60.964 kl=0.0019 clipf=0.010 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 179 step= 576000 ep_ret=-471.940 step_rew=-4.7194 pol=-0.0005 val=1813.9198 ent=2.0505 tot=+906.9389 gnorm=64.568 kl=0.0012 clipf=0.004 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 180 step= 579200 ep_ret=-464.916 step_rew=-4.6492 pol=+0.0003 val=1735.2626 ent=2.0427 tot=+867.6112 gnorm=62.730 kl=0.0010 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 181 step= 582400 ep_ret=-416.720 step_rew=-4.1672 pol=-0.0003 val=1408.5161 ent=2.0694 tot=+704.2370 gnorm=55.059 kl=0.0013 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 182 step= 585600 ep_ret=-419.377 step_rew=-4.1938 pol=-0.0003 val=1342.2595 ent=2.0550 tot=+671.1089 gnorm=54.702 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 183 step= 588800 ep_ret=-438.044 step_rew=-4.3804 pol=-0.0006 val=1540.3329 ent=2.0586 tot=+770.1453 gnorm=58.367 kl=0.0011 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 184 step= 592000 ep_ret=-489.475 step_rew=-4.8948 pol=-0.0004 val=1938.6612 ent=2.0563 tot=+969.3096 gnorm=65.422 kl=0.0012 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 185 step= 595200 ep_ret=-454.563 step_rew=-4.5456 pol=+0.0000 val=1657.3643 ent=2.0650 tot=+828.6616 gnorm=60.543 kl=0.0003 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 186 step= 598400 ep_ret=-463.258 step_rew=-4.6326 pol=+0.0004 val=1776.2971 ent=2.0682 tot=+888.1283 gnorm=62.547 kl=0.0006 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 187 step= 601600 ep_ret=-482.801 step_rew=-4.8280 pol=-0.0004 val=1904.4120 ent=2.0604 tot=+952.1850 gnorm=65.857 kl=0.0006 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 188 step= 604800 ep_ret=-438.388 step_rew=-4.3839 pol=-0.0002 val=1462.9176 ent=2.0631 tot=+731.4380 gnorm=57.291 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 189 step= 608000 ep_ret=-438.311 step_rew=-4.3831 pol=+0.0001 val=1498.5476 ent=2.0779 tot=+749.2532 gnorm=58.033 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 190 step= 611200 ep_ret=-459.278 step_rew=-4.5928 pol=-0.0006 val=1718.6060 ent=2.0815 tot=+859.2816 gnorm=60.353 kl=0.0005 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 191 step= 614400 ep_ret=-453.285 step_rew=-4.5329 pol=-0.0005 val=1628.1537 ent=2.0757 tot=+814.0556 gnorm=59.476 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 192 step= 617600 ep_ret=-473.586 step_rew=-4.7359 pol=-0.0004 val=1787.1589 ent=2.0471 tot=+893.5586 gnorm=63.033 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 193 step= 620800 ep_ret=-450.238 step_rew=-4.5024 pol=+0.0001 val=1638.5410 ent=2.0730 tot=+819.2499 gnorm=59.881 kl=0.0004 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 194 step= 624000 ep_ret=-461.245 step_rew=-4.6125 pol=-0.0006 val=1671.7321 ent=2.0718 tot=+835.8447 gnorm=60.784 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 195 step= 627200 ep_ret=-417.698 step_rew=-4.1770 pol=-0.0007 val=1343.5699 ent=2.0798 tot=+671.7635 gnorm=53.984 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 196 step= 630400 ep_ret=-512.080 step_rew=-5.1208 pol=-0.0014 val=2118.2677 ent=2.0673 tot=+1059.1118 gnorm=68.566 kl=0.0013 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 197 step= 633600 ep_ret=-439.168 step_rew=-4.3917 pol=-0.0005 val=1532.9478 ent=2.0743 tot=+766.4527 gnorm=57.056 kl=0.0010 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 198 step= 636800 ep_ret=-514.546 step_rew=-5.1455 pol=-0.0000 val=2116.5541 ent=2.0760 tot=+1058.2563 gnorm=69.863 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 199 step= 640000 ep_ret=-495.285 step_rew=-4.9529 pol=-0.0004 val=2005.3602 ent=2.0796 tot=+1002.6590 gnorm=66.903 kl=0.0012 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 200 step= 643200 ep_ret=-436.664 step_rew=-4.3666 pol=-0.0014 val=1511.0503 ent=2.0749 tot=+755.5030 gnorm=57.038 kl=0.0019 clipf=0.009 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 201 step= 646400 ep_ret=-448.068 step_rew=-4.4807 pol=-0.0008 val=1645.5181 ent=2.0756 tot=+822.7375 gnorm=58.832 kl=0.0015 clipf=0.011 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 202 step= 649600 ep_ret=-462.072 step_rew=-4.6207 pol=-0.0001 val=1628.0004 ent=2.0718 tot=+813.9794 gnorm=60.998 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 203 step= 652800 ep_ret=-475.979 step_rew=-4.7598 pol=-0.0010 val=1771.9620 ent=2.0857 tot=+885.9591 gnorm=62.345 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 204 step= 656000 ep_ret=-480.371 step_rew=-4.8037 pol=-0.0003 val=1799.8449 ent=2.0617 tot=+899.9015 gnorm=63.147 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 205 step= 659200 ep_ret=-456.892 step_rew=-4.5689 pol=-0.0002 val=1606.1700 ent=2.0791 tot=+803.0640 gnorm=59.138 kl=0.0010 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 206 step= 662400 ep_ret=-460.072 step_rew=-4.6007 pol=-0.0008 val=1624.4648 ent=2.0714 tot=+812.2109 gnorm=59.333 kl=0.0014 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 207 step= 665600 ep_ret=-461.398 step_rew=-4.6140 pol=-0.0003 val=1611.9714 ent=2.0804 tot=+805.9645 gnorm=67.122 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 208 step= 668800 ep_ret=-413.192 step_rew=-4.1319 pol=-0.0001 val=1274.4633 ent=2.0889 tot=+637.2107 gnorm=52.668 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 209 step= 672000 ep_ret=-431.348 step_rew=-4.3135 pol=-0.0004 val=1395.0549 ent=2.0859 tot=+697.5062 gnorm=55.510 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 210 step= 675200 ep_ret=-447.274 step_rew=-4.4727 pol=-0.0006 val=1479.2996 ent=2.0820 tot=+739.6284 gnorm=56.684 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 211 step= 678400 ep_ret=-411.739 step_rew=-4.1174 pol=+0.0001 val=1259.6418 ent=2.0889 tot=+629.8001 gnorm=52.203 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 212 step= 681600 ep_ret=-417.311 step_rew=-4.1731 pol=+0.0003 val=1272.2566 ent=2.1004 tot=+636.1076 gnorm=56.131 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 213 step= 684800 ep_ret=-468.383 step_rew=-4.6838 pol=-0.0005 val=1698.8147 ent=2.0875 tot=+849.3860 gnorm=61.212 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 214 step= 688000 ep_ret=-411.892 step_rew=-4.1189 pol=-0.0001 val=1335.0891 ent=2.0954 tot=+667.5236 gnorm=51.919 kl=0.0006 clipf=0.000 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 215 step= 691200 ep_ret=-421.560 step_rew=-4.2156 pol=-0.0006 val=1276.4699 ent=2.0997 tot=+638.2134 gnorm=52.925 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 216 step= 694400 ep_ret=-434.848 step_rew=-4.3485 pol=-0.0004 val=1407.7700 ent=2.0865 tot=+703.8638 gnorm=55.579 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 217 step= 697600 ep_ret=-471.686 step_rew=-4.7169 pol=-0.0001 val=1754.1102 ent=2.0831 tot=+877.0342 gnorm=61.961 kl=0.0010 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 218 step= 700800 ep_ret=-421.247 step_rew=-4.2125 pol=-0.0007 val=1275.0635 ent=2.1059 tot=+637.5100 gnorm=53.649 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 219 step= 704000 ep_ret=-427.257 step_rew=-4.2726 pol=-0.0001 val=1332.8844 ent=2.0825 tot=+666.4212 gnorm=53.529 kl=0.0011 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 220 step= 707200 ep_ret=-446.445 step_rew=-4.4644 pol=+0.0000 val=1456.4967 ent=2.0904 tot=+728.2275 gnorm=55.988 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 221 step= 710400 ep_ret=-459.312 step_rew=-4.5931 pol=-0.0002 val=1641.5646 ent=2.0889 tot=+820.7612 gnorm=58.204 kl=0.0008 clipf=0.001 ev=-0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 222 step= 713600 ep_ret=-480.271 step_rew=-4.8027 pol=-0.0006 val=1783.7372 ent=2.0790 tot=+891.8472 gnorm=61.762 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 223 step= 716800 ep_ret=-468.861 step_rew=-4.6886 pol=-0.0008 val=1635.8989 ent=2.0830 tot=+817.9279 gnorm=61.181 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 224 step= 720000 ep_ret=-447.138 step_rew=-4.4714 pol=-0.0002 val=1435.8834 ent=2.0808 tot=+717.9207 gnorm=55.886 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 225 step= 723200 ep_ret=-469.968 step_rew=-4.6997 pol=-0.0007 val=1719.8779 ent=2.1015 tot=+859.9172 gnorm=60.844 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 226 step= 726400 ep_ret=-426.739 step_rew=-4.2674 pol=-0.0003 val=1351.7226 ent=2.0834 tot=+675.8401 gnorm=52.898 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 227 step= 729600 ep_ret=-436.081 step_rew=-4.3608 pol=-0.0002 val=1420.8826 ent=2.0756 tot=+710.4203 gnorm=54.270 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 228 step= 732800 ep_ret=-467.442 step_rew=-4.6744 pol=-0.0002 val=1602.5303 ent=2.1005 tot=+801.2439 gnorm=60.400 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 229 step= 736000 ep_ret=-432.641 step_rew=-4.3264 pol=-0.0008 val=1405.3717 ent=2.0919 tot=+702.6641 gnorm=53.250 kl=0.0010 clipf=0.007 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 230 step= 739200 ep_ret=-442.150 step_rew=-4.4215 pol=+0.0001 val=1452.4176 ent=2.1013 tot=+726.1879 gnorm=56.971 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 231 step= 742400 ep_ret=-441.449 step_rew=-4.4145 pol=+0.0002 val=1407.5984 ent=2.0991 tot=+703.7784 gnorm=55.007 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 232 step= 745600 ep_ret=-459.759 step_rew=-4.5976 pol=-0.0010 val=1540.0845 ent=2.0975 tot=+770.0203 gnorm=58.138 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 233 step= 748800 ep_ret=-468.833 step_rew=-4.6883 pol=-0.0000 val=1596.4388 ent=2.0953 tot=+798.1984 gnorm=59.819 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 234 step= 752000 ep_ret=-405.056 step_rew=-4.0506 pol=-0.0004 val=1089.2329 ent=2.0987 tot=+544.5951 gnorm=49.447 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 235 step= 755200 ep_ret=-455.106 step_rew=-4.5511 pol=-0.0001 val=1513.5003 ent=2.1005 tot=+756.7291 gnorm=56.647 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 236 step= 758400 ep_ret=-436.022 step_rew=-4.3602 pol=-0.0002 val=1304.5268 ent=2.0934 tot=+652.2423 gnorm=54.164 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 237 step= 761600 ep_ret=-468.877 step_rew=-4.6888 pol=-0.0004 val=1600.9365 ent=2.0917 tot=+800.4469 gnorm=59.574 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 238 step= 764800 ep_ret=-466.081 step_rew=-4.6608 pol=-0.0004 val=1650.2935 ent=2.1078 tot=+825.1253 gnorm=60.369 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 239 step= 768000 ep_ret=-454.420 step_rew=-4.5442 pol=-0.0002 val=1536.8269 ent=2.1013 tot=+768.3922 gnorm=56.951 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 240 step= 771200 ep_ret=-458.268 step_rew=-4.5827 pol=-0.0003 val=1471.2900 ent=2.0821 tot=+735.6238 gnorm=56.582 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 241 step= 774400 ep_ret=-447.645 step_rew=-4.4764 pol=-0.0008 val=1483.0141 ent=2.0944 tot=+741.4854 gnorm=56.275 kl=0.0012 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 242 step= 777600 ep_ret=-472.175 step_rew=-4.7217 pol=-0.0001 val=1683.3639 ent=2.1011 tot=+841.6608 gnorm=59.698 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 243 step= 780800 ep_ret=-446.084 step_rew=-4.4608 pol=-0.0001 val=1375.8360 ent=2.0985 tot=+687.8969 gnorm=55.293 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 244 step= 784000 ep_ret=-477.908 step_rew=-4.7791 pol=-0.0008 val=1724.7711 ent=2.1046 tot=+862.3637 gnorm=61.383 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 245 step= 787200 ep_ret=-413.813 step_rew=-4.1381 pol=-0.0000 val=1162.9058 ent=2.1028 tot=+581.4319 gnorm=49.674 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 246 step= 790400 ep_ret=-412.091 step_rew=-4.1209 pol=-0.0000 val=1217.3465 ent=2.1097 tot=+608.6522 gnorm=50.087 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 247 step= 793600 ep_ret=-447.461 step_rew=-4.4746 pol=-0.0009 val=1423.4905 ent=2.0891 tot=+711.7235 gnorm=54.526 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 248 step= 796800 ep_ret=-398.825 step_rew=-3.9882 pol=-0.0005 val=1077.6525 ent=2.1053 tot=+538.8047 gnorm=47.649 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 249 step= 800000 ep_ret=-435.270 step_rew=-4.3527 pol=-0.0004 val=1348.0293 ent=2.0969 tot=+673.9933 gnorm=53.698 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 250 step= 803200 ep_ret=-462.348 step_rew=-4.6235 pol=-0.0004 val=1528.3178 ent=2.0967 tot=+764.1375 gnorm=57.927 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 251 step= 806400 ep_ret=-459.358 step_rew=-4.5936 pol=-0.0002 val=1528.2926 ent=2.1072 tot=+764.1250 gnorm=57.510 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 252 step= 809600 ep_ret=-464.401 step_rew=-4.6440 pol=-0.0003 val=1515.2019 ent=2.0839 tot=+757.5799 gnorm=57.483 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 253 step= 812800 ep_ret=-424.291 step_rew=-4.2429 pol=-0.0000 val=1223.1344 ent=2.0989 tot=+611.5462 gnorm=52.625 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 254 step= 816000 ep_ret=-466.134 step_rew=-4.6613 pol=-0.0009 val=1643.1718 ent=2.0961 tot=+821.5640 gnorm=58.466 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 255 step= 819200 ep_ret=-456.107 step_rew=-4.5611 pol=-0.0003 val=1464.8696 ent=2.0703 tot=+732.4138 gnorm=56.281 kl=0.0011 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 256 step= 822400 ep_ret=-470.051 step_rew=-4.7005 pol=-0.0012 val=1550.3081 ent=2.0513 tot=+775.1323 gnorm=57.771 kl=0.0014 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 257 step= 825600 ep_ret=-432.416 step_rew=-4.3242 pol=+0.0003 val=1235.1546 ent=2.0609 tot=+617.5570 gnorm=52.806 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 258 step= 828800 ep_ret=-461.674 step_rew=-4.6167 pol=-0.0001 val=1509.8852 ent=2.0628 tot=+754.9218 gnorm=56.714 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 259 step= 832000 ep_ret=-440.427 step_rew=-4.4043 pol=-0.0003 val=1393.6957 ent=2.0648 tot=+696.8269 gnorm=53.350 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 260 step= 835200 ep_ret=-425.183 step_rew=-4.2518 pol=-0.0004 val=1189.9094 ent=2.0536 tot=+594.9338 gnorm=51.112 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 261 step= 838400 ep_ret=-461.621 step_rew=-4.6162 pol=-0.0000 val=1487.0212 ent=2.0736 tot=+743.4898 gnorm=57.404 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 262 step= 841600 ep_ret=-452.737 step_rew=-4.5274 pol=-0.0002 val=1462.7833 ent=2.0654 tot=+731.3708 gnorm=54.673 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 263 step= 844800 ep_ret=-430.496 step_rew=-4.3050 pol=-0.0010 val=1237.8506 ent=2.0576 tot=+618.9038 gnorm=51.284 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 264 step= 848000 ep_ret=-460.278 step_rew=-4.6028 pol=-0.0006 val=1508.6297 ent=2.0727 tot=+754.2935 gnorm=57.088 kl=0.0012 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 265 step= 851200 ep_ret=-449.729 step_rew=-4.4973 pol=-0.0002 val=1459.2087 ent=2.0737 tot=+729.5834 gnorm=54.980 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 266 step= 854400 ep_ret=-455.714 step_rew=-4.5571 pol=-0.0006 val=1452.8468 ent=2.0664 tot=+726.4021 gnorm=56.138 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 267 step= 857600 ep_ret=-432.035 step_rew=-4.3204 pol=+0.0000 val=1290.1537 ent=2.0807 tot=+645.0561 gnorm=51.992 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 268 step= 860800 ep_ret=-413.735 step_rew=-4.1373 pol=-0.0006 val=1103.7210 ent=2.0791 tot=+551.8392 gnorm=49.156 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 269 step= 864000 ep_ret=-448.305 step_rew=-4.4831 pol=-0.0003 val=1391.1601 ent=2.0807 tot=+695.5589 gnorm=55.134 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 270 step= 867200 ep_ret=-446.094 step_rew=-4.4609 pol=-0.0004 val=1447.5993 ent=2.0785 tot=+723.7784 gnorm=54.292 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 271 step= 870400 ep_ret=-419.982 step_rew=-4.1998 pol=+0.0000 val=1221.6538 ent=2.0714 tot=+610.8062 gnorm=49.044 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 272 step= 873600 ep_ret=-467.449 step_rew=-4.6745 pol=+0.0000 val=1532.4677 ent=2.0926 tot=+766.2129 gnorm=58.184 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 273 step= 876800 ep_ret=-424.407 step_rew=-4.2441 pol=-0.0008 val=1180.9843 ent=2.0657 tot=+590.4707 gnorm=50.427 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 274 step= 880000 ep_ret=-488.333 step_rew=-4.8833 pol=+0.0006 val=1671.4699 ent=2.0781 tot=+835.7147 gnorm=61.094 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 275 step= 883200 ep_ret=-403.219 step_rew=-4.0322 pol=-0.0010 val=1030.4445 ent=2.0722 tot=+515.2005 gnorm=45.327 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 276 step= 886400 ep_ret=-386.236 step_rew=-3.8624 pol=-0.0006 val=867.5748 ent=2.0830 tot=+433.7660 gnorm=44.297 kl=0.0017 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 277 step= 889600 ep_ret=-437.246 step_rew=-4.3725 pol=-0.0002 val=1309.3753 ent=2.0684 tot=+654.6667 gnorm=52.602 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 278 step= 892800 ep_ret=-427.087 step_rew=-4.2709 pol=-0.0007 val=1234.5997 ent=2.0842 tot=+617.2783 gnorm=51.216 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 279 step= 896000 ep_ret=-437.055 step_rew=-4.3705 pol=-0.0002 val=1338.6062 ent=2.0896 tot=+669.2820 gnorm=51.573 kl=0.0015 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 280 step= 899200 ep_ret=-441.283 step_rew=-4.4128 pol=-0.0010 val=1341.4269 ent=2.0854 tot=+670.6917 gnorm=52.784 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 281 step= 902400 ep_ret=-434.037 step_rew=-4.3404 pol=-0.0005 val=1238.2437 ent=2.0620 tot=+619.1008 gnorm=51.549 kl=0.0028 clipf=0.012 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 282 step= 905600 ep_ret=-414.824 step_rew=-4.1482 pol=+0.0004 val=1050.9663 ent=2.0666 tot=+525.4629 gnorm=49.649 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 283 step= 908800 ep_ret=-441.511 step_rew=-4.4151 pol=-0.0005 val=1299.5039 ent=2.0667 tot=+649.7308 gnorm=52.659 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 284 step= 912000 ep_ret=-433.692 step_rew=-4.3369 pol=-0.0003 val=1275.0348 ent=2.0617 tot=+637.4964 gnorm=51.177 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 285 step= 915200 ep_ret=-440.474 step_rew=-4.4047 pol=-0.0007 val=1260.3535 ent=2.0727 tot=+630.1553 gnorm=51.661 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 286 step= 918400 ep_ret=-483.922 step_rew=-4.8392 pol=-0.0001 val=1624.2392 ent=2.0828 tot=+812.0987 gnorm=58.769 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 287 step= 921600 ep_ret=-460.569 step_rew=-4.6057 pol=-0.0002 val=1492.3623 ent=2.0762 tot=+746.1602 gnorm=55.392 kl=0.0016 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 288 step= 924800 ep_ret=-463.343 step_rew=-4.6334 pol=-0.0001 val=1492.6074 ent=2.0759 tot=+746.2829 gnorm=61.807 kl=0.0011 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 289 step= 928000 ep_ret=-410.743 step_rew=-4.1074 pol=-0.0008 val=1143.7371 ent=2.0841 tot=+571.8469 gnorm=47.102 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 290 step= 931200 ep_ret=-418.331 step_rew=-4.1833 pol=+0.0003 val=1071.8650 ent=2.0679 tot=+535.9121 gnorm=48.536 kl=0.0010 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 291 step= 934400 ep_ret=-440.539 step_rew=-4.4054 pol=-0.0002 val=1283.7257 ent=2.0784 tot=+641.8418 gnorm=52.249 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 292 step= 937600 ep_ret=-478.439 step_rew=-4.7844 pol=+0.0003 val=1509.7056 ent=2.0657 tot=+754.8324 gnorm=57.845 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 293 step= 940800 ep_ret=-446.430 step_rew=-4.4643 pol=-0.0001 val=1255.1276 ent=2.0736 tot=+627.5430 gnorm=52.784 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 294 step= 944000 ep_ret=-478.268 step_rew=-4.7827 pol=+0.0003 val=1573.8637 ent=2.0741 tot=+786.9114 gnorm=57.430 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 295 step= 947200 ep_ret=-457.421 step_rew=-4.5742 pol=-0.0007 val=1447.5549 ent=2.0628 tot=+723.7562 gnorm=54.146 kl=0.0014 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 296 step= 950400 ep_ret=-440.122 step_rew=-4.4012 pol=-0.0003 val=1178.6800 ent=2.0563 tot=+589.3192 gnorm=51.162 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 297 step= 953600 ep_ret=-405.787 step_rew=-4.0579 pol=-0.0008 val=980.0798 ent=2.0609 tot=+490.0185 gnorm=45.457 kl=0.0013 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 298 step= 956800 ep_ret=-484.661 step_rew=-4.8466 pol=-0.0003 val=1597.5242 ent=2.0551 tot=+798.7412 gnorm=58.411 kl=0.0006 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 299 step= 960000 ep_ret=-470.954 step_rew=-4.7095 pol=+0.0003 val=1496.6987 ent=2.0635 tot=+748.3290 gnorm=56.706 kl=0.0012 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 300 step= 963200 ep_ret=-440.388 step_rew=-4.4039 pol=-0.0004 val=1185.4849 ent=2.0621 tot=+592.7214 gnorm=50.362 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 301 step= 966400 ep_ret=-462.113 step_rew=-4.6211 pol=+0.0002 val=1349.7304 ent=2.0556 tot=+674.8449 gnorm=54.191 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 302 step= 969600 ep_ret=-455.835 step_rew=-4.5583 pol=-0.0015 val=1351.6676 ent=2.0565 tot=+675.8117 gnorm=53.520 kl=0.0015 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 303 step= 972800 ep_ret=-418.923 step_rew=-4.1892 pol=+0.0002 val=1082.4874 ent=2.0503 tot=+541.2234 gnorm=46.947 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 304 step= 976000 ep_ret=-457.777 step_rew=-4.5778 pol=-0.0005 val=1413.5287 ent=2.0644 tot=+706.7432 gnorm=54.242 kl=0.0008 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 305 step= 979200 ep_ret=-418.362 step_rew=-4.1836 pol=-0.0004 val=1121.0482 ent=2.0710 tot=+560.5030 gnorm=47.234 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 306 step= 982400 ep_ret=-410.234 step_rew=-4.1023 pol=-0.0005 val=979.2480 ent=2.0756 tot=+489.6027 gnorm=46.062 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 307 step= 985600 ep_ret=-421.652 step_rew=-4.2165 pol=-0.0008 val=1026.9046 ent=2.0706 tot=+513.4307 gnorm=46.428 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 308 step= 988800 ep_ret=-450.145 step_rew=-4.5015 pol=-0.0008 val=1254.5459 ent=2.0613 tot=+627.2515 gnorm=51.680 kl=0.0012 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 309 step= 992000 ep_ret=-470.909 step_rew=-4.7091 pol=-0.0005 val=1403.4070 ent=2.0616 tot=+701.6824 gnorm=54.811 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 310 step= 995200 ep_ret=-416.314 step_rew=-4.1631 pol=-0.0002 val=994.1608 ent=2.0623 tot=+497.0596 gnorm=46.717 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 311 step= 998400 ep_ret=-467.370 step_rew=-4.6737 pol=-0.0003 val=1425.4859 ent=2.0454 tot=+712.7221 gnorm=54.384 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 312 step=1001600 ep_ret=-415.170 step_rew=-4.1517 pol=-0.0000 val=995.2154 ent=2.0608 tot=+497.5870 gnorm=46.009 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 313 step=1004800 ep_ret=-419.205 step_rew=-4.1920 pol=-0.0001 val=1061.3804 ent=2.0637 tot=+530.6694 gnorm=47.392 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 314 step=1008000 ep_ret=-405.789 step_rew=-4.0579 pol=+0.0008 val=920.1694 ent=2.0646 tot=+460.0649 gnorm=44.037 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 315 step=1011200 ep_ret=-424.010 step_rew=-4.2401 pol=-0.0005 val=1104.6907 ent=2.0576 tot=+552.3243 gnorm=54.121 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 316 step=1014400 ep_ret=-429.759 step_rew=-4.2976 pol=-0.0007 val=1122.9536 ent=2.0614 tot=+561.4555 gnorm=60.414 kl=0.0013 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 317 step=1017600 ep_ret=-412.363 step_rew=-4.1236 pol=-0.0004 val=986.0583 ent=2.0570 tot=+493.0082 gnorm=45.540 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 318 step=1020800 ep_ret=-426.875 step_rew=-4.2687 pol=-0.0001 val=1093.9136 ent=2.0663 tot=+546.9361 gnorm=49.050 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 319 step=1024000 ep_ret=-427.870 step_rew=-4.2787 pol=+0.0000 val=1071.8273 ent=2.0710 tot=+535.8930 gnorm=47.905 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 320 step=1027200 ep_ret=-449.328 step_rew=-4.4933 pol=-0.0009 val=1327.6687 ent=2.0386 tot=+663.8131 gnorm=51.176 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 321 step=1030400 ep_ret=-414.065 step_rew=-4.1406 pol=-0.0004 val=949.8172 ent=2.0539 tot=+474.8877 gnorm=46.051 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 322 step=1033600 ep_ret=-443.040 step_rew=-4.4304 pol=-0.0006 val=1277.0673 ent=2.0488 tot=+638.5126 gnorm=50.470 kl=0.0020 clipf=0.008 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 323 step=1036800 ep_ret=-459.001 step_rew=-4.5900 pol=-0.0001 val=1316.6113 ent=2.0557 tot=+658.2850 gnorm=66.579 kl=0.0015 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 324 step=1040000 ep_ret=-426.965 step_rew=-4.2696 pol=-0.0001 val=1111.7086 ent=2.0447 tot=+555.8338 gnorm=47.773 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 325 step=1043200 ep_ret=-421.654 step_rew=-4.2165 pol=-0.0006 val=1053.5520 ent=2.0538 tot=+526.7548 gnorm=47.234 kl=0.0020 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 326 step=1046400 ep_ret=-456.594 step_rew=-4.5659 pol=-0.0002 val=1329.0804 ent=2.0426 tot=+664.5195 gnorm=59.023 kl=0.0015 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 327 step=1049600 ep_ret=-415.036 step_rew=-4.1504 pol=-0.0006 val=1005.4268 ent=2.0534 tot=+502.6923 gnorm=45.387 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 328 step=1052800 ep_ret=-441.765 step_rew=-4.4177 pol=-0.0001 val=1196.3459 ent=2.0618 tot=+598.1522 gnorm=49.815 kl=0.0030 clipf=0.020 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 329 step=1056000 ep_ret=-425.056 step_rew=-4.2506 pol=+0.0004 val=1082.9018 ent=2.0716 tot=+541.4306 gnorm=46.675 kl=0.0015 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 330 step=1059200 ep_ret=-449.368 step_rew=-4.4937 pol=-0.0011 val=1253.4533 ent=2.0770 tot=+626.7048 gnorm=50.721 kl=0.0014 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 331 step=1062400 ep_ret=-389.821 step_rew=-3.8982 pol=+0.0008 val=833.0518 ent=2.0758 tot=+416.5060 gnorm=45.970 kl=0.0015 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 332 step=1065600 ep_ret=-445.512 step_rew=-4.4551 pol=-0.0004 val=1153.8650 ent=2.0552 tot=+576.9115 gnorm=48.284 kl=0.0021 clipf=0.013 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 333 step=1068800 ep_ret=-422.447 step_rew=-4.2245 pol=-0.0003 val=1012.9373 ent=2.0612 tot=+506.4478 gnorm=45.535 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 334 step=1072000 ep_ret=-436.847 step_rew=-4.3685 pol=-0.0007 val=1142.6753 ent=2.0641 tot=+571.3163 gnorm=48.486 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 335 step=1075200 ep_ret=-428.344 step_rew=-4.2834 pol=-0.0000 val=1021.7581 ent=2.0520 tot=+510.8585 gnorm=46.652 kl=0.0013 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 336 step=1078400 ep_ret=-426.855 step_rew=-4.2686 pol=-0.0005 val=1110.0333 ent=2.0511 tot=+554.9956 gnorm=47.211 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 337 step=1081600 ep_ret=-468.700 step_rew=-4.6870 pol=-0.0005 val=1403.6006 ent=2.0538 tot=+701.7792 gnorm=53.810 kl=0.0010 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 338 step=1084800 ep_ret=-422.511 step_rew=-4.2251 pol=-0.0002 val=1073.6612 ent=2.0664 tot=+536.8097 gnorm=46.573 kl=0.0011 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 339 step=1088000 ep_ret=-426.590 step_rew=-4.2659 pol=-0.0002 val=993.4658 ent=2.0532 tot=+496.7122 gnorm=45.437 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 340 step=1091200 ep_ret=-399.164 step_rew=-3.9916 pol=-0.0004 val=894.6001 ent=2.0692 tot=+447.2790 gnorm=42.634 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 341 step=1094400 ep_ret=-416.785 step_rew=-4.1679 pol=+0.0005 val=1001.0446 ent=2.0538 tot=+500.5022 gnorm=48.972 kl=0.0020 clipf=0.009 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 342 step=1097600 ep_ret=-472.168 step_rew=-4.7217 pol=-0.0002 val=1367.7587 ent=2.0401 tot=+683.8587 gnorm=53.529 kl=0.0016 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 343 step=1100800 ep_ret=-412.676 step_rew=-4.1268 pol=+0.0002 val=988.3834 ent=2.0574 tot=+494.1713 gnorm=49.538 kl=0.0013 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 344 step=1104000 ep_ret=-405.474 step_rew=-4.0547 pol=-0.0011 val=881.7598 ent=2.0567 tot=+440.8582 gnorm=47.523 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 345 step=1107200 ep_ret=-460.331 step_rew=-4.6033 pol=+0.0005 val=1310.2024 ent=2.0607 tot=+655.0811 gnorm=51.619 kl=0.0024 clipf=0.012 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 346 step=1110400 ep_ret=-426.729 step_rew=-4.2673 pol=-0.0001 val=1064.4769 ent=2.0569 tot=+532.2178 gnorm=46.592 kl=0.0025 clipf=0.020 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 347 step=1113600 ep_ret=-477.233 step_rew=-4.7723 pol=-0.0007 val=1385.6247 ent=2.0485 tot=+692.7911 gnorm=59.734 kl=0.0015 clipf=0.009 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 348 step=1116800 ep_ret=-491.417 step_rew=-4.9142 pol=-0.0000 val=1437.2499 ent=2.0607 tot=+718.6043 gnorm=61.390 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 349 step=1120000 ep_ret=-437.521 step_rew=-4.3752 pol=+0.0001 val=1202.2007 ent=2.0569 tot=+601.0799 gnorm=52.123 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 350 step=1123200 ep_ret=-441.924 step_rew=-4.4192 pol=-0.0006 val=1150.6667 ent=2.0561 tot=+575.3121 gnorm=48.859 kl=0.0009 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 351 step=1126400 ep_ret=-443.487 step_rew=-4.4349 pol=-0.0002 val=1130.1317 ent=2.0579 tot=+565.0451 gnorm=54.406 kl=0.0010 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 352 step=1129600 ep_ret=-428.196 step_rew=-4.2820 pol=-0.0003 val=1033.3132 ent=2.0423 tot=+516.6358 gnorm=45.895 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 353 step=1132800 ep_ret=-414.162 step_rew=-4.1416 pol=-0.0006 val=935.3629 ent=2.0587 tot=+467.6603 gnorm=43.963 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 354 step=1136000 ep_ret=-406.844 step_rew=-4.0684 pol=-0.0001 val=887.3958 ent=2.0653 tot=+443.6771 gnorm=42.058 kl=0.0012 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 355 step=1139200 ep_ret=-488.084 step_rew=-4.8808 pol=-0.0000 val=1490.8713 ent=2.0418 tot=+745.4152 gnorm=54.185 kl=0.0013 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 356 step=1142400 ep_ret=-421.697 step_rew=-4.2170 pol=-0.0006 val=1007.2768 ent=2.0585 tot=+503.6172 gnorm=50.319 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 357 step=1145600 ep_ret=-411.959 step_rew=-4.1196 pol=-0.0002 val=907.5607 ent=2.0458 tot=+453.7597 gnorm=47.308 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 358 step=1148800 ep_ret=-427.344 step_rew=-4.2734 pol=+0.0003 val=1069.1924 ent=2.0477 tot=+534.5760 gnorm=45.356 kl=0.0011 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 359 step=1152000 ep_ret=-416.729 step_rew=-4.1673 pol=+0.0003 val=905.4956 ent=2.0600 tot=+452.7275 gnorm=43.200 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 360 step=1155200 ep_ret=-440.369 step_rew=-4.4037 pol=-0.0004 val=1104.9930 ent=2.0643 tot=+552.4755 gnorm=53.514 kl=0.0016 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 361 step=1158400 ep_ret=-427.207 step_rew=-4.2721 pol=+0.0001 val=1001.8934 ent=2.0548 tot=+500.9263 gnorm=44.803 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 362 step=1161600 ep_ret=-441.846 step_rew=-4.4185 pol=-0.0001 val=1115.7072 ent=2.0653 tot=+557.8328 gnorm=51.607 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 363 step=1164800 ep_ret=-407.740 step_rew=-4.0774 pol=-0.0006 val=1009.2542 ent=2.0808 tot=+504.6057 gnorm=42.576 kl=0.0010 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 364 step=1168000 ep_ret=-406.848 step_rew=-4.0685 pol=+0.0002 val=799.1684 ent=2.0752 tot=+399.5637 gnorm=52.841 kl=0.0011 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 365 step=1171200 ep_ret=-433.146 step_rew=-4.3315 pol=-0.0004 val=974.0655 ent=2.0632 tot=+487.0117 gnorm=45.446 kl=0.0017 clipf=0.008 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 366 step=1174400 ep_ret=-416.303 step_rew=-4.1630 pol=-0.0004 val=929.6512 ent=2.0644 tot=+464.8045 gnorm=43.713 kl=0.0012 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 367 step=1177600 ep_ret=-407.922 step_rew=-4.0792 pol=-0.0007 val=908.7612 ent=2.0492 tot=+454.3594 gnorm=46.792 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 368 step=1180800 ep_ret=-466.345 step_rew=-4.6635 pol=-0.0002 val=1260.5708 ent=2.0628 tot=+630.2646 gnorm=58.149 kl=0.0014 clipf=0.008 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 369 step=1184000 ep_ret=-437.902 step_rew=-4.3790 pol=+0.0001 val=1106.4750 ent=2.0517 tot=+553.2171 gnorm=46.292 kl=0.0016 clipf=0.011 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 370 step=1187200 ep_ret=-440.230 step_rew=-4.4023 pol=-0.0003 val=1086.1678 ent=2.0409 tot=+543.0632 gnorm=47.498 kl=0.0015 clipf=0.008 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 371 step=1190400 ep_ret=-423.029 step_rew=-4.2303 pol=+0.0007 val=942.0473 ent=2.0666 tot=+471.0036 gnorm=49.632 kl=0.0022 clipf=0.013 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 372 step=1193600 ep_ret=-455.205 step_rew=-4.5521 pol=+0.0003 val=1182.0020 ent=2.0593 tot=+590.9807 gnorm=49.121 kl=0.0016 clipf=0.010 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 373 step=1196800 ep_ret=-424.052 step_rew=-4.2405 pol=-0.0005 val=924.2600 ent=2.0740 tot=+462.1087 gnorm=44.245 kl=0.0025 clipf=0.021 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 374 step=1200000 ep_ret=-389.243 step_rew=-3.8924 pol=-0.0001 val=752.9653 ent=2.0652 tot=+376.4619 gnorm=42.785 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 375 step=1203200 ep_ret=-439.687 step_rew=-4.3969 pol=-0.0001 val=960.5744 ent=2.0510 tot=+480.2666 gnorm=45.596 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 376 step=1206400 ep_ret=-450.470 step_rew=-4.5047 pol=-0.0006 val=1167.6404 ent=2.0756 tot=+583.7989 gnorm=48.641 kl=0.0022 clipf=0.011 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 377 step=1209600 ep_ret=-432.230 step_rew=-4.3223 pol=-0.0005 val=1039.0341 ent=2.0713 tot=+519.4958 gnorm=50.956 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 378 step=1212800 ep_ret=-393.483 step_rew=-3.9348 pol=-0.0011 val=689.6661 ent=2.0649 tot=+344.8113 gnorm=38.393 kl=0.0012 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 379 step=1216000 ep_ret=-469.114 step_rew=-4.6911 pol=+0.0002 val=1255.5582 ent=2.0743 tot=+627.7585 gnorm=54.122 kl=0.0013 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 380 step=1219200 ep_ret=-432.957 step_rew=-4.3296 pol=+0.0004 val=956.9019 ent=2.0556 tot=+478.4308 gnorm=48.578 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 381 step=1222400 ep_ret=-430.941 step_rew=-4.3094 pol=-0.0003 val=934.6905 ent=2.0449 tot=+467.3245 gnorm=44.122 kl=0.0014 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 382 step=1225600 ep_ret=-445.283 step_rew=-4.4528 pol=-0.0004 val=1033.0919 ent=2.0606 tot=+516.5250 gnorm=50.169 kl=0.0012 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 383 step=1228800 ep_ret=-377.666 step_rew=-3.7767 pol=-0.0005 val=733.7072 ent=2.0699 tot=+366.8324 gnorm=39.719 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 384 step=1232000 ep_ret=-439.907 step_rew=-4.3991 pol=-0.0002 val=1041.2688 ent=2.0692 tot=+520.6135 gnorm=50.936 kl=0.0015 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 385 step=1235200 ep_ret=-445.336 step_rew=-4.4534 pol=+0.0000 val=1003.9297 ent=2.0622 tot=+501.9442 gnorm=53.316 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 386 step=1238400 ep_ret=-429.376 step_rew=-4.2938 pol=+0.0002 val=1010.6100 ent=2.0742 tot=+505.2844 gnorm=44.548 kl=0.0018 clipf=0.008 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 387 step=1241600 ep_ret=-396.025 step_rew=-3.9603 pol=-0.0003 val=709.5160 ent=2.0727 tot=+354.7370 gnorm=43.248 kl=0.0020 clipf=0.018 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 388 step=1244800 ep_ret=-387.297 step_rew=-3.8730 pol=+0.0001 val=726.7190 ent=2.0616 tot=+363.3390 gnorm=37.220 kl=0.0017 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 389 step=1248000 ep_ret=-421.003 step_rew=-4.2100 pol=-0.0001 val=894.9498 ent=2.0670 tot=+447.4542 gnorm=47.372 kl=0.0020 clipf=0.011 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 390 step=1251200 ep_ret=-453.921 step_rew=-4.5392 pol=-0.0002 val=1166.7979 ent=2.0818 tot=+583.3779 gnorm=54.538 kl=0.0016 clipf=0.010 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 391 step=1254400 ep_ret=-435.872 step_rew=-4.3587 pol=-0.0007 val=909.8679 ent=2.0551 tot=+454.9127 gnorm=43.556 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 392 step=1257600 ep_ret=-410.854 step_rew=-4.1085 pol=+0.0003 val=904.7981 ent=2.0840 tot=+452.3785 gnorm=44.767 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 393 step=1260800 ep_ret=-424.645 step_rew=-4.2465 pol=-0.0004 val=938.2210 ent=2.0750 tot=+469.0893 gnorm=58.465 kl=0.0010 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 394 step=1264000 ep_ret=-451.088 step_rew=-4.5109 pol=-0.0006 val=1026.9487 ent=2.0766 tot=+513.4530 gnorm=46.786 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 395 step=1267200 ep_ret=-420.408 step_rew=-4.2041 pol=-0.0005 val=833.7300 ent=2.0756 tot=+416.8438 gnorm=44.616 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 396 step=1270400 ep_ret=-404.236 step_rew=-4.0424 pol=-0.0004 val=807.3132 ent=2.0719 tot=+403.6355 gnorm=42.529 kl=0.0012 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 397 step=1273600 ep_ret=-450.052 step_rew=-4.5005 pol=-0.0003 val=1012.3932 ent=2.0678 tot=+506.1756 gnorm=53.332 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 398 step=1276800 ep_ret=-434.080 step_rew=-4.3408 pol=-0.0002 val=942.5592 ent=2.0717 tot=+471.2587 gnorm=43.456 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 399 step=1280000 ep_ret=-404.116 step_rew=-4.0412 pol=+0.0002 val=758.0451 ent=2.0518 tot=+379.0023 gnorm=42.511 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 400 step=1283200 ep_ret=-426.751 step_rew=-4.2675 pol=-0.0010 val=900.1346 ent=2.0518 tot=+450.0458 gnorm=42.582 kl=0.0014 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 401 step=1286400 ep_ret=-420.028 step_rew=-4.2003 pol=+0.0007 val=836.1025 ent=2.0630 tot=+418.0313 gnorm=45.876 kl=0.0012 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 402 step=1289600 ep_ret=-390.630 step_rew=-3.9063 pol=-0.0002 val=705.4956 ent=2.0750 tot=+352.7268 gnorm=36.740 kl=0.0009 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 403 step=1292800 ep_ret=-401.119 step_rew=-4.0112 pol=-0.0002 val=795.1830 ent=2.0796 tot=+397.5705 gnorm=43.484 kl=0.0012 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 404 step=1296000 ep_ret=-415.984 step_rew=-4.1598 pol=-0.0002 val=842.9745 ent=2.0762 tot=+421.4663 gnorm=46.055 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 405 step=1299200 ep_ret=-425.458 step_rew=-4.2546 pol=-0.0006 val=935.5136 ent=2.0863 tot=+467.7354 gnorm=48.173 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 406 step=1302400 ep_ret=-404.759 step_rew=-4.0476 pol=-0.0008 val=737.3617 ent=2.0836 tot=+368.6592 gnorm=42.818 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 407 step=1305600 ep_ret=-435.327 step_rew=-4.3533 pol=-0.0005 val=958.0763 ent=2.0918 tot=+479.0167 gnorm=49.785 kl=0.0013 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 408 step=1308800 ep_ret=-411.687 step_rew=-4.1169 pol=-0.0004 val=740.5840 ent=2.0840 tot=+370.2708 gnorm=44.205 kl=0.0015 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 409 step=1312000 ep_ret=-421.434 step_rew=-4.2143 pol=+0.0009 val=902.4585 ent=2.0898 tot=+451.2092 gnorm=44.352 kl=0.0023 clipf=0.011 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 410 step=1315200 ep_ret=-408.407 step_rew=-4.0841 pol=-0.0005 val=766.8610 ent=2.0871 tot=+383.4091 gnorm=43.970 kl=0.0033 clipf=0.037 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 411 step=1318400 ep_ret=-430.719 step_rew=-4.3072 pol=-0.0004 val=893.8242 ent=2.0912 tot=+446.8908 gnorm=45.822 kl=0.0016 clipf=0.010 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 412 step=1321600 ep_ret=-410.923 step_rew=-4.1092 pol=-0.0001 val=774.1513 ent=2.0771 tot=+387.0548 gnorm=43.323 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 413 step=1324800 ep_ret=-423.582 step_rew=-4.2358 pol=-0.0001 val=856.4612 ent=2.0957 tot=+428.2096 gnorm=46.305 kl=0.0010 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 414 step=1328000 ep_ret=-383.267 step_rew=-3.8327 pol=-0.0002 val=627.9792 ent=2.0981 tot=+313.9684 gnorm=39.192 kl=0.0013 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 415 step=1331200 ep_ret=-426.827 step_rew=-4.2683 pol=-0.0003 val=866.1068 ent=2.0873 tot=+433.0323 gnorm=46.884 kl=0.0007 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 416 step=1334400 ep_ret=-401.874 step_rew=-4.0187 pol=-0.0000 val=799.6896 ent=2.0885 tot=+399.8239 gnorm=47.964 kl=0.0013 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 417 step=1337600 ep_ret=-437.782 step_rew=-4.3778 pol=-0.0001 val=961.0137 ent=2.0869 tot=+480.4859 gnorm=60.057 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 418 step=1340800 ep_ret=-431.026 step_rew=-4.3103 pol=-0.0006 val=890.3790 ent=2.0826 tot=+445.1681 gnorm=42.425 kl=0.0011 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 419 step=1344000 ep_ret=-433.451 step_rew=-4.3345 pol=-0.0004 val=989.5519 ent=2.0973 tot=+494.7546 gnorm=48.440 kl=0.0008 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 420 step=1347200 ep_ret=-444.345 step_rew=-4.4434 pol=-0.0002 val=930.8410 ent=2.0666 tot=+465.3997 gnorm=49.483 kl=0.0013 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 421 step=1350400 ep_ret=-432.982 step_rew=-4.3298 pol=-0.0007 val=877.5396 ent=2.0787 tot=+438.7484 gnorm=42.340 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 422 step=1353600 ep_ret=-413.538 step_rew=-4.1354 pol=+0.0000 val=836.7853 ent=2.0822 tot=+418.3718 gnorm=44.942 kl=0.0014 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 423 step=1356800 ep_ret=-425.331 step_rew=-4.2533 pol=+0.0006 val=795.8533 ent=2.0721 tot=+397.9065 gnorm=44.333 kl=0.0016 clipf=0.007 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 424 step=1360000 ep_ret=-422.139 step_rew=-4.2214 pol=-0.0008 val=880.6936 ent=2.0728 tot=+440.3253 gnorm=44.148 kl=0.0028 clipf=0.013 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 425 step=1363200 ep_ret=-439.831 step_rew=-4.3983 pol=-0.0002 val=943.7264 ent=2.0870 tot=+471.8422 gnorm=49.870 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 426 step=1366400 ep_ret=-415.765 step_rew=-4.1577 pol=-0.0004 val=781.0025 ent=2.0823 tot=+390.4801 gnorm=43.887 kl=0.0013 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 427 step=1369600 ep_ret=-392.692 step_rew=-3.9269 pol=-0.0011 val=681.0163 ent=2.0841 tot=+340.4863 gnorm=40.286 kl=0.0020 clipf=0.013 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 428 step=1372800 ep_ret=-406.375 step_rew=-4.0637 pol=-0.0001 val=706.6985 ent=2.0750 tot=+353.3284 gnorm=61.521 kl=0.0012 clipf=0.007 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 429 step=1376000 ep_ret=-411.187 step_rew=-4.1119 pol=-0.0004 val=759.1020 ent=2.0908 tot=+379.5297 gnorm=38.807 kl=0.0009 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 430 step=1379200 ep_ret=-421.054 step_rew=-4.2105 pol=+0.0011 val=849.6915 ent=2.0810 tot=+424.8260 gnorm=50.603 kl=0.0016 clipf=0.009 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 431 step=1382400 ep_ret=-425.965 step_rew=-4.2596 pol=+0.0011 val=902.4520 ent=2.0964 tot=+451.2062 gnorm=51.264 kl=0.0027 clipf=0.030 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 432 step=1385600 ep_ret=-415.180 step_rew=-4.1518 pol=+0.0012 val=800.3943 ent=2.0889 tot=+400.1775 gnorm=47.998 kl=0.0033 clipf=0.035 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 433 step=1388800 ep_ret=-387.985 step_rew=-3.8798 pol=+0.0022 val=620.0201 ent=2.0716 tot=+309.9915 gnorm=36.220 kl=0.0048 clipf=0.057 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 434 step=1392000 ep_ret=-416.361 step_rew=-4.1636 pol=+0.0028 val=742.4849 ent=2.0766 tot=+371.2245 gnorm=48.815 kl=0.0050 clipf=0.061 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 435 step=1395200 ep_ret=-427.121 step_rew=-4.2712 pol=+0.0018 val=913.6527 ent=2.0654 tot=+456.8075 gnorm=45.377 kl=0.0049 clipf=0.057 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 436 step=1398400 ep_ret=-450.842 step_rew=-4.5084 pol=+0.0010 val=948.9826 ent=2.0644 tot=+474.4716 gnorm=49.854 kl=0.0039 clipf=0.041 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 437 step=1401600 ep_ret=-411.901 step_rew=-4.1190 pol=-0.0009 val=851.6166 ent=2.0818 tot=+425.7865 gnorm=43.079 kl=0.0025 clipf=0.024 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 438 step=1404800 ep_ret=-395.918 step_rew=-3.9592 pol=-0.0000 val=632.9621 ent=2.0645 tot=+316.4604 gnorm=51.478 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 439 step=1408000 ep_ret=-412.790 step_rew=-4.1279 pol=-0.0001 val=737.6092 ent=2.0708 tot=+368.7838 gnorm=37.633 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 440 step=1411200 ep_ret=-409.045 step_rew=-4.0905 pol=-0.0009 val=792.2709 ent=2.0804 tot=+396.1137 gnorm=43.306 kl=0.0018 clipf=0.008 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 441 step=1414400 ep_ret=-409.043 step_rew=-4.0904 pol=-0.0003 val=694.5209 ent=2.0792 tot=+347.2393 gnorm=47.660 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 442 step=1417600 ep_ret=-438.165 step_rew=-4.3817 pol=-0.0005 val=877.5454 ent=2.0733 tot=+438.7514 gnorm=42.197 kl=0.0013 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 443 step=1420800 ep_ret=-416.404 step_rew=-4.1640 pol=-0.0006 val=759.1259 ent=2.0844 tot=+379.5415 gnorm=48.613 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 444 step=1424000 ep_ret=-404.395 step_rew=-4.0439 pol=-0.0004 val=729.2524 ent=2.1039 tot=+364.6048 gnorm=41.554 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 445 step=1427200 ep_ret=-410.620 step_rew=-4.1062 pol=+0.0002 val=781.1845 ent=2.0690 tot=+390.5718 gnorm=41.951 kl=0.0010 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 446 step=1430400 ep_ret=-397.164 step_rew=-3.9716 pol=-0.0003 val=666.2051 ent=2.0757 tot=+333.0815 gnorm=42.417 kl=0.0008 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 447 step=1433600 ep_ret=-431.580 step_rew=-4.3158 pol=+0.0000 val=840.6189 ent=2.0852 tot=+420.2886 gnorm=60.128 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 448 step=1436800 ep_ret=-452.145 step_rew=-4.5215 pol=-0.0008 val=908.2417 ent=2.0696 tot=+454.0994 gnorm=43.450 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 449 step=1440000 ep_ret=-398.844 step_rew=-3.9884 pol=-0.0003 val=627.6961 ent=2.0747 tot=+313.8270 gnorm=39.592 kl=0.0014 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 450 step=1443200 ep_ret=-420.481 step_rew=-4.2048 pol=-0.0001 val=798.7520 ent=2.0680 tot=+399.3553 gnorm=42.994 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 451 step=1446400 ep_ret=-427.863 step_rew=-4.2786 pol=+0.0002 val=754.8279 ent=2.0654 tot=+377.3935 gnorm=49.241 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 452 step=1449600 ep_ret=-420.924 step_rew=-4.2092 pol=+0.0001 val=817.6579 ent=2.0783 tot=+408.8082 gnorm=42.652 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 453 step=1452800 ep_ret=-448.819 step_rew=-4.4882 pol=+0.0000 val=917.6523 ent=2.0748 tot=+458.8054 gnorm=69.415 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 454 step=1456000 ep_ret=-400.513 step_rew=-4.0051 pol=-0.0007 val=666.8394 ent=2.0788 tot=+333.3982 gnorm=35.564 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 455 step=1459200 ep_ret=-419.703 step_rew=-4.1970 pol=+0.0004 val=811.3210 ent=2.0802 tot=+405.6400 gnorm=47.532 kl=0.0019 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 456 step=1462400 ep_ret=-446.012 step_rew=-4.4601 pol=-0.0001 val=954.3528 ent=2.0765 tot=+477.1556 gnorm=52.812 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 457 step=1465600 ep_ret=-385.973 step_rew=-3.8597 pol=-0.0005 val=617.3866 ent=2.0960 tot=+308.6719 gnorm=41.311 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 458 step=1468800 ep_ret=-423.760 step_rew=-4.2376 pol=+0.0006 val=828.6980 ent=2.0619 tot=+414.3290 gnorm=47.021 kl=0.0022 clipf=0.017 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 459 step=1472000 ep_ret=-438.282 step_rew=-4.3828 pol=-0.0006 val=850.0125 ent=2.0733 tot=+424.9848 gnorm=56.531 kl=0.0017 clipf=0.013 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 460 step=1475200 ep_ret=-431.555 step_rew=-4.3156 pol=-0.0001 val=824.1067 ent=2.0701 tot=+412.0325 gnorm=39.195 kl=0.0009 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 461 step=1478400 ep_ret=-440.135 step_rew=-4.4013 pol=-0.0002 val=848.7419 ent=2.0775 tot=+424.3500 gnorm=58.112 kl=0.0014 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 462 step=1481600 ep_ret=-409.787 step_rew=-4.0979 pol=-0.0005 val=641.9298 ent=2.0576 tot=+320.9438 gnorm=39.802 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 463 step=1484800 ep_ret=-435.229 step_rew=-4.3523 pol=-0.0002 val=866.1045 ent=2.0832 tot=+433.0312 gnorm=46.534 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 464 step=1488000 ep_ret=-418.262 step_rew=-4.1826 pol=+0.0000 val=797.8121 ent=2.0610 tot=+398.8855 gnorm=42.112 kl=0.0011 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 465 step=1491200 ep_ret=-427.569 step_rew=-4.2757 pol=-0.0004 val=797.6926 ent=2.0678 tot=+398.8252 gnorm=63.076 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 466 step=1494400 ep_ret=-447.184 step_rew=-4.4718 pol=-0.0003 val=906.8503 ent=2.0773 tot=+453.4041 gnorm=47.913 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 467 step=1497600 ep_ret=-424.969 step_rew=-4.2497 pol=+0.0004 val=822.5191 ent=2.0638 tot=+411.2393 gnorm=44.064 kl=0.0010 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 468 step=1500800 ep_ret=-401.066 step_rew=-4.0107 pol=-0.0002 val=603.4131 ent=2.0602 tot=+301.6858 gnorm=42.480 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 469 step=1504000 ep_ret=-411.683 step_rew=-4.1168 pol=-0.0003 val=720.1933 ent=2.0778 tot=+360.0756 gnorm=41.048 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 470 step=1507200 ep_ret=-409.162 step_rew=-4.0916 pol=+0.0002 val=655.6660 ent=2.0648 tot=+327.8125 gnorm=44.160 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 471 step=1510400 ep_ret=-424.621 step_rew=-4.2462 pol=-0.0002 val=781.8785 ent=2.0736 tot=+390.9183 gnorm=46.564 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 472 step=1513600 ep_ret=-394.051 step_rew=-3.9405 pol=-0.0004 val=697.2445 ent=2.0823 tot=+348.6010 gnorm=37.416 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 473 step=1516800 ep_ret=-421.132 step_rew=-4.2113 pol=+0.0004 val=750.0697 ent=2.0697 tot=+375.0146 gnorm=50.900 kl=0.0012 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 474 step=1520000 ep_ret=-402.170 step_rew=-4.0217 pol=-0.0005 val=654.1893 ent=2.0723 tot=+327.0734 gnorm=38.761 kl=0.0006 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 475 step=1523200 ep_ret=-432.090 step_rew=-4.3209 pol=-0.0002 val=785.1728 ent=2.0850 tot=+392.5654 gnorm=44.818 kl=0.0010 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 476 step=1526400 ep_ret=-445.631 step_rew=-4.4563 pol=-0.0004 val=847.4762 ent=2.0864 tot=+423.7169 gnorm=46.994 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 477 step=1529600 ep_ret=-425.296 step_rew=-4.2530 pol=-0.0007 val=781.3176 ent=2.0884 tot=+390.6372 gnorm=43.923 kl=0.0010 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 478 step=1532800 ep_ret=-412.901 step_rew=-4.1290 pol=-0.0006 val=667.6558 ent=2.0835 tot=+333.8065 gnorm=39.929 kl=0.0023 clipf=0.015 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 479 step=1536000 ep_ret=-414.075 step_rew=-4.1408 pol=-0.0004 val=675.4786 ent=2.0890 tot=+337.7181 gnorm=40.848 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 480 step=1539200 ep_ret=-435.181 step_rew=-4.3518 pol=-0.0007 val=828.5905 ent=2.0657 tot=+414.2739 gnorm=43.266 kl=0.0011 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 481 step=1542400 ep_ret=-417.961 step_rew=-4.1796 pol=-0.0004 val=756.1373 ent=2.0822 tot=+378.0474 gnorm=41.317 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 482 step=1545600 ep_ret=-419.133 step_rew=-4.1913 pol=-0.0001 val=692.4276 ent=2.0708 tot=+346.1930 gnorm=49.320 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 483 step=1548800 ep_ret=-444.288 step_rew=-4.4429 pol=+0.0001 val=852.4374 ent=2.0774 tot=+426.1980 gnorm=45.800 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 484 step=1552000 ep_ret=-397.831 step_rew=-3.9783 pol=-0.0003 val=602.2213 ent=2.0766 tot=+301.0896 gnorm=36.532 kl=0.0011 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 485 step=1555200 ep_ret=-398.430 step_rew=-3.9843 pol=-0.0001 val=605.6713 ent=2.0767 tot=+302.8148 gnorm=54.168 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 486 step=1558400 ep_ret=-414.715 step_rew=-4.1472 pol=-0.0008 val=658.7451 ent=2.0757 tot=+329.3511 gnorm=39.613 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 487 step=1561600 ep_ret=-437.633 step_rew=-4.3763 pol=-0.0008 val=830.9633 ent=2.0854 tot=+415.4600 gnorm=50.630 kl=0.0012 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 488 step=1564800 ep_ret=-441.819 step_rew=-4.4182 pol=-0.0003 val=835.9476 ent=2.0776 tot=+417.9527 gnorm=45.286 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 489 step=1568000 ep_ret=-409.043 step_rew=-4.0904 pol=-0.0003 val=615.6435 ent=2.0827 tot=+307.8006 gnorm=56.739 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 490 step=1571200 ep_ret=-406.826 step_rew=-4.0683 pol=-0.0001 val=683.2274 ent=2.0665 tot=+341.5929 gnorm=34.470 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 491 step=1574400 ep_ret=-421.808 step_rew=-4.2181 pol=-0.0009 val=730.6034 ent=2.0836 tot=+365.2800 gnorm=46.375 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 492 step=1577600 ep_ret=-414.272 step_rew=-4.1427 pol=-0.0003 val=649.4169 ent=2.0706 tot=+324.6875 gnorm=40.083 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 493 step=1580800 ep_ret=-452.149 step_rew=-4.5215 pol=+0.0004 val=940.5847 ent=2.0459 tot=+470.2723 gnorm=55.931 kl=0.0017 clipf=0.009 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 494 step=1584000 ep_ret=-415.458 step_rew=-4.1546 pol=-0.0003 val=728.4586 ent=2.0637 tot=+364.2084 gnorm=44.502 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 495 step=1587200 ep_ret=-459.258 step_rew=-4.5926 pol=-0.0001 val=887.1315 ent=2.0637 tot=+443.5450 gnorm=63.394 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 496 step=1590400 ep_ret=-440.890 step_rew=-4.4089 pol=-0.0004 val=832.5813 ent=2.0734 tot=+416.2695 gnorm=40.020 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 497 step=1593600 ep_ret=-443.069 step_rew=-4.4307 pol=-0.0002 val=854.3327 ent=2.0685 tot=+427.1455 gnorm=45.363 kl=0.0013 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 498 step=1596800 ep_ret=-416.332 step_rew=-4.1633 pol=-0.0004 val=655.0324 ent=2.0752 tot=+327.4951 gnorm=49.596 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 499 step=1600000 ep_ret=-401.511 step_rew=-4.0151 pol=+0.0000 val=615.0128 ent=2.0613 tot=+307.4858 gnorm=41.379 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 500 step=1603200 ep_ret=-430.150 step_rew=-4.3015 pol=-0.0003 val=774.2292 ent=2.0758 tot=+387.0935 gnorm=41.867 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 501 step=1606400 ep_ret=-435.826 step_rew=-4.3583 pol=+0.0000 val=701.7049 ent=2.0645 tot=+350.8318 gnorm=62.039 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 502 step=1609600 ep_ret=-438.710 step_rew=-4.3871 pol=-0.0002 val=793.0272 ent=2.0635 tot=+396.4927 gnorm=39.456 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 503 step=1612800 ep_ret=-412.393 step_rew=-4.1239 pol=-0.0001 val=678.9228 ent=2.0388 tot=+339.4410 gnorm=42.078 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 504 step=1616000 ep_ret=-384.188 step_rew=-3.8419 pol=+0.0006 val=516.7048 ent=2.0724 tot=+258.3323 gnorm=33.417 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 505 step=1619200 ep_ret=-437.063 step_rew=-4.3706 pol=+0.0003 val=781.8969 ent=2.0658 tot=+390.9282 gnorm=62.549 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 506 step=1622400 ep_ret=-372.845 step_rew=-3.7285 pol=-0.0004 val=520.1132 ent=2.0737 tot=+260.0355 gnorm=27.880 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 507 step=1625600 ep_ret=-410.863 step_rew=-4.1086 pol=+0.0008 val=648.3881 ent=2.0669 tot=+324.1742 gnorm=57.752 kl=0.0008 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 508 step=1628800 ep_ret=-438.646 step_rew=-4.3865 pol=-0.0002 val=733.7926 ent=2.0495 tot=+366.8756 gnorm=42.029 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 509 step=1632000 ep_ret=-433.320 step_rew=-4.3332 pol=+0.0002 val=711.8568 ent=2.0592 tot=+355.9080 gnorm=45.779 kl=0.0013 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 510 step=1635200 ep_ret=-413.846 step_rew=-4.1385 pol=-0.0002 val=660.0537 ent=2.0577 tot=+330.0061 gnorm=39.101 kl=0.0012 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 511 step=1638400 ep_ret=-429.661 step_rew=-4.2966 pol=-0.0006 val=678.3976 ent=2.0570 tot=+339.1776 gnorm=41.221 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 512 step=1641600 ep_ret=-448.926 step_rew=-4.4893 pol=+0.0000 val=860.4635 ent=2.0572 tot=+430.2112 gnorm=60.295 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 513 step=1644800 ep_ret=-409.927 step_rew=-4.0993 pol=-0.0005 val=657.8483 ent=2.0606 tot=+328.9030 gnorm=34.221 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 514 step=1648000 ep_ret=-417.764 step_rew=-4.1776 pol=+0.0003 val=699.6695 ent=2.0457 tot=+349.8146 gnorm=47.693 kl=0.0010 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 515 step=1651200 ep_ret=-422.983 step_rew=-4.2298 pol=-0.0005 val=679.5761 ent=2.0550 tot=+339.7670 gnorm=45.109 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 516 step=1654400 ep_ret=-402.385 step_rew=-4.0238 pol=-0.0000 val=599.0057 ent=2.0531 tot=+299.4823 gnorm=39.999 kl=0.0013 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 517 step=1657600 ep_ret=-431.952 step_rew=-4.3195 pol=+0.0002 val=685.0960 ent=2.0467 tot=+342.5278 gnorm=55.685 kl=0.0011 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 518 step=1660800 ep_ret=-421.767 step_rew=-4.2177 pol=-0.0009 val=708.2282 ent=2.0563 tot=+354.0926 gnorm=35.622 kl=0.0011 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 519 step=1664000 ep_ret=-399.864 step_rew=-3.9986 pol=-0.0006 val=591.7766 ent=2.0545 tot=+295.8672 gnorm=55.780 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 520 step=1667200 ep_ret=-378.564 step_rew=-3.7856 pol=-0.0003 val=445.7019 ent=2.0500 tot=+222.8302 gnorm=31.864 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 521 step=1670400 ep_ret=-419.166 step_rew=-4.1917 pol=-0.0004 val=676.7065 ent=2.0526 tot=+338.3324 gnorm=56.118 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 522 step=1673600 ep_ret=-437.472 step_rew=-4.3747 pol=-0.0002 val=773.9954 ent=2.0553 tot=+386.9769 gnorm=47.509 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 523 step=1676800 ep_ret=-411.049 step_rew=-4.1105 pol=-0.0002 val=578.4281 ent=2.0621 tot=+289.1933 gnorm=37.659 kl=0.0006 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 524 step=1680000 ep_ret=-390.735 step_rew=-3.9073 pol=+0.0001 val=510.1596 ent=2.0399 tot=+255.0595 gnorm=47.473 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 525 step=1683200 ep_ret=-443.630 step_rew=-4.4363 pol=-0.0004 val=855.6361 ent=2.0525 tot=+427.7971 gnorm=44.102 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 526 step=1686400 ep_ret=-407.399 step_rew=-4.0740 pol=-0.0005 val=607.8804 ent=2.0661 tot=+303.9191 gnorm=38.996 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 527 step=1689600 ep_ret=-404.219 step_rew=-4.0422 pol=-0.0004 val=586.4697 ent=2.0711 tot=+293.2137 gnorm=52.205 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 528 step=1692800 ep_ret=-393.712 step_rew=-3.9371 pol=-0.0004 val=563.1923 ent=2.0663 tot=+281.5751 gnorm=33.286 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 529 step=1696000 ep_ret=-412.572 step_rew=-4.1257 pol=+0.0001 val=666.5601 ent=2.0621 tot=+333.2595 gnorm=58.094 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 530 step=1699200 ep_ret=-378.662 step_rew=-3.7866 pol=-0.0003 val=440.9814 ent=2.0753 tot=+220.4697 gnorm=28.203 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 531 step=1702400 ep_ret=-435.363 step_rew=-4.3536 pol=-0.0005 val=720.3311 ent=2.0527 tot=+360.1445 gnorm=50.716 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 532 step=1705600 ep_ret=-433.596 step_rew=-4.3360 pol=-0.0002 val=750.6764 ent=2.0602 tot=+375.3174 gnorm=45.448 kl=0.0013 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 533 step=1708800 ep_ret=-358.749 step_rew=-3.5875 pol=-0.0008 val=381.2468 ent=2.0804 tot=+190.6017 gnorm=27.093 kl=0.0015 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 534 step=1712000 ep_ret=-435.783 step_rew=-4.3578 pol=-0.0000 val=721.8535 ent=2.0685 tot=+360.9060 gnorm=59.304 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 535 step=1715200 ep_ret=-429.212 step_rew=-4.2921 pol=-0.0005 val=687.7177 ent=2.0572 tot=+343.8378 gnorm=36.260 kl=0.0012 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 536 step=1718400 ep_ret=-446.198 step_rew=-4.4620 pol=+0.0002 val=882.7559 ent=2.0515 tot=+441.3576 gnorm=47.341 kl=0.0010 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 537 step=1721600 ep_ret=-426.591 step_rew=-4.2659 pol=+0.0002 val=649.5691 ent=2.0396 tot=+324.7644 gnorm=52.729 kl=0.0022 clipf=0.007 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 538 step=1724800 ep_ret=-479.216 step_rew=-4.7922 pol=-0.0003 val=1011.7794 ent=2.0288 tot=+505.8692 gnorm=49.157 kl=0.0014 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 539 step=1728000 ep_ret=-412.464 step_rew=-4.1246 pol=-0.0011 val=597.7528 ent=2.0344 tot=+298.8550 gnorm=37.441 kl=0.0018 clipf=0.007 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 540 step=1731200 ep_ret=-388.139 step_rew=-3.8814 pol=-0.0009 val=464.5580 ent=2.0419 tot=+232.2577 gnorm=39.450 kl=0.0016 clipf=0.005 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 541 step=1734400 ep_ret=-427.953 step_rew=-4.2795 pol=+0.0004 val=707.2180 ent=2.0617 tot=+353.5888 gnorm=44.060 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 542 step=1737600 ep_ret=-387.136 step_rew=-3.8714 pol=-0.0004 val=441.5607 ent=2.0609 tot=+220.7593 gnorm=38.666 kl=0.0013 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 543 step=1740800 ep_ret=-410.569 step_rew=-4.1057 pol=+0.0008 val=577.6351 ent=2.0452 tot=+288.7979 gnorm=48.488 kl=0.0012 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 544 step=1744000 ep_ret=-377.941 step_rew=-3.7794 pol=-0.0001 val=436.2374 ent=2.0422 tot=+218.0982 gnorm=30.282 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 545 step=1747200 ep_ret=-392.965 step_rew=-3.9297 pol=+0.0003 val=543.2482 ent=2.0478 tot=+271.6039 gnorm=47.659 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 546 step=1750400 ep_ret=-424.989 step_rew=-4.2499 pol=-0.0003 val=740.6974 ent=2.0451 tot=+370.3280 gnorm=43.058 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 547 step=1753600 ep_ret=-404.120 step_rew=-4.0412 pol=+0.0002 val=536.1965 ent=2.0654 tot=+268.0778 gnorm=43.304 kl=0.0020 clipf=0.009 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 548 step=1756800 ep_ret=-400.135 step_rew=-4.0013 pol=-0.0006 val=535.2206 ent=2.0566 tot=+267.5891 gnorm=37.926 kl=0.0016 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 549 step=1760000 ep_ret=-450.803 step_rew=-4.5080 pol=-0.0003 val=805.3204 ent=2.0720 tot=+402.6392 gnorm=48.716 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 550 step=1763200 ep_ret=-419.759 step_rew=-4.1976 pol=+0.0007 val=617.8439 ent=2.0633 tot=+308.9020 gnorm=53.795 kl=0.0013 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 551 step=1766400 ep_ret=-395.059 step_rew=-3.9506 pol=-0.0003 val=506.0086 ent=2.0484 tot=+252.9835 gnorm=34.282 kl=0.0008 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 552 step=1769600 ep_ret=-400.800 step_rew=-4.0080 pol=+0.0003 val=506.3265 ent=2.0622 tot=+253.1429 gnorm=48.346 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 553 step=1772800 ep_ret=-400.836 step_rew=-4.0084 pol=-0.0008 val=484.0892 ent=2.0590 tot=+242.0232 gnorm=36.361 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 554 step=1776000 ep_ret=-398.372 step_rew=-3.9837 pol=+0.0008 val=520.1992 ent=2.0540 tot=+260.0799 gnorm=47.559 kl=0.0012 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 555 step=1779200 ep_ret=-393.709 step_rew=-3.9371 pol=+0.0002 val=447.6549 ent=2.0544 tot=+223.8071 gnorm=35.758 kl=0.0017 clipf=0.004 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 556 step=1782400 ep_ret=-441.636 step_rew=-4.4164 pol=-0.0015 val=781.8349 ent=2.0438 tot=+390.8955 gnorm=40.301 kl=0.0023 clipf=0.015 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 557 step=1785600 ep_ret=-378.507 step_rew=-3.7851 pol=+0.0003 val=421.9021 ent=2.0602 tot=+210.9308 gnorm=38.124 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 558 step=1788800 ep_ret=-413.939 step_rew=-4.1394 pol=-0.0002 val=552.9573 ent=2.0727 tot=+276.4577 gnorm=40.352 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 559 step=1792000 ep_ret=-435.572 step_rew=-4.3557 pol=-0.0002 val=664.6550 ent=2.0544 tot=+332.3068 gnorm=57.302 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 560 step=1795200 ep_ret=-419.268 step_rew=-4.1927 pol=-0.0007 val=641.4774 ent=2.0609 tot=+320.7173 gnorm=39.654 kl=0.0010 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 561 step=1798400 ep_ret=-415.428 step_rew=-4.1543 pol=-0.0008 val=590.7675 ent=2.0471 tot=+295.3625 gnorm=45.875 kl=0.0020 clipf=0.009 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 562 step=1801600 ep_ret=-395.361 step_rew=-3.9536 pol=-0.0000 val=515.0409 ent=2.0770 tot=+257.4996 gnorm=39.620 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 563 step=1804800 ep_ret=-397.310 step_rew=-3.9731 pol=+0.0001 val=498.6620 ent=2.0576 tot=+249.3106 gnorm=39.644 kl=0.0012 clipf=0.002 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 564 step=1808000 ep_ret=-362.211 step_rew=-3.6221 pol=-0.0004 val=363.9703 ent=2.0510 tot=+181.9642 gnorm=34.162 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 565 step=1811200 ep_ret=-392.482 step_rew=-3.9248 pol=-0.0002 val=475.0190 ent=2.0622 tot=+237.4886 gnorm=39.138 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 566 step=1814400 ep_ret=-403.201 step_rew=-4.0320 pol=+0.0007 val=464.7952 ent=2.0839 tot=+232.3775 gnorm=45.082 kl=0.0022 clipf=0.013 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 567 step=1817600 ep_ret=-459.907 step_rew=-4.5991 pol=-0.0002 val=790.1056 ent=2.0634 tot=+395.0320 gnorm=48.783 kl=0.0027 clipf=0.020 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 568 step=1820800 ep_ret=-408.359 step_rew=-4.0836 pol=+0.0003 val=590.4173 ent=2.0672 tot=+295.1883 gnorm=49.192 kl=0.0013 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 569 step=1824000 ep_ret=-388.932 step_rew=-3.8893 pol=-0.0001 val=519.7142 ent=2.0670 tot=+259.8363 gnorm=35.300 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 570 step=1827200 ep_ret=-400.069 step_rew=-4.0007 pol=+0.0002 val=503.8464 ent=2.0647 tot=+251.9028 gnorm=43.680 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 571 step=1830400 ep_ret=-413.699 step_rew=-4.1370 pol=-0.0003 val=615.2436 ent=2.0742 tot=+307.6007 gnorm=43.289 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 572 step=1833600 ep_ret=-416.017 step_rew=-4.1602 pol=-0.0002 val=571.8352 ent=2.0751 tot=+285.8966 gnorm=46.752 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 573 step=1836800 ep_ret=-396.275 step_rew=-3.9628 pol=-0.0006 val=451.2669 ent=2.0672 tot=+225.6121 gnorm=38.570 kl=0.0010 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 574 step=1840000 ep_ret=-402.147 step_rew=-4.0215 pol=+0.0011 val=491.1940 ent=2.0717 tot=+245.5773 gnorm=44.019 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 575 step=1843200 ep_ret=-377.136 step_rew=-3.7714 pol=+0.0001 val=392.4861 ent=2.0654 tot=+196.2224 gnorm=34.573 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 576 step=1846400 ep_ret=-411.989 step_rew=-4.1199 pol=-0.0002 val=557.7404 ent=2.0781 tot=+278.8492 gnorm=46.513 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 577 step=1849600 ep_ret=-393.503 step_rew=-3.9350 pol=+0.0001 val=487.7234 ent=2.0659 tot=+243.8411 gnorm=38.497 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 578 step=1852800 ep_ret=-409.097 step_rew=-4.0910 pol=-0.0000 val=603.6916 ent=2.0698 tot=+301.8251 gnorm=45.900 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 579 step=1856000 ep_ret=-410.779 step_rew=-4.1078 pol=-0.0001 val=512.3587 ent=2.0691 tot=+256.1585 gnorm=40.399 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 580 step=1859200 ep_ret=-383.936 step_rew=-3.8394 pol=+0.0002 val=463.3813 ent=2.0751 tot=+231.6701 gnorm=40.007 kl=0.0008 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 581 step=1862400 ep_ret=-391.226 step_rew=-3.9123 pol=-0.0001 val=530.0746 ent=2.0466 tot=+265.0168 gnorm=36.109 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 582 step=1865600 ep_ret=-400.231 step_rew=-4.0023 pol=+0.0002 val=539.0002 ent=2.0695 tot=+269.4796 gnorm=43.223 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 583 step=1868800 ep_ret=-378.262 step_rew=-3.7826 pol=+0.0001 val=451.9188 ent=2.0685 tot=+225.9388 gnorm=34.501 kl=0.0006 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 584 step=1872000 ep_ret=-377.689 step_rew=-3.7769 pol=-0.0004 val=432.7241 ent=2.0677 tot=+216.3409 gnorm=37.499 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 585 step=1875200 ep_ret=-402.539 step_rew=-4.0254 pol=+0.0002 val=562.7126 ent=2.0679 tot=+281.3358 gnorm=39.660 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 586 step=1878400 ep_ret=-388.100 step_rew=-3.8810 pol=+0.0001 val=427.5547 ent=2.0593 tot=+213.7569 gnorm=39.734 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 587 step=1881600 ep_ret=-401.918 step_rew=-4.0192 pol=-0.0000 val=547.7977 ent=2.0673 tot=+273.8782 gnorm=39.077 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 588 step=1884800 ep_ret=-395.001 step_rew=-3.9500 pol=-0.0002 val=487.8673 ent=2.0588 tot=+243.9129 gnorm=41.046 kl=0.0011 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 589 step=1888000 ep_ret=-394.975 step_rew=-3.9498 pol=-0.0001 val=436.3281 ent=2.0702 tot=+218.1432 gnorm=38.211 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 590 step=1891200 ep_ret=-380.109 step_rew=-3.8011 pol=-0.0002 val=389.8997 ent=2.0516 tot=+194.9291 gnorm=36.699 kl=0.0012 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 591 step=1894400 ep_ret=-405.822 step_rew=-4.0582 pol=-0.0001 val=496.9006 ent=2.0485 tot=+248.4297 gnorm=39.397 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 592 step=1897600 ep_ret=-393.355 step_rew=-3.9335 pol=-0.0002 val=462.2857 ent=2.0410 tot=+231.1222 gnorm=37.729 kl=0.0018 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 593 step=1900800 ep_ret=-394.859 step_rew=-3.9486 pol=-0.0002 val=488.5400 ent=2.0465 tot=+244.2493 gnorm=40.889 kl=0.0012 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 594 step=1904000 ep_ret=-394.727 step_rew=-3.9473 pol=-0.0003 val=510.5803 ent=2.0536 tot=+255.2693 gnorm=39.804 kl=0.0005 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 595 step=1907200 ep_ret=-424.955 step_rew=-4.2496 pol=-0.0001 val=512.0010 ent=2.0443 tot=+255.9799 gnorm=47.251 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 596 step=1910400 ep_ret=-375.554 step_rew=-3.7555 pol=-0.0004 val=382.2157 ent=2.0436 tot=+191.0870 gnorm=27.736 kl=0.0011 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 597 step=1913600 ep_ret=-378.427 step_rew=-3.7843 pol=-0.0002 val=419.9097 ent=2.0532 tot=+209.9341 gnorm=40.493 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 598 step=1916800 ep_ret=-388.230 step_rew=-3.8823 pol=-0.0002 val=387.5312 ent=2.0415 tot=+193.7450 gnorm=31.016 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 599 step=1920000 ep_ret=-396.000 step_rew=-3.9600 pol=+0.0002 val=514.9659 ent=2.0595 tot=+257.4626 gnorm=44.540 kl=0.0007 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 600 step=1923200 ep_ret=-411.731 step_rew=-4.1173 pol=-0.0000 val=512.5070 ent=2.0528 tot=+256.2329 gnorm=39.326 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 601 step=1926400 ep_ret=-384.211 step_rew=-3.8421 pol=-0.0000 val=468.4540 ent=2.0483 tot=+234.2065 gnorm=38.816 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 602 step=1929600 ep_ret=-374.231 step_rew=-3.7423 pol=-0.0001 val=387.2426 ent=2.0586 tot=+193.6006 gnorm=32.522 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 603 step=1932800 ep_ret=-432.480 step_rew=-4.3248 pol=+0.0001 val=650.0297 ent=2.0544 tot=+324.9944 gnorm=50.499 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 604 step=1936000 ep_ret=-390.368 step_rew=-3.9037 pol=-0.0002 val=444.7178 ent=2.0662 tot=+222.3380 gnorm=34.910 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 605 step=1939200 ep_ret=-391.296 step_rew=-3.9130 pol=+0.0003 val=436.5269 ent=2.0436 tot=+218.2433 gnorm=40.071 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 606 step=1942400 ep_ret=-407.269 step_rew=-4.0727 pol=-0.0002 val=495.1149 ent=2.0753 tot=+247.5365 gnorm=39.360 kl=0.0002 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 607 step=1945600 ep_ret=-422.587 step_rew=-4.2259 pol=+0.0004 val=593.6856 ent=2.0657 tot=+296.8226 gnorm=40.890 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 608 step=1948800 ep_ret=-372.948 step_rew=-3.7295 pol=-0.0001 val=355.2737 ent=2.0647 tot=+177.6161 gnorm=37.404 kl=0.0041 clipf=0.043 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 609 step=1952000 ep_ret=-402.943 step_rew=-4.0294 pol=-0.0003 val=520.5955 ent=2.0700 tot=+260.2767 gnorm=37.706 kl=0.0020 clipf=0.016 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 610 step=1955200 ep_ret=-423.095 step_rew=-4.2310 pol=+0.0006 val=549.1441 ent=2.0665 tot=+274.5519 gnorm=50.589 kl=0.0009 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 611 step=1958400 ep_ret=-388.175 step_rew=-3.8818 pol=-0.0004 val=383.8126 ent=2.0673 tot=+191.8853 gnorm=34.183 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 612 step=1961600 ep_ret=-394.300 step_rew=-3.9430 pol=-0.0001 val=425.8476 ent=2.0643 tot=+212.9030 gnorm=42.110 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 613 step=1964800 ep_ret=-388.062 step_rew=-3.8806 pol=+0.0004 val=469.7423 ent=2.0629 tot=+234.8509 gnorm=34.091 kl=0.0010 clipf=0.001 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 614 step=1968000 ep_ret=-409.112 step_rew=-4.0911 pol=-0.0001 val=489.6128 ent=2.0754 tot=+244.7856 gnorm=45.653 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 615 step=1971200 ep_ret=-394.212 step_rew=-3.9421 pol=+0.0007 val=483.8499 ent=2.0613 tot=+241.9050 gnorm=34.799 kl=0.0009 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 616 step=1974400 ep_ret=-387.186 step_rew=-3.8719 pol=+0.0001 val=399.3619 ent=2.0506 tot=+199.6605 gnorm=39.272 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 617 step=1977600 ep_ret=-390.187 step_rew=-3.9019 pol=-0.0005 val=405.4389 ent=2.0666 tot=+202.6983 gnorm=34.026 kl=0.0013 clipf=0.006 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 618 step=1980800 ep_ret=-401.563 step_rew=-4.0156 pol=-0.0006 val=432.4482 ent=2.0595 tot=+216.2029 gnorm=42.541 kl=0.0003 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 619 step=1984000 ep_ret=-391.728 step_rew=-3.9173 pol=+0.0001 val=409.7741 ent=2.0705 tot=+204.8665 gnorm=33.665 kl=0.0007 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 620 step=1987200 ep_ret=-419.378 step_rew=-4.1938 pol=-0.0004 val=550.4492 ent=2.0716 tot=+275.2035 gnorm=47.433 kl=0.0012 clipf=0.003 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 621 step=1990400 ep_ret=-368.721 step_rew=-3.6872 pol=+0.0000 val=364.2637 ent=2.0856 tot=+182.1110 gnorm=30.521 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 622 step=1993600 ep_ret=-371.040 step_rew=-3.7104 pol=-0.0001 val=384.7912 ent=2.0640 tot=+192.3748 gnorm=34.758 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 623 step=1996800 ep_ret=-379.617 step_rew=-3.7962 pol=-0.0001 val=341.2530 ent=2.0704 tot=+170.6058 gnorm=31.975 kl=0.0001 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+iter= 624 step=2000000 ep_ret=-390.485 step_rew=-3.9048 pol=-0.0007 val=457.1179 ent=2.0658 tot=+228.5376 gnorm=39.896 kl=0.0004 clipf=0.000 ev=+0.000 r0=1.0000 lr=5.0e-04 seed=1
+[train] Final checkpoint saved to runs/vmas_simple_spread/20260603_155234_967371_seed1_pid3163665_arrayjob633866_job633868_task1/ckpt/final.pt
+[train] Run artifacts in runs/vmas_simple_spread/20260603_155234_967371_seed1_pid3163665_arrayjob633866_job633868_task1
+[render] Skipped post-train render (mode=off).

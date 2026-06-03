@@ -19,7 +19,6 @@ env/
 htmlcov/
 
 # Training artifacts
-runs/
 *.pt
 *.ckpt
 
