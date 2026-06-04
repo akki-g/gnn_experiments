@@ -27,8 +27,67 @@ DEFAULT_EXCLUDE_COLUMNS = {
     "seed",
     "run",
     "run_label",
+    "config_label",
     "source_path",
 }
+
+MAXIMIZE_SUMMARY_METRICS = (
+    "episode_return",
+    "mean_step_reward",
+    "optimized_episode_return",
+    "optimized_mean_step_reward",
+    "episode_return_delta_from_start",
+    "mean_step_reward_delta_from_start",
+    "task_score",
+    "eval_mean_return",
+    "eval_mean_step_reward",
+    "eval_optimized_mean_return",
+    "eval_optimized_mean_step_reward",
+    "eval_return_delta_from_start",
+    "eval_task_score",
+    "capture_rate",
+    "eval_capture",
+)
+
+MINIMIZE_SUMMARY_METRICS = (
+    "episode_return_gap_to_zero",
+    "mean_step_reward_gap_to_zero",
+    "coverage_distance",
+    "collision_pairs",
+    "eval_return_gap_to_zero",
+    "eval_coverage_distance",
+    "eval_collision_pairs",
+    "pursuer_target_distance",
+    "eval_pursuer_target_distance",
+)
+
+FINAL_ONLY_SUMMARY_METRICS = (
+    "episodes_completed",
+    "policy_loss",
+    "value_loss",
+    "entropy",
+    "entropy_coef",
+    "total_loss",
+    "grad_norm",
+    "actor_grad_norm",
+    "critic_grad_norm",
+    "approx_kl",
+    "clipfrac",
+    "explained_variance",
+    "mean_ratio_epoch0",
+    "lr",
+    "reward_shift",
+)
+
+DEFAULT_SUMMARY_SORT = "best_eval_mean_return"
+SUMMARY_SORT_FALLBACKS = (
+    "best_eval_mean_return",
+    "best_episode_return",
+    "best_eval_task_score",
+    "best_task_score",
+    "best_eval_optimized_mean_return",
+    "best_optimized_episode_return",
+)
 
 
 def _discover_metrics_files(paths: Iterable[str | Path], recursive: bool = False) -> list[Path]:
@@ -77,9 +136,63 @@ def _read_metrics_file(path: Path) -> pd.DataFrame:
     raise ValueError(f"Unsupported metrics file type: {path}")
 
 
+def _python_scalar(value):
+    if hasattr(value, "item"):
+        return value.item()
+    return value
+
+
+def _single_value(series: pd.Series):
+    values = series.dropna().unique()
+    if len(values) != 1:
+        return None
+    return _python_scalar(values[0])
+
+
+def _single_string_value(series: pd.Series) -> str | None:
+    value = _single_value(series)
+    if value is None:
+        return None
+    value = str(value).strip()
+    return value or None
+
+
+def _config_label_for_metrics_file(metrics_file: Path) -> str | None:
+    config_path = metrics_file.parent / "config.yaml"
+    if not config_path.exists():
+        return None
+
+    try:
+        import yaml
+    except ImportError:
+        return None
+
+    try:
+        with config_path.open("r") as f:
+            cfg = yaml.safe_load(f) or {}
+    except Exception:
+        return None
+
+    label = cfg.get("logging", {}).get("run_label")
+    if label is None:
+        return None
+    label = str(label).strip()
+    return label or None
+
+
 def _base_label_for_run(df: pd.DataFrame) -> str:
+    config_label = (
+        _single_string_value(df["config_label"])
+        if "config_label" in df.columns
+        else None
+    )
     if "seed" in df.columns and df["seed"].nunique(dropna=True) == 1:
-        return f"seed={df['seed'].iloc[0]}"
+        seed_label = f"seed={df['seed'].iloc[0]}"
+        if config_label is not None:
+            return f"{config_label} {seed_label}"
+        return seed_label
+    if config_label is not None:
+        return config_label
     return "run"
 
 
@@ -110,6 +223,15 @@ def load_run_metrics(paths: Sequence[str | Path], recursive: bool = False) -> pd
             continue
 
         df = df.copy()
+        existing_run_label = (
+            _single_string_value(df["run_label"])
+            if "run_label" in df.columns
+            else None
+        )
+        if "config_label" not in df.columns:
+            config_label = _config_label_for_metrics_file(metrics_file) or existing_run_label
+            if config_label is not None:
+                df["config_label"] = config_label
         df["run"] = metrics_file.parent.name
         df["source_path"] = str(metrics_file)
         frame_records.append((df, _base_label_for_run(df), metrics_file.parent.name))
@@ -130,6 +252,124 @@ def load_run_metrics(paths: Sequence[str | Path], recursive: bool = False) -> pd
         frames.append(df)
 
     return pd.concat(frames, ignore_index=True, sort=False)
+
+
+def _numeric_values(df: pd.DataFrame, column: str) -> pd.Series:
+    if column not in df.columns:
+        return pd.Series(dtype="float64")
+    return pd.to_numeric(df[column], errors="coerce").dropna()
+
+
+def _last_numeric_value(df: pd.DataFrame, column: str) -> float:
+    values = _numeric_values(df, column)
+    if values.empty:
+        return float("nan")
+    return float(values.iloc[-1])
+
+
+def _first_numeric_value(df: pd.DataFrame, column: str) -> float:
+    values = _numeric_values(df, column)
+    if values.empty:
+        return float("nan")
+    return float(values.iloc[0])
+
+
+def _max_numeric_value(df: pd.DataFrame, column: str) -> float:
+    values = _numeric_values(df, column)
+    if values.empty:
+        return float("nan")
+    return float(values.max())
+
+
+def _min_numeric_value(df: pd.DataFrame, column: str) -> float:
+    values = _numeric_values(df, column)
+    if values.empty:
+        return float("nan")
+    return float(values.min())
+
+
+def _sort_summary(
+    summary_df: pd.DataFrame,
+    sort_by: str | None,
+    ascending: bool | None,
+) -> pd.DataFrame:
+    candidates = []
+    if sort_by:
+        candidates.append(sort_by)
+    candidates.extend(col for col in SUMMARY_SORT_FALLBACKS if col not in candidates)
+
+    active_sort = None
+    for column in candidates:
+        if column in summary_df.columns and summary_df[column].notna().any():
+            active_sort = column
+            break
+
+    if active_sort is None:
+        return summary_df
+
+    sort_ascending = active_sort.startswith("min_") if ascending is None else ascending
+    return summary_df.sort_values(
+        active_sort,
+        ascending=sort_ascending,
+        na_position="last",
+        kind="mergesort",
+    ).reset_index(drop=True)
+
+
+def summarize_run_metrics(
+    paths: Sequence[str | Path],
+    *,
+    recursive: bool = False,
+    sort_by: str | None = DEFAULT_SUMMARY_SORT,
+    ascending: bool | None = None,
+) -> pd.DataFrame:
+    """
+    Produce one ranked summary row per metrics file.
+
+    The summary is intentionally tolerant of old run schemas. Missing metrics are
+    included as NaN so older CSVs can be compared with newer VMAS/pursuit logs.
+    """
+    metrics_df = load_run_metrics(paths, recursive=recursive)
+    sort_column = "global_step" if "global_step" in metrics_df.columns else "iter"
+
+    summary_rows = []
+    for source_path, run_df in metrics_df.groupby("source_path", sort=False):
+        if sort_column in run_df.columns:
+            run_df = run_df.sort_values(sort_column, kind="mergesort")
+
+        row = {
+            "run_label": _single_string_value(run_df["run_label"]),
+            "config_label": (
+                _single_string_value(run_df["config_label"])
+                if "config_label" in run_df.columns
+                else None
+            ),
+            "run": _single_string_value(run_df["run"]),
+            "seed": _single_value(run_df["seed"]) if "seed" in run_df.columns else None,
+            "source_path": source_path,
+            "rows": int(len(run_df)),
+            "first_global_step": _first_numeric_value(run_df, "global_step"),
+            "final_global_step": _last_numeric_value(run_df, "global_step"),
+        }
+
+        for metric in MAXIMIZE_SUMMARY_METRICS:
+            row[f"best_{metric}"] = _max_numeric_value(run_df, metric)
+            row[f"final_{metric}"] = _last_numeric_value(run_df, metric)
+
+        for metric in MINIMIZE_SUMMARY_METRICS:
+            row[f"min_{metric}"] = _min_numeric_value(run_df, metric)
+            row[f"final_{metric}"] = _last_numeric_value(run_df, metric)
+
+        for metric in FINAL_ONLY_SUMMARY_METRICS:
+            row[f"final_{metric}"] = _last_numeric_value(run_df, metric)
+
+        summary_rows.append(row)
+
+    if not summary_rows:
+        raise ValueError("All discovered metrics files were empty.")
+
+    summary_df = pd.DataFrame(summary_rows)
+    return _sort_summary(summary_df, sort_by=sort_by, ascending=ascending)
 
 
 def metric_columns(
@@ -299,21 +539,59 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Open an interactive matplotlib window after plotting.",
     )
+    parser.add_argument(
+        "--summary",
+        action="store_true",
+        help="Print one ranked summary row per run.",
+    )
+    parser.add_argument(
+        "--summary-output",
+        type=str,
+        default=None,
+        help="Optional output CSV path for --summary.",
+    )
+    parser.add_argument(
+        "--summary-sort",
+        default=DEFAULT_SUMMARY_SORT,
+        help=(
+            "Summary column to sort by. Falls back to episode return/task score "
+            "columns when the requested metric is missing."
+        ),
+    )
+    parser.add_argument(
+        "--summary-ascending",
+        action="store_true",
+        help="Sort summary in ascending order.",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = _parse_args()
-    plot_run_metrics(
-        args.paths,
-        output=args.output,
-        recursive=args.recursive,
-        metrics=args.metrics,
-        x_column=args.x,
-        rolling=args.rolling,
-        columns=args.columns,
-        show=args.show,
-    )
+    if args.summary:
+        summary_df = summarize_run_metrics(
+            args.paths,
+            recursive=args.recursive,
+            sort_by=args.summary_sort,
+            ascending=True if args.summary_ascending else None,
+        )
+        print(summary_df.to_string(index=False))
+        if args.summary_output is not None:
+            output_path = Path(args.summary_output).expanduser()
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            summary_df.to_csv(output_path, index=False)
+
+    if not args.summary or args.output is not None or args.show:
+        plot_run_metrics(
+            args.paths,
+            output=args.output,
+            recursive=args.recursive,
+            metrics=args.metrics,
+            x_column=args.x,
+            rolling=args.rolling,
+            columns=args.columns,
+            show=args.show,
+        )
 
 
 if __name__ == "__main__":

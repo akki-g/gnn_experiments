@@ -1,0 +1,62 @@
+# VMAS simple_spread MAPPO config: wider MLP with lower LR for capacity/stability.
+# Logs raw reward, gap-to-zero/progress, deterministic eval, coverage_distance,
+# and collision_pairs diagnostics.
+
+algo:
+  name: "mappo"
+  lr: 5.0e-4
+  lr_final: 1.0e-5
+  reward_shift: 0.0
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_eps: 0.2
+  value_clip_eps: 0.2
+  entropy_coef: 0.01
+  entropy_coef_final: 5.0e-4
+  value_coef: 0.5
+  max_grad_norm: 10.0
+  ppo_epochs: 10
+  num_minibatches: 2
+  normalize_advantages: true
+  share_encoder: true
+  use_value_norm: true
+
+runtime:
+  rollout_length: 100
+  num_envs: 32
+  total_env_steps: 2000000
+  checkpoint_interval: 20
+  eval_interval: 20
+
+model:
+  hidden_dim: 128
+  encoder_layers: 2
+  actor_layers: 1
+  critic_layers: 2
+
+comm:
+  module: "identity"
+
+env:
+  name: "vmas_simple_spread"
+  scenario: "simple_spread"
+  num_agents: 3
+  max_steps: 100
+  include_timestep_in_state: true
+
+logging:
+  log_dir: "runs/vmas_simple_spread"
+  run_label: "wide128_lr5e-4"
+  wandb: false
+  wandb_project: "marl-thesis"
+  console_log_interval: 1
+
+render:
+  mode: "off"
+  eval_seed: 1000
+  episodes: 2
+  fps: 15
+  frame_size: 512
+
+seed: 0
+device: "auto"

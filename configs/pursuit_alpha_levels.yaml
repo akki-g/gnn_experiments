@@ -1,0 +1,25 @@
+# Alpha levels for the observation-asymmetry ablation sweep.
+#
+# These values are for future probe / eval / sweep consumption.
+# No orchestration or sweep runner is defined here — this file is
+# a named constant list to be imported by future sweep scripts.
+#
+# Semantics:
+#   alpha=0.00  sensor-limited agents are fully blind to the target
+#   alpha=0.25  sensor-limited see ~25% of world radius
+#   alpha=0.50  sensor-limited see ~50% of world radius
+#   alpha=0.75  sensor-limited see ~75% of world radius
+#   alpha=1.00  symmetric: sensor-limited == full-sight (same range)
+#
+# Usage example (future sweep script):
+#   from backbone.utils import load_yaml_config
+#   lvls = load_yaml_config("configs/pursuit_alpha_levels.yaml")["alpha_levels"]
+#   for alpha in lvls:
+#       run(alpha=alpha)
+
+alpha_levels:
+  - 0.0
+  - 0.25
+  - 0.5
+  - 0.75
+  - 1.0

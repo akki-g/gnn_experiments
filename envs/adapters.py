@@ -201,6 +201,52 @@ class VMASAdapter(VectorEnvAdapter):
         )
         return done_env
 
+    def _task_diagnostics(self) -> Dict[str, Tensor]:
+        """
+        Return simple_spread task diagnostics without changing reward dynamics.
+
+        coverage_distance is the mean over landmarks of the closest agent
+        distance. collision_pairs counts overlapping unordered agent pairs.
+        """
+        world = getattr(self.env, "world", None)
+        if world is None or not hasattr(world, "agents") or not hasattr(world, "landmarks"):
+            nan_vec = torch.full((self.B,), float("nan"), device=self.device)
+            return {
+                "coverage_distance": nan_vec,
+                "collision_pairs": nan_vec,
+            }
+
+        if not world.agents or not world.landmarks:
+            nan_vec = torch.full((self.B,), float("nan"), device=self.device)
+            return {
+                "coverage_distance": nan_vec,
+                "collision_pairs": nan_vec,
+            }
+
+        agent_pos = torch.stack([agent.state.pos for agent in world.agents], dim=1)
+        landmark_pos = torch.stack(
+            [landmark.state.pos for landmark in world.landmarks], dim=1
+        )
+        distances = torch.linalg.vector_norm(
+            agent_pos.unsqueeze(2) - landmark_pos.unsqueeze(1),
+            dim=-1,
+        )
+        closest_per_landmark = distances.min(dim=1).values
+        coverage_distance = closest_per_landmark.mean(dim=1).to(self.device)
+
+        collision_pairs = torch.zeros(self.B, device=self.device)
+        for i, agent_i in enumerate(world.agents):
+            if not getattr(agent_i, "collide", False):
+                continue
+            for agent_j in world.agents[i + 1:]:
+                if getattr(agent_j, "collide", False):
+                    collision_pairs += world.is_overlapping(agent_i, agent_j).to(self.device).float()
+
+        return {
+            "coverage_distance": coverage_distance,
+            "collision_pairs": collision_pairs,
+        }
+
     def reset(self) -> Tuple[Tensor, Tensor]:
         """
         Reset all parallel environments.
@@ -323,6 +369,7 @@ class VMASAdapter(VectorEnvAdapter):
             "terminal_state": terminal_state,
             "raw_vmas_dones": vmas_done,
         }
+        info.update(self._task_diagnostics())
         return obs, state, reward, done, info
 
     def render(self) -> np.ndarray:

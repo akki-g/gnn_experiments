@@ -43,6 +43,10 @@ def test_vmas_adapter_reset_and_step_shapes():
     assert info["terminated"].shape == (2,)
     assert info["terminal_obs"].shape == (2, 3, env.obs_dim)
     assert info["terminal_state"].shape == (2, env.state_dim)
+    assert info["coverage_distance"].shape == (2,)
+    assert info["collision_pairs"].shape == (2,)
+    assert info["coverage_distance"].ge(0.0).all()
+    assert info["collision_pairs"].ge(0.0).all()
     assert not info["truncated"].any()
 
 

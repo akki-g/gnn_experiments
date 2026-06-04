@@ -1,0 +1,10 @@
+[env] kind=pursuit name=pursuit n_agents=3 obs_dim=5 action_dim=5 state_dim=9 num_envs=8
+[train] Starting: total_iters=25 T=100 B=8 device=cpu seed=0 render=off
+iter=   0 step=    800 ep_ret=+30.605 opt_ret=+30.605 step_rew=0.3061 opt_step=0.3061 gap0=0.000 dret=+0.000 eval_ret=n/a pursuer_target_distance=0.534 capture=0.085 score=0.055 pol=-0.0008 val=0.5925 ent=1.6094 tot=+0.2794 agnorm=0.058 cgnorm=0.335 kl=0.0001 clipf=0.000 ev=-0.228 r0=1.0000 entcoef=1.00e-02 lr=7.0e-04 seed=0
+iter=   5 step=   4800 ep_ret=-83.935 opt_ret=-83.935 step_rew=-0.8394 opt_step=-0.8394 gap0=83.935 dret=-114.540 eval_ret=n/a pursuer_target_distance=0.942 capture=0.011 score=0.006 pol=-0.0001 val=0.2672 ent=1.6084 tot=+0.1205 agnorm=0.039 cgnorm=0.312 kl=0.0000 clipf=0.000 ev=+0.029 r0=1.0000 entcoef=8.13e-03 lr=5.6e-04 seed=0
+iter=  10 step=   8800 ep_ret=-71.020 opt_ret=-71.020 step_rew=-0.7102 opt_step=-0.7102 gap0=71.020 dret=-101.625 eval_ret=n/a pursuer_target_distance=0.888 capture=0.019 score=0.010 pol=-0.0001 val=0.4463 ent=1.6064 tot=+0.2130 agnorm=0.044 cgnorm=0.336 kl=0.0000 clipf=0.000 ev=-0.034 r0=1.0000 entcoef=6.25e-03 lr=4.1e-04 seed=0
+iter=  15 step=  12800 ep_ret=-54.592 opt_ret=-54.592 step_rew=-0.5459 opt_step=-0.5459 gap0=54.592 dret=-85.197 eval_ret=n/a pursuer_target_distance=0.736 capture=0.020 score=0.012 pol=-0.0003 val=0.3925 ent=1.6038 tot=+0.1890 agnorm=0.063 cgnorm=0.268 kl=0.0000 clipf=0.000 ev=+0.013 r0=1.0000 entcoef=4.37e-03 lr=2.7e-04 seed=0
+iter=  20 step=  16800 ep_ret=-37.893 opt_ret=-37.893 step_rew=-0.3789 opt_step=-0.3789 gap0=37.893 dret=-68.498 eval_ret=n/a pursuer_target_distance=0.619 capture=0.025 score=0.015 pol=-0.0000 val=0.2558 ent=1.6024 tot=+0.1239 agnorm=0.034 cgnorm=0.208 kl=0.0000 clipf=0.000 ev=+0.183 r0=1.0000 entcoef=2.50e-03 lr=1.3e-04 seed=0
+[train] Final checkpoint saved to runs/pursuit_smoke/20260604_163551_620452_smoke_seed0_pid62887/ckpt/final.pt
+[train] Run artifacts in runs/pursuit_smoke/20260604_163551_620452_smoke_seed0_pid62887
+[render] Skipped post-train render (mode=off).

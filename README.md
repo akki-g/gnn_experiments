@@ -254,6 +254,57 @@ python -m experiments.plot_run_metrics runs/vmas_simple_spread \
     --output runs/vmas_simple_spread/all_metrics.png
 ```
 
+To rank a sweep after the array finishes, write a one-row-per-run summary:
+
+```bash
+python -m experiments.plot_run_metrics runs/vmas_simple_spread \
+    --recursive \
+    --summary \
+    --summary-output runs/vmas_simple_spread/sweep_summary.csv
+```
+
+By default the summary sorts by `best_eval_mean_return`, then falls back to raw
+episode return or task-score columns if older run files do not contain eval
+metrics.
+
+### Interpreting simple_spread reward
+
+VMAS `simple_spread` is a cost-style task: reward is the negative sum of
+landmark coverage distances plus collision penalties. The raw reward ceiling is
+therefore approximately `0`, not a positive value. Successful learning should
+move `episode_return` and `mean_step_reward` upward toward `0`.
+
+The default simple_spread config now linearly anneals `algo.lr` and
+`algo.entropy_coef`. This keeps early exploration and larger early policy
+updates, then encourages a less stochastic and more stable policy late in
+training, which should help close the remaining gap toward the zero-reward
+ceiling.
+
+Training logs also include `episode_return_gap_to_zero`,
+`mean_step_reward_gap_to_zero`, and `*_delta_from_start` columns. The gap metrics
+should decrease; the delta metrics become positive when the policy improves over
+its first logged rollout.
+
+`runtime.eval_interval` runs deterministic no-video evaluation during training
+and logs `eval_*` metrics. This is useful because PPO rollouts are sampled from
+the stochastic policy, while deterministic evaluation shows the greedy policy we
+would normally deploy. The trainer saves `ckpt/best_eval.pt` when deterministic
+evaluation improves.
+
+For reward diagnosis, VMAS runs also log `coverage_distance` and
+`collision_pairs`. If reward improves while `coverage_distance` falls, learning
+is driven by better landmark coverage. If collision counts stay high, the next
+tuning target should be collision avoidance rather than optimizer settings.
+The derived `task_score` / `eval_task_score` metrics are positive bounded
+diagnostics from these two quantities; they are useful for quick plots, but the
+raw VMAS reward remains the benchmark reward.
+
+The `vmas_simple_spread_mappo_shifted.yaml` sweep variant uses
+`algo.reward_shift: 6.0`. This adds a constant per-step shift only to the reward
+used for PPO returns/advantages and logs it as `optimized_*`. Raw VMAS reward is
+still logged separately as `episode_return` and `mean_step_reward`; those remain
+the benchmark values.
+
 ### HPC dependencies
 
 For the VMAS training job on a cluster, use the minimal pinned batch
@@ -270,7 +321,7 @@ time. `req.txt` remains the broader local/dev dependency list, including
 rendering and analysis packages. The HPC list intentionally omits rendering-only
 packages because the batch script runs with `--render off`.
 
-### SLURM (seeds 0, 1, 2; account cenyioha, partition normal)
+### SLURM sweep (4 configs x seeds 0, 1, 2; account cenyioha, partition normal)
 
 One-time setup before first submission from the repo root. SLURM needs the log
 directory to exist before it opens `--output` / `--error`:
@@ -292,9 +343,20 @@ The script writes scheduler logs directly to
 `slurm_logs/vmas_ss_mappo_<jobid>_<arrayid>.out` and `.err`. It resolves the
 runtime repo root from `SLURM_SUBMIT_DIR` and falls back to
 `$HOME/gnn_experiments`, so submitting from the repo root remains the safest
-default. Array tasks 0/1/2 → seeds 0/1/2. The trainer writes its own
-`console.log` inside a collision-resistant run dir containing timestamp,
-seed, pid, and SLURM job/task ids when present.
+default.
+
+The array is a small tuning sweep:
+
+| Array tasks | Config | Seeds |
+|---|---|---|
+| `0-2` | `configs/vmas_simple_spread_mappo.yaml` | `0,1,2` |
+| `3-5` | `configs/vmas_simple_spread_mappo_exploit.yaml` | `0,1,2` |
+| `6-8` | `configs/vmas_simple_spread_mappo_wide.yaml` | `0,1,2` |
+| `9-11` | `configs/vmas_simple_spread_mappo_shifted.yaml` | `0,1,2` |
+
+The trainer writes its own `console.log` inside a collision-resistant run dir
+containing timestamp, config run label, seed, pid, and SLURM job/task ids when
+present.
 
 `CUDA_VISIBLE_DEVICES` is set by SLURM automatically — the trainer uses `cuda:0`
 which maps to the assigned GPU. No manual device override needed.
@@ -312,6 +374,7 @@ run `experiments.render_trained_policy` locally, or submit the render under
 |---|---|
 | `ckpt/final.pt` | Checkpoint after final iteration |
 | `ckpt/best.pt` | Checkpoint at best mean episode return |
+| `ckpt/best_eval.pt` | Optional checkpoint at best deterministic eval return |
 | `config.yaml` | Copy of the config used for this run |
 | `metrics.json` | Per-iteration metrics (JSON list of dicts) |
 | `metrics.csv` | Per-iteration metrics (CSV) |

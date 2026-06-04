@@ -15,15 +15,27 @@
 #   value_loss      : raw MSE before value_coef scaling (total_loss applies the weight)
 #   approx_kl       : 0.5 * E[(log r)²] approximation, not the Schulman estimator
 #   mean_ratio_epoch0: first minibatch of epoch 0 only; should be ≈ 1.0
+#   lr              : linearly annealed from lr to lr_final
+#   reward_shift    : added only to PPO optimization reward; raw reward still logged
+#   entropy_coef    : linearly annealed from entropy_coef to entropy_coef_final
+#                     to keep early exploration while encouraging late exploitation
+#   *_gap_to_zero   : remaining positive distance from raw non-positive reward to 0
+#   *_delta_from_start: positive means improvement over this run's first metric
+#   eval_*          : deterministic greedy-policy no-video evaluation metrics
+#   coverage_distance/collision_pairs: direct simple_spread task diagnostics
+#   task_score      : positive bounded diagnostic from coverage/collisions; not reward
 
 algo:
   name: "mappo"
   lr: 7.0e-4
+  lr_final: 1.0e-5
+  reward_shift: 0.0
   gamma: 0.99
   gae_lambda: 0.95
   clip_eps: 0.2
   value_clip_eps: 0.2
   entropy_coef: 0.01
+  entropy_coef_final: 0.001
   value_coef: 0.5
   max_grad_norm: 10.0
   ppo_epochs: 10
@@ -37,7 +49,7 @@ runtime:
   num_envs: 32
   total_env_steps: 2000000
   checkpoint_interval: 20
-  eval_interval: 0
+  eval_interval: 20
 
 model:
   hidden_dim: 64
@@ -57,6 +69,7 @@ env:
 
 logging:
   log_dir: "runs/vmas_simple_spread"
+  run_label: "entropy_anneal"
   wandb: false
   wandb_project: "marl-thesis"
   console_log_interval: 1
