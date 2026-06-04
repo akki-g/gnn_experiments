@@ -7,8 +7,6 @@
 #SBATCH --mem=32G
 #SBATCH --time=08:00:00
 #SBATCH --array=0-2
-# Output dirs must exist before submission.
-# Run once: mkdir -p $HOME/gnn_experiments/slurm_logs
 #SBATCH --output=slurm_logs/%x_%A_%a.out
 #SBATCH --error=slurm_logs/%x_%A_%a.err
 
@@ -49,7 +47,7 @@ source "${VENV_DIR}/bin/activate"
 
 check_hpc_imports() {
     python - <<'PY'
-import importlib
+import importlib.util
 import sys
 
 required = {
@@ -58,16 +56,12 @@ required = {
     "torch": "torch",
     "vmas": "vmas",
 }
-failed = []
-for module, package in required.items():
-    try:
-        importlib.import_module(module)
-    except Exception as exc:
-        failed.append((package, f"{exc.__class__.__name__}: {exc}"))
-if failed:
-    print("[setup] Missing or failing Python packages:")
-    for package, reason in failed:
-        print(f"[setup]   {package}: {reason}")
+missing = [
+    package for module, package in required.items()
+    if importlib.util.find_spec(module) is None
+]
+if missing:
+    print("[setup] Missing Python packages:", ", ".join(missing))
     sys.exit(1)
 print("[setup] Required Python imports are available.")
 PY
@@ -75,7 +69,7 @@ PY
 
 write_missing_requirements() {
     python - "$1" <<'PY'
-import importlib
+import importlib.util
 import pathlib
 import sys
 
@@ -86,12 +80,10 @@ required = {
     "torch": "torch==2.12.0",
     "vmas": "vmas==1.5.2",
 }
-missing = []
-for module, spec in required.items():
-    try:
-        importlib.import_module(module)
-    except Exception:
-        missing.append(spec)
+missing = [
+    spec for module, spec in required.items()
+    if importlib.util.find_spec(module) is None
+]
 out_path.write_text("\n".join(missing) + ("\n" if missing else ""))
 PY
 }
@@ -125,6 +117,22 @@ if ! check_hpc_imports; then
     cleanup_lock
     trap - EXIT
 fi
+
+organize_slurm_logs() {
+    local job_name="${SLURM_JOB_NAME:-vmas_ss_mappo}"
+    local array_job_id="${SLURM_ARRAY_JOB_ID:-${SLURM_JOB_ID:-manual}}"
+    local array_task_id="${SLURM_ARRAY_TASK_ID:-0}"
+
+    local log_root="${SLURM_SUBMIT_DIR:-$PWD}/slurm_logs"
+    local log_dir="${log_root}/${job_name}_${array_job_id}_${array_task_id}"
+
+    mkdir -p "${log_dir}"
+
+    mv "${log_root}/${job_name}_${array_job_id}_${array_task_id}.out" "${log_dir}/" 2>/dev/null || true
+    mv "${log_root}/${job_name}_${array_job_id}_${array_task_id}.err" "${log_dir}/" 2>/dev/null || true
+}
+
+trap organize_slurm_logs EXIT
 
 check_hpc_imports
 
@@ -169,5 +177,6 @@ python -m experiments.train_vmas_mappo \
     --config configs/vmas_simple_spread_mappo.yaml \
     --seed "${SLURM_ARRAY_TASK_ID:-0}" \
     --render off
+
 
 echo "=== done $(date) ==="

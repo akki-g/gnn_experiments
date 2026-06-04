@@ -234,6 +234,26 @@ python -m experiments.render_trained_policy \
     --no-video
 ```
 
+### Plot run metrics
+
+Plot every numeric metric from one or more run directories:
+
+```bash
+python -m experiments.plot_run_metrics \
+    runs/vmas_simple_spread/20260603_192930_* \
+    --rolling 5 \
+    --output runs/vmas_simple_spread/metrics_633898.png
+```
+
+For a parent directory, use recursive discovery:
+
+```bash
+python -m experiments.plot_run_metrics runs/vmas_simple_spread \
+    --recursive \
+    --rolling 5 \
+    --output runs/vmas_simple_spread/all_metrics.png
+```
+
 ### HPC dependencies
 
 For the VMAS training job on a cluster, use the minimal pinned batch
