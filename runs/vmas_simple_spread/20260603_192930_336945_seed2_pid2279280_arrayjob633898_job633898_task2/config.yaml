@@ -1,0 +1,47 @@
+algo:
+  clip_eps: 0.2
+  entropy_coef: 0.01
+  gae_lambda: 0.95
+  gamma: 0.99
+  lr: 0.0007
+  max_grad_norm: 10.0
+  name: mappo
+  normalize_advantages: true
+  num_minibatches: 1
+  ppo_epochs: 10
+  share_encoder: true
+  use_value_norm: true
+  value_clip_eps: 0.2
+  value_coef: 0.5
+comm:
+  module: identity
+device: auto
+env:
+  include_timestep_in_state: true
+  max_steps: 100
+  name: vmas_simple_spread
+  num_agents: 3
+  scenario: simple_spread
+logging:
+  console_log_interval: 1
+  log_dir: runs/vmas_simple_spread
+  wandb: false
+  wandb_project: marl-thesis
+model:
+  actor_layers: 1
+  critic_layers: 2
+  encoder_layers: 2
+  hidden_dim: 64
+render:
+  episodes: 2
+  eval_seed: 1000
+  fps: 15
+  frame_size: 512
+  mode: 'off'
+runtime:
+  checkpoint_interval: 20
+  eval_interval: 0
+  num_envs: 32
+  rollout_length: 100
+  total_env_steps: 2000000
+seed: 2
