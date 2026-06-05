@@ -1,0 +1,61 @@
+algo:
+  name: mappo
+  lr: 0.0007
+  lr_final: 1.0e-05
+  reward_shift: 0.0
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_eps: 0.2
+  value_clip_eps: 0.2
+  entropy_coef: 0.01
+  entropy_coef_final: 0.001
+  value_coef: 0.5
+  max_grad_norm: 10.0
+  ppo_epochs: 5
+  num_minibatches: 1
+  normalize_advantages: true
+  share_encoder: true
+  use_value_norm: true
+runtime:
+  rollout_length: 100
+  num_envs: 8
+  total_env_steps: 20000
+  checkpoint_interval: 50
+  eval_interval: 0
+model:
+  hidden_dim: 32
+  encoder_layers: 2
+  actor_layers: 1
+  critic_layers: 2
+comm:
+  module: identity
+env:
+  name: pursuit
+  kind: pursuit
+  num_agents: 3
+  max_steps: 100
+  include_timestep_in_state: true
+  alpha: 0.0
+  num_full_sight: 2
+  observe_teammates: false
+  world_size: 1.0
+  capture_radius: 0.1
+  move_step: 0.05
+  target_speed: 0.03
+  dist_coef: 1.0
+  step_penalty: 0.01
+  capture_bonus: 10.0
+  primary_diagnostic: pursuer_target_distance
+  secondary_diagnostic: capture
+  task_score_kind: pursuit
+logging:
+  log_dir: runs/pursuit_sweep/pursuit_smoke
+  run_label: pursuit_smoke_alpha0p0
+  wandb: false
+  console_log_interval: 5
+render:
+  mode: 'off'
+  eval_seed: 1000
+  episodes: 1
+seed: 0
+device: cpu

@@ -1,0 +1,61 @@
+[setup] Required Python imports are available.
+[setup] Required Python imports are available.
+=== Job info ===
+Job      : 634676  array=26
+Node     : evc34
+Submit   : /lustre/fs1/home/ak565492/gnn_experiments
+Repo     : /lustre/fs1/home/ak565492/gnn_experiments
+Git rev  : c98852a
+Python   : /home/ak565492/expenv/bin/python
+Python 3.11.4
+PyYAML   : 6.0.3
+NumPy    : 2.3.5
+Torch    : 2.5.1+cu121 cuda_available=True torch_cuda=12.1
+CUDA_VIS : 0
+Threads  : OMP=4 MKL=4 OPENBLAS=1
+Task     : 26/30
+Config   : configs/pursuit_smoke.yaml
+Generated: runs/pursuit_sweep/generated_configs/634633_26_pursuit_smoke_alpha0p75_seed2.yaml
+Alpha    : 0.75
+Seed     : 2
+Run label: pursuit_smoke_alpha0p75
+Log dir  : runs/pursuit_sweep/pursuit_smoke
+Probe    : 1
+Start    : Thu Jun  4 17:14:33 EDT 2026
+================
+Thu Jun  4 17:14:33 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 PCIe               Off |   00000000:17:00.0 Off |                    0 |
+| N/A   34C    P0             46W /  310W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+[env] kind=pursuit name=pursuit n_agents=3 obs_dim=5 action_dim=5 state_dim=9 num_envs=8
+[train] Starting: total_iters=25 T=100 B=8 device=cpu seed=2 render=off
+iter=   0 step=    800 ep_ret=-2.195 opt_ret=-2.195 step_rew=-0.0220 opt_step=-0.0220 gap0=2.195 dret=+0.000 eval_ret=n/a pursuer_target_distance=0.512 capture=0.050 score=0.033 pol=-0.0007 val=0.5550 ent=1.6094 tot=+0.2607 agnorm=0.055 cgnorm=0.271 kl=0.0001 clipf=0.000 ev=-0.124 r0=1.0000 entcoef=1.00e-02 lr=7.0e-04 seed=2
+iter=   5 step=   4800 ep_ret=-48.554 opt_ret=-48.554 step_rew=-0.4855 opt_step=-0.4855 gap0=48.554 dret=-46.358 eval_ret=n/a pursuer_target_distance=0.613 capture=0.014 score=0.009 pol=-0.0004 val=0.3159 ent=1.6072 tot=+0.1445 agnorm=0.058 cgnorm=0.265 kl=0.0000 clipf=0.000 ev=+0.184 r0=1.0000 entcoef=8.13e-03 lr=5.6e-04 seed=2
+iter=  10 step=   8800 ep_ret=-83.037 opt_ret=-83.037 step_rew=-0.8304 opt_step=-0.8304 gap0=83.037 dret=-80.841 eval_ret=n/a pursuer_target_distance=0.833 capture=0.001 score=0.001 pol=-0.0004 val=0.2474 ent=1.6040 tot=+0.1133 agnorm=0.080 cgnorm=0.494 kl=0.0000 clipf=0.000 ev=+0.162 r0=1.0000 entcoef=6.25e-03 lr=4.1e-04 seed=2
+iter=  15 step=  12800 ep_ret=-76.769 opt_ret=-76.769 step_rew=-0.7677 opt_step=-0.7677 gap0=76.769 dret=-74.574 eval_ret=n/a pursuer_target_distance=0.758 capture=0.000 score=0.000 pol=-0.0001 val=0.3046 ent=1.6034 tot=+0.1452 agnorm=0.043 cgnorm=0.445 kl=0.0000 clipf=0.000 ev=+0.126 r0=1.0000 entcoef=4.37e-03 lr=2.7e-04 seed=2
+iter=  20 step=  16800 ep_ret=-68.696 opt_ret=-68.696 step_rew=-0.6870 opt_step=-0.6870 gap0=68.696 dret=-66.501 eval_ret=n/a pursuer_target_distance=0.752 capture=0.007 score=0.004 pol=-0.0000 val=0.2606 ent=1.6041 tot=+0.1262 agnorm=0.045 cgnorm=0.251 kl=0.0000 clipf=0.000 ev=+0.265 r0=1.0000 entcoef=2.50e-03 lr=1.3e-04 seed=2
+[train] Final checkpoint saved to runs/pursuit_sweep/pursuit_smoke/20260604_171434_343476_pursuit_smoke_alpha0p75_seed2_pid667131_arrayjob634633_job634676_task26/ckpt/final.pt
+[train] Run artifacts in runs/pursuit_sweep/pursuit_smoke/20260604_171434_343476_pursuit_smoke_alpha0p75_seed2_pid667131_arrayjob634633_job634676_task26
+[render] Skipped post-train render (mode=off).
+[probe] alpha=0.75 seed=2 N=3 B=16 obs_dim=5 steps=200 total_samples=9600
+[probe] full_sight    R²=0.9948  MSE=0.001666 (n=6400)
+[probe] sensor_limited R²=0.9896  MSE=0.003200 (n=3200)
+[probe] probe_gap (full - limited) = 0.0052
+[probe] Summary: alpha=0.75 | score_full_sight=0.9948 | score_sensor_limited=0.9896 | gap=0.0052
+=== done Thu Jun  4 17:14:42 EDT 2026 ===
