@@ -89,6 +89,20 @@ def test_plot_run_metrics_writes_output(tmp_path):
     fig.clf()
 
 
+def test_plot_run_metrics_defaults_to_iteration_axis(tmp_path):
+    _write_metrics(tmp_path / "run_seed0", seed=0)
+
+    fig = plot_run_metrics(
+        [tmp_path / "run_seed0"],
+        metrics=["episode_return"],
+    )
+
+    ax = fig.axes[0]
+    assert ax.get_xlabel() == "iter"
+    assert list(ax.lines[0].get_xdata()) == [0, 1]
+    fig.clf()
+
+
 def test_summarize_run_metrics_ranks_runs_and_preserves_config_labels(tmp_path):
     _write_sweep_metrics(
         tmp_path / "weak_seed0",

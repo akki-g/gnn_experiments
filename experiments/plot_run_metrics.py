@@ -374,7 +374,7 @@ def summarize_run_metrics(
 
 def metric_columns(
     metrics_df: pd.DataFrame,
-    x_column: str = "global_step",
+    x_column: str = "iter",
     exclude_columns: Iterable[str] = DEFAULT_EXCLUDE_COLUMNS,
 ) -> list[str]:
     """Return numeric columns that should be plotted as y-axis metrics."""
@@ -395,10 +395,10 @@ def plot_run_metrics(
     output: str | Path | None = None,
     recursive: bool = False,
     metrics: Sequence[str] | None = None,
-    x_column: str = "global_step",
+    x_column: str = "iter",
     rolling: int = 1,
     columns: int = 3,
-    dpi: int = 160,
+    dpi: int = 220,
     show: bool = False,
 ):
     """
@@ -411,8 +411,8 @@ def plot_run_metrics(
     metrics_df = load_run_metrics(paths, recursive=recursive)
 
     if x_column not in metrics_df.columns:
-        if "iter" in metrics_df.columns:
-            x_column = "iter"
+        if x_column == "iter" and "global_step" in metrics_df.columns:
+            x_column = "global_step"
         else:
             x_column = "__row_index__"
             metrics_df[x_column] = metrics_df.groupby("run_label").cumcount()
@@ -430,8 +430,8 @@ def plot_run_metrics(
 
     columns = max(1, int(columns))
     rows = math.ceil(len(metrics_to_plot) / columns)
-    fig_width = min(18, 5.4 * columns)
-    fig_height = max(3.2, 3.2 * rows)
+    fig_width = min(28, 7.2 * columns)
+    fig_height = max(4.5, 4.2 * rows)
     fig, axes = plt.subplots(rows, columns, figsize=(fig_width, fig_height), squeeze=False)
     axes_flat = axes.ravel()
 
@@ -519,8 +519,11 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--x",
-        default="global_step",
-        help="X-axis column. Falls back to iter or row index if missing.",
+        default="iter",
+        help=(
+            "X-axis column. Defaults to iter so every logged training iteration "
+            "is shown. Use --x global_step for environment-step scale."
+        ),
     )
     parser.add_argument(
         "--rolling",
@@ -533,6 +536,12 @@ def _parse_args() -> argparse.Namespace:
         type=int,
         default=3,
         help="Number of subplot columns.",
+    )
+    parser.add_argument(
+        "--dpi",
+        type=int,
+        default=220,
+        help="Output image resolution in dots per inch.",
     )
     parser.add_argument(
         "--show",
@@ -590,6 +599,7 @@ def main() -> None:
             x_column=args.x,
             rolling=args.rolling,
             columns=args.columns,
+            dpi=args.dpi,
             show=args.show,
         )
 
