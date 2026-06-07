@@ -1,2 +1,0 @@
-iter,global_step,episode_return,mean_step_reward,episodes_completed,policy_loss,value_loss,entropy,total_loss,grad_norm,approx_kl,clipfrac,explained_variance,mean_ratio_epoch0,lr,seed
-0,20,0.0,-6.405258846282959,0,-0.0033277321262477066,529.1045989990234,2.1971855461597443,264.5270004272461,24.620471239089966,2.9183498270531536e-05,0.0,-0.004003763198852539,1.0,0.0005,3

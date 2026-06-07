@@ -1,5 +1,0 @@
-[probe] alpha=0.25 seed=0 N=3 B=16 obs_dim=5 steps=200 total_samples=9600
-[probe] full_sight    R²=0.9968  MSE=0.001073 (n=6400)
-[probe] sensor_limited R²=0.3740  MSE=0.193633 (n=3200)
-[probe] probe_gap (full - limited) = 0.6228
-[probe] Summary: alpha=0.25 | score_full_sight=0.9968 | score_sensor_limited=0.3740 | gap=0.6228

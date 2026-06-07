@@ -402,30 +402,41 @@ def main(
     device = get_device(prefer_cuda=(cfg["device"] != "cpu"))
     render_mode = _resolve_render_mode(cfg, render)
 
-    # Collision-resistant run directory for SLURM arrays.
-    run_dir = _make_run_dir(
-        cfg["logging"]["log_dir"],
-        cfg["seed"],
-        cfg.get("logging", {}).get("run_label"),
-    )
+    log_cfg = cfg.setdefault("logging", {})
+    run_dir = log_cfg.get("run_dir")
+    if run_dir:
+        os.makedirs(run_dir, exist_ok=True)
+    else:
+        # Collision-resistant run directory for local runs and SLURM arrays.
+        run_dir = _make_run_dir(
+            log_cfg["log_dir"],
+            cfg["seed"],
+            log_cfg.get("run_label"),
+        )
+
+    save_checkpoints = bool(log_cfg.get("save_checkpoints", True))
+    save_config = bool(log_cfg.get("save_config", True))
+    save_console_log = bool(log_cfg.get("save_console_log", True))
     ckpt_dir = os.path.join(run_dir, "ckpt")
-    os.makedirs(ckpt_dir, exist_ok=True)
+    if save_checkpoints:
+        os.makedirs(ckpt_dir, exist_ok=True)
 
-    # Copy config into run dir
-    config_copy_path = os.path.join(run_dir, "config.yaml")
-    with open(config_copy_path, "w") as f:
-        yaml.safe_dump(cfg, f)
+    if save_config:
+        config_copy_path = os.path.join(run_dir, "config.yaml")
+        with open(config_copy_path, "w") as f:
+            yaml.safe_dump(cfg, f)
 
-    # Console tee: all print() output goes to both terminal and console.log
-    log_file = open(os.path.join(run_dir, "console.log"), "w", buffering=1)
-    tee = _Tee(log_file)
-    sys.stdout = tee
-
-    try:
+    if save_console_log:
+        log_file = open(os.path.join(run_dir, "console.log"), "w", buffering=1)
+        tee = _Tee(log_file)
+        sys.stdout = tee
+        try:
+            _train(cfg, device, run_dir, ckpt_dir, resume, render_mode)
+        finally:
+            sys.stdout = sys.__stdout__
+            log_file.close()
+    else:
         _train(cfg, device, run_dir, ckpt_dir, resume, render_mode)
-    finally:
-        sys.stdout = sys.__stdout__
-        log_file.close()
 
     return run_dir
 
@@ -438,6 +449,8 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
     algo_cfg = cfg["algo"]
     runtime_cfg = cfg["runtime"]
     log_cfg = cfg["logging"]
+    save_checkpoints = bool(log_cfg.get("save_checkpoints", True))
+    save_metrics_json = bool(log_cfg.get("save_metrics_json", True))
 
     # ----- Environment -----
     env = _build_env(env_cfg, num_envs=runtime_cfg["num_envs"], seed=cfg["seed"], device=str(device))
@@ -725,12 +738,13 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
                 start_eval_return = eval_metrics["eval_mean_return"]
             if eval_metrics["eval_mean_return"] > best_eval_return:
                 best_eval_return = eval_metrics["eval_mean_return"]
-                model.save(
-                    os.path.join(ckpt_dir, "best_eval.pt"),
-                    optimizer=optimizer,
-                    global_step=global_step,
-                    extra={"eval_mean_return": best_eval_return},
-                )
+                if save_checkpoints:
+                    model.save(
+                        os.path.join(ckpt_dir, "best_eval.pt"),
+                        optimizer=optimizer,
+                        global_step=global_step,
+                        extra={"eval_mean_return": best_eval_return},
+                    )
 
         # Row dict: diagnostic columns use the env-specific key names so
         # VMAS CSV schema ("coverage_distance", "collision_pairs", etc.) is
@@ -777,6 +791,8 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
             "entropy_coef": entropy_coef,
             "lr": active_lr,
             "seed": cfg["seed"],
+            "alpha": env_cfg.get("alpha", float("nan")),
+            "env_alpha": env_cfg.get("alpha", float("nan")),
         }
         # Pursuit-only extra column: per-episode capture rate (absent for VMAS).
         if env_kind == "pursuit":
@@ -817,16 +833,17 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
         # Best checkpoint
         if not math.isnan(mean_ep_ret) and mean_ep_ret > best_return:
             best_return = mean_ep_ret
-            best_ckpt_path = os.path.join(ckpt_dir, "best.pt")
-            model.save(
-                best_ckpt_path,
-                optimizer=optimizer,
-                global_step=global_step,
-                extra={"episode_return": best_return},
-            )
+            if save_checkpoints:
+                best_ckpt_path = os.path.join(ckpt_dir, "best.pt")
+                model.save(
+                    best_ckpt_path,
+                    optimizer=optimizer,
+                    global_step=global_step,
+                    extra={"episode_return": best_return},
+                )
 
         # Periodic checkpoint
-        if it > 0 and it % checkpoint_interval == 0:
+        if save_checkpoints and it > 0 and it % checkpoint_interval == 0:
             model.save(
                 os.path.join(ckpt_dir, f"ckpt_{it}.pt"),
                 optimizer=optimizer,
@@ -837,13 +854,17 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
     # End of training: save final checkpoint and write artifact files         #
     # ---------------------------------------------------------------------- #
     final_ckpt_path = os.path.join(ckpt_dir, "final.pt")
-    model.save(final_ckpt_path, optimizer=optimizer, global_step=global_step)
-    print(f"[train] Final checkpoint saved to {final_ckpt_path}")
+    if save_checkpoints:
+        model.save(final_ckpt_path, optimizer=optimizer, global_step=global_step)
+        print(f"[train] Final checkpoint saved to {final_ckpt_path}")
+    else:
+        print("[train] Checkpoint saving disabled.")
 
     # metrics.json
-    metrics_json_path = os.path.join(run_dir, "metrics.json")
-    with open(metrics_json_path, "w") as f:
-        json.dump(metrics_rows, f, indent=2)
+    if save_metrics_json:
+        metrics_json_path = os.path.join(run_dir, "metrics.json")
+        with open(metrics_json_path, "w") as f:
+            json.dump(metrics_rows, f, indent=2)
 
     # metrics.csv — field order matches the row dict key insertion order above
     metrics_csv_path = os.path.join(run_dir, "metrics.csv")
@@ -861,6 +882,9 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
     # ---------------------------------------------------------------------- #
     if render_mode == "off":
         print("[render] Skipped post-train render (mode=off).")
+        return
+    if not save_checkpoints:
+        print("[render] Skipped post-train render (checkpoint saving disabled).")
         return
     if render_mode == "auto" and _is_headless():
         print("[render] Skipped post-train render (mode=auto, no display detected).")

@@ -58,17 +58,17 @@ comm:
 env:
   name: "pursuit"
   kind: "pursuit"
-  num_agents: 3
+  num_agents: 5
   max_steps: 100
   include_timestep_in_state: true
 
   # Observation asymmetry knob (Phase 2 focus):
   alpha: 1.0              # 1.0 = symmetric (all agents full-sight); 0.0 = fully blind
-  num_full_sight: 2       # first 2 agents are class 0 (full-sight)
+  num_full_sight: 1       # first 2 agents are class 0 (full-sight)
   observe_teammates: false # no teammate positions in local obs (isolation guarantee)
 
   # World geometry:
-  world_size: 1.0
+  world_size: 5.0
   capture_radius: 0.1
   move_step: 0.05
   target_speed: 0.03

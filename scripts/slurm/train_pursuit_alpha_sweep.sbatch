@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=08:00:00
-#SBATCH --array=0-29
+#SBATCH --array=0-14
 #SBATCH --output=slurm_logs/%x_%A_%a.out
 #SBATCH --error=slurm_logs/%x_%A_%a.err
 
@@ -29,32 +29,22 @@ if [[ ! -f "${REPO_ROOT}/configs/pursuit_base.yaml" ]]; then
 fi
 cd "${REPO_ROOT}"
 
-mkdir -p runs/pursuit_sweep/generated_configs
-mkdir -p runs/pursuit_sweep/probes
-
-# Default sweep: 2 pursuit configs x 5 alpha levels x 3 seeds = 30 array tasks.
-# Override with, for example:
-#   sbatch --array=0-14 --export=ALL,SWEEP_CONFIGS="configs/pursuit_base.yaml" scripts/slurm/train_pursuit_alpha_sweep.sbatch
-read -r -a CONFIGS <<< "${SWEEP_CONFIGS:-configs/pursuit_base.yaml configs/pursuit_smoke.yaml}"
+# Default sweep: pursuit_base x 5 alpha levels x 3 seeds = 15 array tasks.
+BASE_CONFIG="${BASE_CONFIG:-configs/pursuit_base.yaml}"
 read -r -a ALPHAS <<< "${ALPHAS:-0.0 0.25 0.5 0.75 1.0}"
 NUM_SEEDS="${NUM_SEEDS:-3}"
-RUN_PROBE="${RUN_PROBE:-1}"
 
 TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"
 NUM_ALPHAS="${#ALPHAS[@]}"
-TASKS_PER_CONFIG=$((NUM_ALPHAS * NUM_SEEDS))
-CONFIG_INDEX=$((TASK_ID / TASKS_PER_CONFIG))
-WITHIN_CONFIG=$((TASK_ID % TASKS_PER_CONFIG))
-ALPHA_INDEX=$((WITHIN_CONFIG / NUM_SEEDS))
-SEED=$((WITHIN_CONFIG % NUM_SEEDS))
-TOTAL_TASKS=$((${#CONFIGS[@]} * TASKS_PER_CONFIG))
+TOTAL_TASKS=$((NUM_ALPHAS * NUM_SEEDS))
+ALPHA_INDEX=$((TASK_ID / NUM_SEEDS))
+SEED=$((TASK_ID % NUM_SEEDS))
 
 if (( TASK_ID >= TOTAL_TASKS )); then
     echo "[setup] Invalid SLURM_ARRAY_TASK_ID=${TASK_ID}; total tasks=${TOTAL_TASKS}"
     exit 2
 fi
 
-BASE_CONFIG="${CONFIGS[$CONFIG_INDEX]}"
 ALPHA="${ALPHAS[$ALPHA_INDEX]}"
 if [[ ! -f "${BASE_CONFIG}" ]]; then
     echo "[setup] Missing config: ${BASE_CONFIG}"
@@ -63,11 +53,11 @@ fi
 
 CONFIG_STEM="$(basename "${BASE_CONFIG}" .yaml)"
 ALPHA_LABEL="alpha${ALPHA//./p}"
-RUN_LABEL="${CONFIG_STEM}_${ALPHA_LABEL}"
-LOG_DIR="runs/pursuit_sweep/${CONFIG_STEM}"
+RUN_LABEL="${ALPHA_LABEL}_seed${SEED}"
+LOG_ROOT="runs/pursuit_sweep/${CONFIG_STEM}"
+RUN_DIR="${LOG_ROOT}/${ALPHA_LABEL}/seed${SEED}"
 JOB_TAG="${SLURM_ARRAY_JOB_ID:-manual}_${TASK_ID}"
-GENERATED_CONFIG="runs/pursuit_sweep/generated_configs/${JOB_TAG}_${RUN_LABEL}_seed${SEED}.yaml"
-PROBE_LOG="runs/pursuit_sweep/probes/${JOB_TAG}_${RUN_LABEL}_seed${SEED}.log"
+GENERATED_CONFIG="${TMPDIR:-/tmp}/${JOB_TAG}_${RUN_LABEL}.yaml"
 
 VENV_DIR="${VENV_DIR:-${HOME}/expenv}"
 REQ_FILE="${REQ_FILE:-${REPO_ROOT}/requirements-hpc.txt}"
@@ -159,32 +149,49 @@ organize_slurm_logs() {
     local array_task_id="${SLURM_ARRAY_TASK_ID:-0}"
 
     local log_root="${SLURM_SUBMIT_DIR:-$PWD}/slurm_logs"
-    local log_dir="${log_root}/${job_name}_${array_job_id}_${array_task_id}"
+    local log_dir="${log_root}/${job_name}_${array_job_id}/${ALPHA_LABEL}"
 
     mkdir -p "${log_dir}"
 
-    mv "${log_root}/${job_name}_${array_job_id}_${array_task_id}.out" "${log_dir}/" 2>/dev/null || true
-    mv "${log_root}/${job_name}_${array_job_id}_${array_task_id}.err" "${log_dir}/" 2>/dev/null || true
+    mv "${log_root}/${job_name}_${array_job_id}_${array_task_id}.out" \
+        "${log_dir}/seed${SEED}_task${array_task_id}.out" 2>/dev/null || true
+    mv "${log_root}/${job_name}_${array_job_id}_${array_task_id}.err" \
+        "${log_dir}/seed${SEED}_task${array_task_id}.err" 2>/dev/null || true
 }
 
-trap organize_slurm_logs EXIT
+cleanup_generated_config() {
+    rm -f "${GENERATED_CONFIG}" 2>/dev/null || true
+}
+
+on_exit() {
+    cleanup_generated_config
+    organize_slurm_logs
+}
+
+trap on_exit EXIT
 
 check_hpc_imports
 
-python - "${BASE_CONFIG}" "${GENERATED_CONFIG}" "${ALPHA}" "${SEED}" "${RUN_LABEL}" "${LOG_DIR}" <<'PY'
+python - "${BASE_CONFIG}" "${GENERATED_CONFIG}" "${ALPHA}" "${SEED}" "${RUN_LABEL}" "${RUN_DIR}" <<'PY'
 import pathlib
 import sys
 
 import yaml
 
-base_path, out_path, alpha, seed, run_label, log_dir = sys.argv[1:]
+base_path, out_path, alpha, seed, run_label, run_dir = sys.argv[1:]
 with open(base_path, "r") as f:
     cfg = yaml.safe_load(f) or {}
 
 cfg["seed"] = int(seed)
 cfg.setdefault("env", {})["alpha"] = float(alpha)
-cfg.setdefault("logging", {})["log_dir"] = log_dir
-cfg["logging"]["run_label"] = run_label
+logging = cfg.setdefault("logging", {})
+logging["log_dir"] = str(pathlib.Path(run_dir).parent)
+logging["run_dir"] = run_dir
+logging["run_label"] = run_label
+logging["save_checkpoints"] = False
+logging["save_config"] = False
+logging["save_console_log"] = False
+logging["save_metrics_json"] = False
 cfg.setdefault("render", {})["mode"] = "off"
 
 out = pathlib.Path(out_path)
@@ -224,8 +231,7 @@ echo "Generated: ${GENERATED_CONFIG}"
 echo "Alpha    : ${ALPHA}"
 echo "Seed     : ${SEED}"
 echo "Run label: ${RUN_LABEL}"
-echo "Log dir  : ${LOG_DIR}"
-echo "Probe    : ${RUN_PROBE}"
+echo "Run dir  : ${RUN_DIR}"
 echo "Start    : $(date)"
 echo "================"
 
@@ -235,12 +241,5 @@ python -m experiments.train_vmas_mappo \
     --config "${GENERATED_CONFIG}" \
     --seed "${SEED}" \
     --render off
-
-if [[ "${RUN_PROBE}" == "1" ]]; then
-    python -m experiments.run_probe \
-        --config "${GENERATED_CONFIG}" \
-        --alpha "${ALPHA}" \
-        --seed "${SEED}" | tee "${PROBE_LOG}"
-fi
 
 echo "=== done $(date) ==="
