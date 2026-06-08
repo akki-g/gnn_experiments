@@ -64,7 +64,7 @@ env:
 
   # Observation asymmetry knob (Phase 2 focus):
   alpha: 1.0              # 1.0 = symmetric (all agents full-sight); 0.0 = fully blind
-  num_full_sight: 1       # first 2 agents are class 0 (full-sight)
+  num_full_sight: 3       # first 2 agents are class 0 (full-sight)
   observe_teammates: false # no teammate positions in local obs (isolation guarantee)
 
   # World geometry:
