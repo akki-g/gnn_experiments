@@ -1,0 +1,10 @@
+[env] kind=pursuit name=pursuit n_agents=3 obs_dim=5 action_dim=5 state_dim=9 num_envs=8
+[train] Starting: total_iters=25 T=100 B=8 device=cpu seed=0 render=off
+iter=   0 step=    800 ep_ret=-68.576 opt_ret=-68.576 step_rew=-0.6858 opt_step=-0.6858 gap0=68.576 dret=+0.000 eval_ret=n/a pursuer_target_distance=0.534 capture=0.004 score=0.002 pol=-0.0004 val=0.5746 ent=1.6094 tot=+0.2708 agnorm=0.029 cgnorm=0.368 kl=0.0001 clipf=0.000 ev=-0.197 r0=1.0000 entcoef=1.00e-02 lr=7.0e-04 seed=0
+iter=   5 step=   4800 ep_ret=-108.144 opt_ret=-108.144 step_rew=-1.0814 opt_step=-1.0814 gap0=108.144 dret=-39.569 eval_ret=n/a pursuer_target_distance=0.893 capture=0.000 score=0.000 pol=+0.0001 val=0.5550 ent=1.6080 tot=+0.2645 agnorm=0.035 cgnorm=0.608 kl=0.0000 clipf=0.000 ev=-0.051 r0=1.0000 entcoef=8.13e-03 lr=5.6e-04 seed=0
+iter=  10 step=   8800 ep_ret=-106.850 opt_ret=-106.850 step_rew=-1.0685 opt_step=-1.0685 gap0=106.850 dret=-38.275 eval_ret=n/a pursuer_target_distance=0.894 capture=0.000 score=0.000 pol=-0.0001 val=0.5383 ent=1.6078 tot=+0.2590 agnorm=0.055 cgnorm=0.570 kl=0.0000 clipf=0.000 ev=-0.206 r0=1.0000 entcoef=6.25e-03 lr=4.1e-04 seed=0
+iter=  15 step=  12800 ep_ret=-96.411 opt_ret=-96.411 step_rew=-0.9641 opt_step=-0.9641 gap0=96.411 dret=-27.835 eval_ret=n/a pursuer_target_distance=0.753 capture=0.000 score=0.000 pol=-0.0002 val=0.3379 ent=1.6073 tot=+0.1617 agnorm=0.074 cgnorm=0.493 kl=0.0000 clipf=0.000 ev=+0.053 r0=1.0000 entcoef=4.37e-03 lr=2.7e-04 seed=0
+iter=  20 step=  16800 ep_ret=-65.903 opt_ret=-65.903 step_rew=-0.6590 opt_step=-0.6590 gap0=65.903 dret=+2.673 eval_ret=n/a pursuer_target_distance=0.545 capture=0.006 score=0.004 pol=-0.0001 val=0.2311 ent=1.6073 tot=+0.1115 agnorm=0.048 cgnorm=0.297 kl=0.0000 clipf=0.000 ev=+0.228 r0=1.0000 entcoef=2.50e-03 lr=1.3e-04 seed=0
+[train] Final checkpoint saved to runs/pursuit_smoke/20260607_233806_968860_smoke_seed0_pid88168/ckpt/final.pt
+[train] Run artifacts in runs/pursuit_smoke/20260607_233806_968860_smoke_seed0_pid88168
+[render] Skipped post-train render (mode=off).
