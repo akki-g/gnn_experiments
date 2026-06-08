@@ -58,7 +58,7 @@ comm:
 env:
   name: "pursuit"
   kind: "pursuit"
-  num_agents: 5
+  num_agents: 10
   max_steps: 100
   include_timestep_in_state: true
 
@@ -68,9 +68,9 @@ env:
   observe_teammates: false # no teammate positions in local obs (isolation guarantee)
 
   # World geometry:
-  world_size: 5.0
+  world_size: 12.0
   capture_radius: 0.5
-  capture_k: 2
+  capture_k: 5
   move_step: 0.05
   target_speed: 0.03
 
@@ -85,7 +85,7 @@ env:
   task_score_kind: "pursuit"
 
 logging:
-  log_dir: "runs/pursuit"
+  log_dir: "runs/pursuit_n10"
   run_label: "pursuit_alpha1"
   wandb: false
   wandb_project: "marl-thesis"
