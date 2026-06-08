@@ -53,7 +53,7 @@ class GraphComm(CommModule):
     num_layers : L — number of GNN message-passing layers.
     """
 
-    def __init__(self, hidden_dim: int, num_heads: int = 4, num_layers: int = 2):
+    def __init__(self, hidden_dim: int, num_heads: int = 4, num_layers: int = 2, zero_messages: bool = False):
         super().__init__()
         assert hidden_dim % num_heads == 0, (
             f"hidden_dim ({hidden_dim}) must be divisible by num_heads ({num_heads})"
@@ -61,6 +61,7 @@ class GraphComm(CommModule):
         self.hidden_dim = hidden_dim
         self.num_heads = num_heads
         self.num_layers = num_layers
+        self.zero_messages = zero_messages
         self.d_k = hidden_dim // num_heads
         self.tau = 1.0 / math.sqrt(self.d_k)
 
@@ -167,6 +168,18 @@ class GraphComm(CommModule):
 
             # Softmax over neighborhood (senders axis = dim=2)
             alpha = masked_softmax(scores, graph_mask_4d, dim=2)  # [B, N, N, H]
+
+            # D4: zero_messages replaces the attention distribution with a self-only
+            # identity distribution (weight=1 on self, 0 on all teammates), completely
+            # decoupling agent i's message from its neighbors.  This preserves the
+            # own-path capacity through the residual (h + delta) and self V-projection.
+            # We build a [B, N, N, H] identity distribution rather than multiplying
+            # the softmax alpha by a diagonal selector, because the softmax alpha[i,i]
+            # varies with neighbor embeddings and would leak information.
+            if self.zero_messages:
+                alpha = torch.zeros_like(alpha)
+                idx_diag = torch.arange(N, device=alpha.device)
+                alpha[:, idx_diag, idx_diag, :] = 1.0  # self-only: weight=1 on self
 
             # Aggregate: c[b, i, h] = sum_j alpha[b,i,j,h] * V[b,j,h]
             V_e = V.unsqueeze(1)        # [B, 1, N, H, d_k]

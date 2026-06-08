@@ -44,10 +44,11 @@ class BroadcastComm(CommModule):
     rounds     : number of message-passing rounds (weights shared).
     """
 
-    def __init__(self, hidden_dim: int, rounds: int = 1):
+    def __init__(self, hidden_dim: int, rounds: int = 1, zero_messages: bool = False):
         super().__init__()
         self.hidden_dim = hidden_dim
         self.rounds = rounds
+        self.zero_messages = zero_messages
 
         # Weights SHARED across rounds
         self.W_H = nn.Linear(hidden_dim, hidden_dim, bias=False)
@@ -119,6 +120,9 @@ class BroadcastComm(CommModule):
             mask_expand = mask.unsqueeze(-1)  # [B, N, N, 1]
             # c[b, i, :] = mean over j of h_expand[b, i, j, :] where mask[b, i, j]
             c = masked_mean(h_expand, mask_expand, dim=2)  # [B, N, D]
+            # D2: zero_messages zeros the aggregated teammate message (ablation)
+            if self.zero_messages:
+                c = torch.zeros_like(c)
             h = torch.tanh(self.W_H(h) + self.W_C(c))
 
         if reshaped:

@@ -1,6 +1,7 @@
-# Temporary smoke config for a fast training sanity check.
-# total_env_steps=20000 → 20000/(100*8) = 25 iterations.
-# NOT committed to the ablation sweep — use configs/pursuit_base.yaml for full runs.
+# Smoke config for BroadcastComm module.
+# num_agents=5, num_full_sight=3, capture_k=4 per R1 (capture_k = num_full_sight + 1;
+# exactly one blind agent must join the capturing set for a necessity-meaningful smoke).
+# total_env_steps=20000 -> 20000/(100*8) = 25 iterations.
 
 algo:
   name: "mappo"
@@ -37,19 +38,23 @@ model:
 comm:
   module: "broadcast"
   rounds: 1
-  comm_radius: 0.5
+  topology: "knn"
+  knn_k: 4
+  symmetrize: "or"
+  zero_messages: false
 
 env:
   name: "pursuit"
   kind: "pursuit"
-  num_agents: 3
+  num_agents: 5
+  num_full_sight: 3
   max_steps: 100
   include_timestep_in_state: true
   alpha: 1.0
-  num_full_sight: 2
   observe_teammates: false
   world_size: 1.0
   capture_radius: 0.1
+  capture_k: 4
   move_step: 0.05
   target_speed: 0.03
   dist_coef: 1.0
@@ -64,6 +69,7 @@ logging:
   run_label: "comm_broadcast"
   wandb: false
   console_log_interval: 5
+  save_checkpoints: true
 
 render:
   mode: "off"

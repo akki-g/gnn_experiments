@@ -70,6 +70,7 @@ def ppo_update(
     max_grad_norm: float,
     normalize_advantages: bool = True,
     value_normalizer=None,
+    class_id=None,
 ) -> Dict[str, float]:
     """
     Run PPO mini-batch update over the filled rollout buffer.
@@ -113,14 +114,20 @@ def ppo_update(
         for mb in buffer.get_minibatches(num_minibatches):
             active_masks = mb["active_masks"]  # [T*B, N] — always ones for toy env
 
-            out = model.evaluate(mb["obs"], mb["state"], mb["actions"], mask=mb.get("comm_mask"))
+            # C4 / R3: pass class_id to evaluate so the diagnostic h matches trained h
+            out = model.evaluate(
+                mb["obs"], mb["state"], mb["actions"],
+                mask=mb.get("comm_mask"),
+                class_id=class_id,
+            )
             new_lp = out["log_prob"]
             old_lp = mb["log_probs"]
             ratio = torch.exp(new_lp - old_lp)
 
             if epoch == 0 and first_mb:
                 # Sampled from first minibatch of epoch 0 only (not the full epoch).
-                # Should be ≈ 1.0; confirms old log-probs were not recomputed.
+                # Should be ~= 1.0; confirms old log-probs were not recomputed.
+                # R3: class_id threaded through so ratio diagnostic h matches trained h.
                 mean_ratio_epoch0 = ratio.mean().item()
                 first_mb = False
 
