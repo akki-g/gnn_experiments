@@ -1,0 +1,69 @@
+algo:
+  clip_eps: 0.2
+  entropy_coef: 0.01
+  entropy_coef_final: 0.001
+  gae_lambda: 0.95
+  gamma: 0.99
+  lr: 0.0007
+  lr_final: 1.0e-05
+  max_grad_norm: 10.0
+  name: mappo
+  normalize_advantages: true
+  num_minibatches: 1
+  ppo_epochs: 10
+  reward_shift: 0.0
+  share_encoder: true
+  use_value_norm: true
+  value_clip_eps: 0.2
+  value_coef: 0.5
+comm:
+  module: identity
+device: auto
+env:
+  alpha: 0.0
+  capture_bonus: 10.0
+  capture_radius: 0.1
+  dist_coef: 1.0
+  include_timestep_in_state: true
+  kind: pursuit
+  max_steps: 100
+  move_step: 0.05
+  name: pursuit
+  num_agents: 5
+  num_full_sight: 1
+  observe_teammates: false
+  primary_diagnostic: pursuer_target_distance
+  secondary_diagnostic: capture
+  step_penalty: 0.01
+  target_speed: 0.03
+  task_score_kind: pursuit
+  world_size: 5.0
+logging:
+  console_log_interval: 1
+  log_dir: runs/pursuit/alpha/identity/alpha0p0
+  run_dir: runs/pursuit/alpha/identity/alpha0p0/seed1
+  run_label: identity_alpha0p0_seed1
+  save_checkpoints: false
+  save_config: true
+  save_console_log: false
+  save_metrics_json: false
+  wandb: false
+  wandb_project: marl-thesis
+model:
+  actor_layers: 1
+  critic_layers: 2
+  encoder_layers: 2
+  hidden_dim: 64
+render:
+  episodes: 2
+  eval_seed: 1000
+  fps: 15
+  frame_size: 512
+  mode: 'off'
+runtime:
+  checkpoint_interval: 20
+  eval_interval: 20
+  num_envs: 32
+  rollout_length: 100
+  total_env_steps: 2000000
+seed: 1
