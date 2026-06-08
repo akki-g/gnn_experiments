@@ -49,7 +49,7 @@ class AttentionComm(CommModule):
     rounds     : number of message-passing rounds (weights shared).
     """
 
-    def __init__(self, hidden_dim: int, num_heads: int = 1, rounds: int = 1):
+    def __init__(self, hidden_dim: int, num_heads: int = 1, rounds: int = 1, zero_messages: bool = False):
         super().__init__()
         assert hidden_dim % num_heads == 0, (
             f"hidden_dim ({hidden_dim}) must be divisible by num_heads ({num_heads})"
@@ -57,6 +57,7 @@ class AttentionComm(CommModule):
         self.hidden_dim = hidden_dim
         self.num_heads = num_heads
         self.rounds = rounds
+        self.zero_messages = zero_messages
         self.d_k = hidden_dim // num_heads
         self.d_v = hidden_dim // num_heads  # d_v == d_k (symmetric head split)
 
@@ -158,6 +159,10 @@ class AttentionComm(CommModule):
             alpha_e = alpha.unsqueeze(-1)             # [B, N, N, H, 1]
             c = (alpha_e * V_e).sum(dim=2)            # [B, N, H, d_k]
             c = c.reshape(B, N, H * d_k)             # [B, N, D]  (D = H * d_k)
+
+            # D3: zero_messages zeros aggregated teammate messages BEFORE concat
+            if self.zero_messages:
+                c = torch.zeros_like(c)
 
             # h' = ln(W_o([h, c]))
             h = self.ln(self.W_o(torch.cat([h, c], dim=-1)))  # [B, N, D]

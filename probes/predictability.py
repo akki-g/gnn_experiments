@@ -176,6 +176,58 @@ def probe_score(model: TargetPredictor, obs_val: Tensor, target_val: Tensor) -> 
     return _r2_score(pred, target_val)
 
 
+def fit_probe_on_features(
+    features: Tensor,
+    target_xy: Tensor,
+    seed: int = 0,
+    epochs: int = 200,
+    hidden: int = 64,
+    val_frac: float = 0.2,
+    lr: float = 1e-3,
+    device: str = "cpu",
+) -> Dict[str, Any]:
+    """
+    Convenience wrapper: asserts shapes then delegates to train_probe.
+
+    Intended for use with post-comm embeddings h of arbitrary feature dimension.
+
+    Parameters
+    ----------
+    features  : [M, D]  per-sample feature vectors (e.g. post-comm embeddings).
+    target_xy : [M, 2]  ground-truth target (x, y) positions.
+    seed      : int  for split permutation and model init.
+    epochs    : int  training epochs.
+    hidden    : int  probe hidden width.
+    val_frac  : float  held-out fraction.
+    lr        : float  Adam learning rate.
+    device    : str  torch device.
+
+    Returns
+    -------
+    dict with keys:
+        "score" : float  clamped R2 in [0, 1] on held-out val set.
+        "model" : TargetPredictor  (trained probe, on device).
+        "mse"   : float  validation MSE.
+    """
+    assert features.dim() == 2, (
+        f"fit_probe_on_features: features must be 2D [M, D], got shape {features.shape}"
+    )
+    assert target_xy.shape == (features.shape[0], 2), (
+        f"fit_probe_on_features: target_xy shape {target_xy.shape} != "
+        f"({features.shape[0]}, 2)"
+    )
+    return train_probe(
+        features,
+        target_xy,
+        seed=seed,
+        epochs=epochs,
+        hidden=hidden,
+        val_frac=val_frac,
+        lr=lr,
+        device=device,
+    )
+
+
 def probe_gap(score_full_sight: float, score_sensor_limited: float) -> float:
     """
     Compute the probe gap: full_sight_score − sensor_limited_score.

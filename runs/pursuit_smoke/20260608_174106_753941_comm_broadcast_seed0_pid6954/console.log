@@ -1,0 +1,10 @@
+[env] kind=pursuit name=pursuit n_agents=5 obs_dim=5 action_dim=5 state_dim=13 num_envs=8
+[train] Starting: total_iters=25 T=100 B=8 device=cpu seed=0 render=off
+iter=   0 step=    800 ep_ret=-92.572 opt_ret=-92.572 step_rew=-0.9257 opt_step=-0.9257 gap0=92.572 dret=+0.000 eval_ret=n/a pursuer_target_distance=0.569 capture=0.000 score=0.000 pol=-0.0007 val=0.6729 ent=1.6093 tot=+0.3197 agnorm=0.045 cgnorm=0.275 kl=0.0001 clipf=0.000 ev=-0.387 r0=1.0000 entcoef=1.00e-02 lr=7.0e-04 seed=0
+iter=   5 step=   4800 ep_ret=-84.984 opt_ret=-84.984 step_rew=-0.8498 opt_step=-0.8498 gap0=84.984 dret=+7.588 eval_ret=n/a pursuer_target_distance=0.448 capture=0.000 score=0.000 pol=-0.0002 val=0.4707 ent=1.6063 tot=+0.2221 agnorm=0.041 cgnorm=0.491 kl=0.0000 clipf=0.000 ev=+0.071 r0=1.0000 entcoef=8.13e-03 lr=5.6e-04 seed=0
+iter=  10 step=   8800 ep_ret=-93.728 opt_ret=-93.728 step_rew=-0.9373 opt_step=-0.9373 gap0=93.728 dret=-1.157 eval_ret=n/a pursuer_target_distance=0.507 capture=0.000 score=0.000 pol=-0.0003 val=0.3533 ent=1.6001 tot=+0.1664 agnorm=0.037 cgnorm=0.383 kl=0.0001 clipf=0.000 ev=+0.280 r0=1.0000 entcoef=6.25e-03 lr=4.1e-04 seed=0
+iter=  15 step=  12800 ep_ret=-74.681 opt_ret=-74.681 step_rew=-0.7468 opt_step=-0.7468 gap0=74.681 dret=+17.891 eval_ret=n/a pursuer_target_distance=0.394 capture=0.000 score=0.000 pol=-0.0002 val=0.2444 ent=1.5917 tot=+0.1150 agnorm=0.055 cgnorm=0.253 kl=0.0000 clipf=0.000 ev=+0.188 r0=1.0000 entcoef=4.37e-03 lr=2.7e-04 seed=0
+iter=  20 step=  16800 ep_ret=-81.707 opt_ret=-81.707 step_rew=-0.8171 opt_step=-0.8171 gap0=81.707 dret=+10.865 eval_ret=n/a pursuer_target_distance=0.426 capture=0.000 score=0.000 pol=-0.0000 val=0.1911 ent=1.5909 tot=+0.0916 agnorm=0.057 cgnorm=0.296 kl=0.0000 clipf=0.000 ev=+0.307 r0=1.0000 entcoef=2.50e-03 lr=1.3e-04 seed=0
+[train] Final checkpoint saved to runs/pursuit_smoke/20260608_174106_753941_comm_broadcast_seed0_pid6954/ckpt/final.pt
+[train] Run artifacts in runs/pursuit_smoke/20260608_174106_753941_comm_broadcast_seed0_pid6954
+[render] Skipped post-train render (mode=off).

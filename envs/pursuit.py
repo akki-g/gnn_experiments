@@ -296,9 +296,20 @@ class PursuitEnv:
 
         Returns
         -------
-        team_reward  : [B]      — one scalar reward per env
-        min_dist     : [B]      — min pursuer-target distance (primary diagnostic)
-        captured_now : [B] bool — True if >= capture_k pursuers are within capture_radius
+        team_reward  : [B]      -- one scalar reward per env
+        min_dist     : [B]      -- min pursuer-target distance (primary diagnostic)
+        captured_now : [B] bool -- True if >= capture_k pursuers are within capture_radius
+
+        Stashed on self (for step info dict, NEVER entered into obs/state):
+            _last_dist_term               [B]
+            _last_dists                   [B, N]
+            _last_n_within                [B] int
+            _last_dist_full_sight         [B]  min dist from full-sight (class-0) agents
+            _last_dist_sensor_limited     [B]  min dist from sensor-limited (class-1) agents
+            _last_capture_set_has_c1      [B] bool  capture_now AND any class-1 in within set
+            _last_marginal_is_c1          [B] bool  marginal capturer is class-1
+            _last_dist_contrib            [B]  -dist_coef * dist_term
+            _last_capture_contrib         [B]  capture_bonus * captured_now.float()
         """
         # distances: [B, N]
         diff  = self.pursuer_pos - self.target_pos.unsqueeze(1)   # [B, N, 2]
@@ -314,14 +325,62 @@ class PursuitEnv:
         n_within     = (dists < self.capture_radius).sum(dim=1)    # [B] int
         captured_now = n_within >= self.capture_k                   # [B] bool
 
-        # Stash dist_term so step() can include it in the info dict without
-        # changing this method's return signature.
+        # Stash dist_term and dists (for diagnostics below and step info dict).
         self._last_dist_term = dist_term
+        self._last_dists     = dists
+        self._last_n_within  = n_within
+
+        # ------------------------------------------------------------------ #
+        # Phase 3 diagnostics (stashed only; never enter obs/state)
+        # ------------------------------------------------------------------ #
+
+        class0_mask = (self.class_id == 0)  # [N] bool -- full-sight agents
+        class1_mask = (self.class_id == 1)  # [N] bool -- sensor-limited agents
+
+        # Minimum distance from each class to the target [B]
+        if class0_mask.any():
+            self._last_dist_full_sight = dists[:, class0_mask].min(dim=1).values  # [B]
+        else:
+            self._last_dist_full_sight = torch.full(
+                (self.B,), float("nan"), device=self.device
+            )
+
+        if class1_mask.any():
+            self._last_dist_sensor_limited = dists[:, class1_mask].min(dim=1).values  # [B]
+        else:
+            self._last_dist_sensor_limited = torch.full(
+                (self.B,), float("nan"), device=self.device
+            )
+
+        # within[b, n] = True if agent n is strictly within capture_radius in env b
+        # REUSE the same strict-< used for n_within (not recomputed differently)
+        within = dists < self.capture_radius  # [B, N]
+
+        # has_c1_within[b] = any sensor-limited agent is within capture_radius in env b
+        has_c1_within = (within & class1_mask.unsqueeze(0)).any(dim=1)  # [B]
+
+        # capture_set_has_sensor_limited: capture occurred AND a class-1 agent was in the set
+        self._last_capture_set_has_c1 = captured_now & has_c1_within  # [B] bool
+
+        # Marginal capturer: among within==True agents, the one with the LARGEST dist
+        # still strictly < capture_radius.  Guard envs where n_within==0.
+        # Set dists of non-within agents to -inf, then argmax.
+        dists_within = dists.clone()
+        dists_within[~within] = float("-inf")
+        marginal_idx = dists_within.argmax(dim=1)  # [B] -- index of marginal agent
+
+        # marginal_is_sensor_limited: capture occurred AND marginal agent is class-1
+        marginal_class = self.class_id[marginal_idx]  # [B] long
+        self._last_marginal_is_c1 = captured_now & (marginal_class == 1)  # [B] bool
+
+        # Reward decomposition terms
+        self._last_dist_contrib    = -self.dist_coef * dist_term      # [B]
+        self._last_capture_contrib = self.capture_bonus * captured_now.float()  # [B]
 
         team_reward = (
-            -self.dist_coef * dist_term
+            self._last_dist_contrib
             - self.step_penalty
-            + self.capture_bonus * captured_now.float()
+            + self._last_capture_contrib
         )
         return team_reward, min_dist, captured_now
 
@@ -441,5 +500,13 @@ class PursuitEnv:
             "capture":                 captured_now.float().clone(),
             "captured_episode":        captured_episode.float(),
             "target_pos":              self.target_pos.clone(),  # ground-truth for probe
+            # Phase 3 diagnostics (stashed in _compute_reward; NEVER from obs/state)
+            "dist_full_sight":              self._last_dist_full_sight.clone(),
+            "dist_sensor_limited":          self._last_dist_sensor_limited.clone(),
+            "capture_set_has_sensor_limited": self._last_capture_set_has_c1.clone(),
+            "n_within_mean":                self._last_n_within.float().clone(),
+            "marginal_is_sensor_limited":   self._last_marginal_is_c1.clone(),
+            "dist_term_contrib":            self._last_dist_contrib.clone(),
+            "capture_bonus_contrib":        self._last_capture_contrib.clone(),
         }
         return obs, state, reward, done, info

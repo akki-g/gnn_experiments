@@ -380,3 +380,158 @@ def test_k1_backward_compat():
     assert torch.allclose(
         info["pursuer_k_distance"], info["pursuer_target_distance"], atol=1e-6
     ), "pursuer_k_distance must equal pursuer_target_distance when capture_k=1"
+
+
+# ---------------------------------------------------------------------------
+# Smoke tests added for Phase 3 dissociation work
+# ---------------------------------------------------------------------------
+
+def test_capture_k_strict_inequality():
+    """
+    capture_k=4 strict inequality and n_within correctness.
+
+    env0: 3 pursuers within (dist 0.1) + 1 far (5.0) -> captured=False, n_within=3
+    env1: 4 pursuers within (dist 0.1)               -> captured=True,  n_within=4
+    env2: 4 pursuers exactly AT capture_radius (0.5) -> captured=False, n_within=0
+          (strict < means distance==radius does NOT count)
+    """
+    env = PursuitEnv(
+        num_envs=3,
+        num_agents=4,
+        max_steps=5,
+        capture_k=4,
+        capture_radius=0.5,
+        world_size=10.0,
+        target_speed=0.0,
+        move_step=0.0,
+        seed=0,
+    )
+    env.reset()
+
+    env.target_pos = torch.zeros(3, 2)
+    # Pursuers placed on x-axis so norm equals x-coordinate exactly.
+    env.pursuer_pos = torch.tensor([
+        # env0: dists [0.1, 0.1, 0.1, 5.0] -> 3 within -> not captured (need 4)
+        [[0.1, 0.0], [0.1, 0.0], [0.1, 0.0], [5.0, 0.0]],
+        # env1: dists [0.1, 0.1, 0.1, 0.1] -> 4 within -> captured
+        [[0.1, 0.0], [0.1, 0.0], [0.1, 0.0], [0.1, 0.0]],
+        # env2: dists [0.5, 0.5, 0.5, 0.5] -> 0 within (strict <) -> not captured
+        [[0.5, 0.0], [0.5, 0.0], [0.5, 0.0], [0.5, 0.0]],
+    ], dtype=torch.float32)
+
+    # Call _compute_reward directly to access stashed diagnostics
+    env._compute_reward()
+
+    assert env._last_n_within[0].item() == 3, \
+        f"env0: expected n_within=3, got {env._last_n_within[0].item()}"
+    assert env._last_n_within[1].item() == 4, \
+        f"env1: expected n_within=4, got {env._last_n_within[1].item()}"
+    assert env._last_n_within[2].item() == 0, \
+        f"env2: expected n_within=0 (boundary at capture_radius), got {env._last_n_within[2].item()}"
+
+    # captured_now is derived from n_within >= capture_k=4
+    dists = torch.linalg.vector_norm(
+        env.pursuer_pos - env.target_pos.unsqueeze(1), dim=-1
+    )
+    within = dists < env.capture_radius
+    n_within = within.sum(dim=1)
+    captured = n_within >= env.capture_k
+
+    assert not captured[0].item(), "env0: 3 within < 4 required -> not captured"
+    assert captured[1].item(),     "env1: 4 within >= 4 required -> captured"
+    assert not captured[2].item(), "env2: boundary (d==r) strict < -> not captured"
+
+
+def test_diagnostics_correctness():
+    """
+    Verify all Phase 3 stashed diagnostics for a controlled scenario.
+
+    Setup: num_agents=4, capture_k=2, num_full_sight=2 (class_id=[0,0,1,1])
+    Positions: agent0=[0.1,0], agent1=[5,0], agent2=[0.2,0], agent3=[8,0]
+    Target at origin.
+
+    Expected:
+        _last_dist_full_sight    = 0.1   (class-0 agents are 0,1; min(0.1,5.0)=0.1)
+        _last_dist_sensor_limited= 0.2   (class-1 agents are 2,3; min(0.2,8.0)=0.2)
+        _last_n_within           = 2     (agents 0 and 2 are within 0.5)
+        _last_capture_set_has_c1 = True  (captured and agent2 (class1) is within)
+        _last_marginal_is_c1     = True  (marginal capturer is agent2 at dist=0.2,
+                                          which is the largest within-set dist)
+        _last_capture_contrib    ~= capture_bonus
+        _last_dist_contrib       ~= -dist_coef * dist_term
+    """
+    env = PursuitEnv(
+        num_envs=1,
+        num_agents=4,
+        max_steps=5,
+        capture_k=2,
+        capture_radius=0.5,
+        num_full_sight=2,
+        world_size=10.0,
+        target_speed=0.0,
+        move_step=0.0,
+        seed=0,
+    )
+    env.reset()
+
+    env.target_pos = torch.zeros(1, 2)
+    env.pursuer_pos = torch.tensor([
+        [[0.1, 0.0], [5.0, 0.0], [0.2, 0.0], [8.0, 0.0]]
+    ], dtype=torch.float32)  # [1, 4, 2]
+
+    env._compute_reward()
+
+    # class_id = [0, 0, 1, 1] from num_full_sight=2
+    assert env.class_id[0].item() == 0
+    assert env.class_id[1].item() == 0
+    assert env.class_id[2].item() == 1
+    assert env.class_id[3].item() == 1
+
+    # dist_full_sight: min dist from class-0 agents (0 and 1) = min(0.1, 5.0) = 0.1
+    assert abs(env._last_dist_full_sight[0].item() - 0.1) < 1e-6, \
+        f"dist_full_sight expected 0.1, got {env._last_dist_full_sight[0].item()}"
+
+    # dist_sensor_limited: min dist from class-1 agents (2 and 3) = min(0.2, 8.0) = 0.2
+    assert abs(env._last_dist_sensor_limited[0].item() - 0.2) < 1e-6, \
+        f"dist_sensor_limited expected 0.2, got {env._last_dist_sensor_limited[0].item()}"
+
+    # n_within: agents 0 (0.1) and 2 (0.2) are within 0.5 -> n_within=2
+    assert env._last_n_within[0].item() == 2, \
+        f"n_within expected 2, got {env._last_n_within[0].item()}"
+
+    # capture_set_has_c1: captured (2>=2) AND agent2 (class1) is within
+    assert env._last_capture_set_has_c1[0].item(), \
+        "capture_set_has_c1 should be True (agent2 is class1 and within capture_radius)"
+
+    # marginal_is_c1: marginal capturer is the within-agent with the largest dist.
+    # within agents: 0 (dist=0.1), 2 (dist=0.2). Largest within-set dist is 0.2 -> agent2 (class1).
+    assert env._last_marginal_is_c1[0].item(), \
+        "marginal_is_c1 should be True (agent2 at dist=0.2 is the marginal capturer)"
+
+    # capture_bonus_contrib ~= capture_bonus (captured=True)
+    assert abs(env._last_capture_contrib[0].item() - env.capture_bonus) < 1e-5, \
+        f"capture_contrib expected {env.capture_bonus}, got {env._last_capture_contrib[0].item()}"
+
+    # dist_contrib = -dist_coef * dist_term
+    expected_dist_contrib = -env.dist_coef * env._last_dist_term[0].item()
+    assert abs(env._last_dist_contrib[0].item() - expected_dist_contrib) < 1e-5, \
+        (f"dist_contrib expected {expected_dist_contrib}, "
+         f"got {env._last_dist_contrib[0].item()}")
+
+
+def test_obs_dim_unchanged_by_capture_k():
+    """
+    Two envs differing only in capture_k must have identical obs_dim and state_dim.
+    """
+    env1 = PursuitEnv(
+        num_envs=2, num_agents=4, max_steps=5, capture_k=1,
+        num_full_sight=2, observe_teammates=False,
+    )
+    env2 = PursuitEnv(
+        num_envs=2, num_agents=4, max_steps=5, capture_k=4,
+        num_full_sight=2, observe_teammates=False,
+    )
+    assert env1.obs_dim == env2.obs_dim, \
+        f"obs_dim differs with different capture_k: {env1.obs_dim} vs {env2.obs_dim}"
+    assert env1.state_dim == env2.state_dim, \
+        f"state_dim differs with different capture_k: {env1.state_dim} vs {env2.state_dim}"

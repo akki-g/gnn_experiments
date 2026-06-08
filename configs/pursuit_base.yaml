@@ -54,6 +54,10 @@ model:
 
 comm:
   module: "identity"
+  topology: "full"
+  knn_k: 4
+  symmetrize: "or"
+  zero_messages: false
 
 env:
   name: "pursuit"
@@ -70,7 +74,7 @@ env:
   # World geometry:
   world_size: 12.0
   capture_radius: 0.5
-  capture_k: 5
+  capture_k: 4
   move_step: 0.2
   target_speed: 0.05
 
@@ -90,6 +94,7 @@ logging:
   wandb: false
   wandb_project: "marl-thesis"
   console_log_interval: 1
+  save_checkpoints: true
 
 render:
   mode: "off"

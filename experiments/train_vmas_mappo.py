@@ -127,27 +127,90 @@ def _build_comm_module(comm_cfg: dict, model_cfg: dict):
     """
     name = comm_cfg.get("module", "identity").lower()
     hidden_dim = model_cfg.get("hidden_dim", 64)
+    # D1: read zero_messages flag (default False; IdentityComm ignores it)
+    zero_messages = bool(comm_cfg.get("zero_messages", False))
     if name == "identity":
         return IdentityComm()
     elif name == "broadcast":
-        return BroadcastComm(hidden_dim, rounds=comm_cfg.get("rounds", 1))
+        return BroadcastComm(hidden_dim, rounds=comm_cfg.get("rounds", 1), zero_messages=zero_messages)
     elif name == "attention":
         return AttentionComm(
             hidden_dim,
             num_heads=comm_cfg.get("num_heads", 1),
             rounds=comm_cfg.get("rounds", 1),
+            zero_messages=zero_messages,
         )
     elif name == "graph":
         return GraphComm(
             hidden_dim,
             num_heads=comm_cfg.get("num_heads", 4),
             num_layers=comm_cfg.get("num_hops", 2),
+            zero_messages=zero_messages,
         )
     else:
         raise ValueError(
             f"Unknown comm module '{name}'. "
             "Supported: 'identity', 'broadcast', 'attention', 'graph'."
         )
+
+
+def build_knn_mask(positions: "Tensor", k: int, symmetrize: str = "or") -> "Tensor":
+    """
+    Build a boolean k-NN communication mask from agent positions.
+
+    Parameters
+    ----------
+    positions  : [B, N, 2]  agent 2D positions.
+    k          : int  number of nearest neighbors per agent.
+    symmetrize : 'or' (default) -- mask[i,j] = True if i->j OR j->i is a kNN edge.
+                 'and' -- True only if both directions are kNN edges.
+                 'none' -- directed only (i includes j iff j is among i's k nearest).
+
+    Returns
+    -------
+    mask : [B, N, N] bool  True if receiver i may receive from sender j.
+           Diagonal is always False (no self-loop).
+    """
+    import torch
+    assert positions.dim() == 3 and positions.shape[-1] == 2, (
+        f"positions must be [B, N, 2], got {positions.shape}"
+    )
+    B, N, _ = positions.shape
+    # Pairwise distances [B, N, N]; diagonal = 0 but will be set to +inf
+    diff = positions.unsqueeze(2) - positions.unsqueeze(1)  # [B, N, N, 2]
+    dist = diff.norm(dim=-1)                                  # [B, N, N]
+
+    # Exclude self by setting diagonal to +inf before topk
+    idx_diag = torch.arange(N, device=positions.device)
+    dist_no_self = dist.clone()
+    dist_no_self[:, idx_diag, idx_diag] = float("inf")
+
+    # k_eff: never request more neighbors than available non-self agents
+    k_eff = min(k, N - 1)
+
+    # knn_indices[b, i, :k_eff] = indices of i's k_eff nearest neighbors in env b
+    knn_indices = dist_no_self.topk(k_eff, dim=-1, largest=False).indices  # [B, N, k_eff]
+
+    # Build directed mask: directed[b, i, j] = True if j is among i's kNN
+    directed = torch.zeros(B, N, N, dtype=torch.bool, device=positions.device)
+    directed.scatter_(2, knn_indices, True)
+
+    # Apply symmetrization
+    sym = symmetrize.lower()
+    if sym == "or":
+        mask = directed | directed.transpose(1, 2)
+    elif sym == "and":
+        mask = directed & directed.transpose(1, 2)
+    elif sym == "none":
+        mask = directed
+    else:
+        raise ValueError(
+            f"build_knn_mask: symmetrize must be 'or', 'and', or 'none', got {symmetrize!r}"
+        )
+
+    # Force diagonal False (no self-communication)
+    mask[:, idx_diag, idx_diag] = False
+    return mask  # [B, N, N] bool
 
 
 def build_radius_mask(positions: "Tensor", radius: float) -> "Tensor":
@@ -353,6 +416,10 @@ def _evaluate_deterministic_policy(
     task_score_kind    = env_cfg.get("task_score_kind",       "spread")
 
     model.eval()
+    # C3: thread class_id into deterministic eval model.act
+    eval_class_id = getattr(eval_env, "class_id", None)
+    if eval_class_id is not None:
+        eval_class_id = eval_class_id.to(device)
     episode_returns = []
     optimized_episode_returns = []
     episode_lengths = []
@@ -363,7 +430,7 @@ def _evaluate_deterministic_policy(
         ep_return = 0.0
         ep_len = 0
         for _ in range(env_cfg["max_steps"]):
-            out = model.act(obs.to(device), state.to(device), deterministic=True)
+            out = model.act(obs.to(device), state.to(device), deterministic=True, class_id=eval_class_id)
             obs, state, reward, done, info = eval_env.step(out["action"].cpu())
             ep_return += reward[0, 0].item()
             ep_len += 1
@@ -607,8 +674,19 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
     task_score_kind    = env_cfg.get("task_score_kind",       "spread")
     env_kind           = env_cfg.get("kind", "vmas")
 
+    # Comm topology settings (C2): read before rollout loop for efficiency.
+    comm_cfg     = cfg.get("comm", {})
+    topology     = comm_cfg.get("topology", "full")
+    knn_k        = int(comm_cfg.get("knn_k", 4))
+    symmetrize   = comm_cfg.get("symmetrize", "or")
     # Comm radius for Option B dynamic radius-mask plumbing (None = full comm)
-    comm_radius = cfg.get("comm", {}).get("comm_radius", None)
+    comm_radius  = comm_cfg.get("comm_radius", None)
+
+    # C3: Precompute class_id for the env before the rollout loop.
+    # env_class_id is [N] long on device, or None for VMAS envs.
+    env_class_id = getattr(env, "class_id", None)
+    if env_class_id is not None:
+        env_class_id = env_class_id.to(device)
 
     for it in range(total_iters):
         buffer.clear()
@@ -618,20 +696,45 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
         rollout_secondary_diag_vals = []
         # pursuit: capture_rate tracking (sum over envs at each truncation)
         rollout_capture_rate_nums   = []
+        # Phase 3 pursuit diagnostic accumulators (B6)
+        rollout_capture_c1_participation = []
+        rollout_dist_full_sight          = []
+        rollout_dist_sensor_limited      = []
+        rollout_marginal_c1_rate         = []
+        # C5: kNN sighted-neighbor fraction (only when topology=="knn" and pursuit)
+        rollout_knn_c1_sighted_frac      = []
 
         # ------------------------------------------------------------------ #
-        # Rollout collection (eval mode — no dropout / batchnorm training)   #
+        # Rollout collection (eval mode -- no dropout / batchnorm training)  #
         # ------------------------------------------------------------------ #
         model.eval()
         for t in range(T):
-            # Build radius-based comm mask if comm_radius is set and env exposes positions.
+            # C2: Build comm mask according to topology setting.
             positions = getattr(env, "agent_positions", None)
-            if comm_radius is not None and positions is not None:
-                comm_mask = build_radius_mask(positions.to(device), comm_radius)
-            else:
-                comm_mask = None
+            comm_mask = None
+            if positions is not None:
+                if topology == "knn":
+                    comm_mask = build_knn_mask(
+                        positions.to(device), knn_k, symmetrize
+                    )
+                elif topology == "radius" or comm_radius is not None:
+                    comm_mask = build_radius_mask(positions.to(device), comm_radius)
+                # else topology=="full" or unknown -> comm_mask stays None (full comm)
 
-            out = model.act(obs, state, mask=comm_mask)
+            # C5: kNN sighted-neighbor diagnostic (pursuit + knn topology only)
+            if topology == "knn" and env_kind == "pursuit" and comm_mask is not None and env_class_id is not None:
+                N_agents = env.num_agents
+                class1_flag = (env_class_id == 1)    # [N] bool
+                class0_flag = (env_class_id == 0)    # [N] bool
+                if class1_flag.any() and class0_flag.any():
+                    # sighted_neighbor[b, i] = True if agent i has any class-0 neighbor in mask
+                    # comm_mask [B, N, N]: mask[b, i, j]=True if i receives from j
+                    sighted_neighbor = (comm_mask & class0_flag.view(1, 1, N_agents)).any(dim=2)  # [B, N]
+                    frac = sighted_neighbor[:, class1_flag].float().mean().item()
+                    rollout_knn_c1_sighted_frac.append(frac)
+
+            # C3: pass class_id to model.act
+            out = model.act(obs, state, mask=comm_mask, class_id=env_class_id)
             next_obs, next_state, reward, done, info = env.step(out["action"].cpu())
             reward = reward.to(device)
             optimized_reward = reward + reward_shift
@@ -682,6 +785,25 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
                     cap_ep = torch.as_tensor(info["captured_episode"], device=device).float()
                     rollout_capture_rate_nums.append(cap_ep[truncated_env].mean().item())
 
+            # B6: guarded accumulation of Phase 3 pursuit diagnostics (per step, not per episode)
+            if env_kind == "pursuit":
+                if "capture_set_has_sensor_limited" in info:
+                    rollout_capture_c1_participation.append(
+                        torch.as_tensor(info["capture_set_has_sensor_limited"], device=device).float().mean().item()
+                    )
+                if "dist_full_sight" in info:
+                    rollout_dist_full_sight.append(
+                        torch.as_tensor(info["dist_full_sight"], device=device).float().mean().item()
+                    )
+                if "dist_sensor_limited" in info:
+                    rollout_dist_sensor_limited.append(
+                        torch.as_tensor(info["dist_sensor_limited"], device=device).float().mean().item()
+                    )
+                if "marginal_is_sensor_limited" in info:
+                    rollout_marginal_c1_rate.append(
+                        torch.as_tensor(info["marginal_is_sensor_limited"], device=device).float().mean().item()
+                    )
+
             global_step += B
             obs, state = next_obs.to(device), next_state.to(device)
             last_step_info = info
@@ -722,6 +844,7 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
             max_grad_norm=max_grad_norm,
             normalize_advantages=normalize_advantages,
             value_normalizer=value_normalizer,
+            class_id=env_class_id,  # C4: thread class_id into evaluate
         )
 
         # NaN guards on float metrics
@@ -772,6 +895,33 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
         mean_capture_rate = (
             sum(rollout_capture_rate_nums) / len(rollout_capture_rate_nums)
             if rollout_capture_rate_nums
+            else float("nan")
+        )
+        # Phase 3 pursuit diagnostics (B6)
+        mean_capture_c1_participation = (
+            sum(rollout_capture_c1_participation) / len(rollout_capture_c1_participation)
+            if rollout_capture_c1_participation
+            else float("nan")
+        )
+        mean_dist_full_sight = (
+            sum(rollout_dist_full_sight) / len(rollout_dist_full_sight)
+            if rollout_dist_full_sight
+            else float("nan")
+        )
+        mean_dist_sensor_limited = (
+            sum(rollout_dist_sensor_limited) / len(rollout_dist_sensor_limited)
+            if rollout_dist_sensor_limited
+            else float("nan")
+        )
+        mean_marginal_c1_rate = (
+            sum(rollout_marginal_c1_rate) / len(rollout_marginal_c1_rate)
+            if rollout_marginal_c1_rate
+            else float("nan")
+        )
+        # C5: kNN sighted-neighbor fraction
+        mean_knn_c1_sighted_frac = (
+            sum(rollout_knn_c1_sighted_frac) / len(rollout_knn_c1_sighted_frac)
+            if rollout_knn_c1_sighted_frac
             else float("nan")
         )
         if start_ep_return is None and not math.isnan(mean_ep_ret):
@@ -857,9 +1007,14 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
             "alpha": env_cfg.get("alpha", float("nan")),
             "env_alpha": env_cfg.get("alpha", float("nan")),
         }
-        # Pursuit-only extra column: per-episode capture rate (absent for VMAS).
+        # Pursuit-only extra columns (absent for VMAS).
         if env_kind == "pursuit":
-            row["capture_rate"] = mean_capture_rate
+            row["capture_rate"]              = mean_capture_rate
+            row["capture_c1_participation"]  = mean_capture_c1_participation
+            row["dist_full_sight"]           = mean_dist_full_sight
+            row["dist_sensor_limited"]       = mean_dist_sensor_limited
+            row["marginal_c1_rate"]          = mean_marginal_c1_rate
+            row["knn_c1_sighted_frac"]       = mean_knn_c1_sighted_frac
         metrics_rows.append(row)
 
         if it % console_log_interval == 0:
