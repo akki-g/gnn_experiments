@@ -12,20 +12,42 @@ import torch
 from backbone.utils import load_yaml_config, set_seed, get_device, make_optimizer
 from backbone import MAPPO, RolloutBuffer
 from backbone.ppo_update import ppo_update
-from comm import IdentityComm
+from comm import IdentityComm, BroadcastComm, AttentionComm, GraphComm
 from envs import ToyMultiAgentEnv
 
 
-def _build_comm_module(comm_cfg: dict):
-    """Instantiate the comm module named in the config."""
+def _build_comm_module(comm_cfg: dict, model_cfg: dict):
+    """
+    Instantiate the comm module named in the config.
+
+    Parameters
+    ----------
+    comm_cfg  : the "comm" sub-dict from the YAML config.
+    model_cfg : the "model" sub-dict (used to read hidden_dim).
+    """
     name = comm_cfg.get("module", "identity").lower()
+    hidden_dim = model_cfg.get("hidden_dim", 64)
     if name == "identity":
         return IdentityComm()
-    raise ValueError(
-        f"Unknown comm module '{name}'. "
-        "Phase 1 supports only 'identity'. "
-        "Future modules (broadcast, attention, graph) are not yet implemented."
-    )
+    elif name == "broadcast":
+        return BroadcastComm(hidden_dim, rounds=comm_cfg.get("rounds", 1))
+    elif name == "attention":
+        return AttentionComm(
+            hidden_dim,
+            num_heads=comm_cfg.get("num_heads", 1),
+            rounds=comm_cfg.get("rounds", 1),
+        )
+    elif name == "graph":
+        return GraphComm(
+            hidden_dim,
+            num_heads=comm_cfg.get("num_heads", 4),
+            num_layers=comm_cfg.get("num_hops", 2),
+        )
+    else:
+        raise ValueError(
+            f"Unknown comm module '{name}'. "
+            "Supported: 'identity', 'broadcast', 'attention', 'graph'."
+        )
 
 
 def main(config_path: str, resume: str = None) -> None:
@@ -51,7 +73,7 @@ def main(config_path: str, resume: str = None) -> None:
         action_dim=env.action_dim,
         num_agents=env.num_agents,
         hidden_dim=model_cfg.get("hidden_dim", 64),
-        comm_module=_build_comm_module(cfg.get("comm", {})),
+        comm_module=_build_comm_module(cfg.get("comm", {}), model_cfg),
         share_encoder=cfg["algo"]["share_encoder"],
         encoder_layers=model_cfg.get("encoder_layers", 2),
         actor_layers=model_cfg.get("actor_layers", 1),

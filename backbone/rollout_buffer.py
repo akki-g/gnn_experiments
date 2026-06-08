@@ -23,6 +23,8 @@ Stored tensor shapes:
     active_masks : [T, B, N]           float (0.0 = dead agent; 1.0 = alive)
     advantages   : [T, B, N]           float (computed by compute_returns_and_advantages)
     returns      : [T, B, N]           float (computed by compute_returns_and_advantages)
+    comm_masks   : [T, B, N, N]        bool  (True = receiver i may receive from sender j;
+                                              diagonal always False; default = full off-diagonal)
 
 bad_masks / truncation semantics
 ----------------------------------
@@ -61,6 +63,7 @@ Flatten T*B, keep N axis  (researcher decision 1):
     returns_mb      : [T*B, N]
     bad_masks_mb    : [T*B, N]
     active_masks_mb : [T*B, N]
+    comm_mask_mb    : [T*B, N, N]
 """
 
 from typing import Optional
@@ -134,6 +137,10 @@ class RolloutBuffer:
         self.bad_masks = torch.ones(T, B, N, device=d)
         # active_masks: 1=alive (default), 0=dead agent
         self.active_masks = torch.ones(T, B, N, device=d)
+        # comm_masks: True = receiver i may receive from sender j; diagonal=False.
+        # Default is full off-diagonal communication (all-to-all minus self).
+        self.comm_masks = torch.ones(T, B, N, N, dtype=torch.bool, device=d)
+        self.comm_masks[:, :, torch.arange(N), torch.arange(N)] = False
         # Computed after rollout:
         self.advantages = torch.zeros(T, B, N, device=d)
         self.returns = torch.zeros(T, B, N, device=d)
@@ -155,6 +162,7 @@ class RolloutBuffer:
         done: Tensor,
         bad_mask: Optional[Tensor] = None,
         active_mask: Optional[Tensor] = None,
+        comm_mask: Optional[Tensor] = None,
     ) -> None:
         """
         Store one step of experience at the current step pointer, then advance it.
@@ -171,6 +179,9 @@ class RolloutBuffer:
                          Defaults to all-ones (no truncation) if None.
             active_mask: [B, N]          float  optional; 0=dead, 1=alive
                          Defaults to all-ones (all alive) if None.
+            comm_mask  : [B, N, N]       bool   optional; True = receiver i may
+                         receive from sender j; diagonal must be False.
+                         Defaults to full off-diagonal (all-to-all minus self) if None.
         """
         assert self.step < self.T, (
             f"Buffer is full (step={self.step} == T={self.T}). Call clear() before inserting."
@@ -221,6 +232,15 @@ class RolloutBuffer:
             self.active_masks[t].copy_(active_mask)
         else:
             self.active_masks[t].fill_(1.0)
+        if comm_mask is not None:
+            assert comm_mask.shape == (self.B, self.N, self.N), (
+                f"comm_mask shape {comm_mask.shape} != ({self.B}, {self.N}, {self.N})"
+            )
+            self.comm_masks[t].copy_(comm_mask.bool())
+        else:
+            # Default: full off-diagonal (all-to-all minus self)
+            self.comm_masks[t].fill_(True)
+            self.comm_masks[t, :, torch.arange(self.N), torch.arange(self.N)] = False
         self.step += 1
 
     def compute_returns_and_advantages(
@@ -296,7 +316,7 @@ class RolloutBuffer:
 
         Yields dicts with keys:
             obs, state, actions, log_probs, values, advantages, returns,
-            bad_masks, active_masks
+            bad_masks, active_masks, comm_mask
         Shapes: all [T*B // num_minibatches, N, ...] (or [T*B//M, ...] for state).
         """
         assert self.is_full, (
@@ -318,6 +338,7 @@ class RolloutBuffer:
         ret_f = self.returns.reshape(total, self.N)
         bad_f = self.bad_masks.reshape(total, self.N)
         active_f = self.active_masks.reshape(total, self.N)
+        comm_masks_f = self.comm_masks.reshape(total, self.N, self.N)
 
         perm = torch.randperm(total, device=self.device)
         for i in range(num_minibatches):
@@ -332,6 +353,7 @@ class RolloutBuffer:
                 "returns": ret_f[idx],
                 "bad_masks": bad_f[idx],
                 "active_masks": active_f[idx],
+                "comm_mask": comm_masks_f[idx],
             }
 
     def clear(self) -> None:
@@ -339,6 +361,7 @@ class RolloutBuffer:
         Reset the step pointer and reinitialise all tensors for the next rollout.
 
         bad_masks and active_masks are reset to all-ones (default safe values).
+        comm_masks is reset to full off-diagonal (all-to-all minus self).
         """
         self.obs.zero_()
         self.state.zero_()
@@ -349,6 +372,9 @@ class RolloutBuffer:
         self.dones.zero_()
         self.bad_masks.fill_(1.0)
         self.active_masks.fill_(1.0)
+        # Reset comm_masks to full off-diagonal communication
+        self.comm_masks.fill_(True)
+        self.comm_masks[:, :, torch.arange(self.N), torch.arange(self.N)] = False
         self.advantages.zero_()
         self.returns.zero_()
         self.step = 0

@@ -113,7 +113,7 @@ def ppo_update(
         for mb in buffer.get_minibatches(num_minibatches):
             active_masks = mb["active_masks"]  # [T*B, N] — always ones for toy env
 
-            out = model.evaluate(mb["obs"], mb["state"], mb["actions"])
+            out = model.evaluate(mb["obs"], mb["state"], mb["actions"], mask=mb.get("comm_mask"))
             new_lp = out["log_prob"]
             old_lp = mb["log_probs"]
             ratio = torch.exp(new_lp - old_lp)

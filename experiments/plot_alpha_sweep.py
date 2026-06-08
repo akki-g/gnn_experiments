@@ -1,18 +1,26 @@
 """
-Aggregate MAPPO sweep runs by a config key (default: env.alpha) and plot
-mean +/- across-seed spread learning curves.
+Aggregate MAPPO sweep runs and plot mean +/- across-seed spread learning curves.
 
-Unlike plot_run_metrics.py (which overlays one line per run/seed), this groups
-runs that share a config value and collapses the seeds into a single mean line
-with a shaded band, so each alpha shows up as one curve. Built for the pursuit
-alpha sweep but works for any config key whose runs share an iteration grid.
+Two modes:
+  --mode alpha  (default)
+      Groups runs by a single config key (default env.alpha) and plots one
+      mean±band learning curve per group value. Built for the identity alpha sweep.
+
+  --mode comm
+      Groups runs by both comm module and alpha level. Produces a subplot grid:
+      rows = metrics, cols = alpha values.  Within each cell, one colored line per
+      comm module (identity / broadcast / attention / graph).  Use this to compare
+      communication architectures across asymmetry levels.
 
 Examples:
-    python -m experiments.plot_alpha_sweep runs/pursuit_sweep/pursuit_base \
+    # Classic alpha sweep (identity baseline):
+    python -m experiments.plot_alpha_sweep runs/pursuit_sweep/pursuit_base \\
         --output runs/pursuit_sweep/pursuit_base/alpha_curves.png
 
-    python -m experiments.plot_alpha_sweep runs/pursuit_sweep/pursuit_base \
-        --group-key env.alpha --rolling 10 --band std
+    # Comm-module vs alpha grid:
+    python -m experiments.plot_alpha_sweep runs/pursuit/alpha \\
+        --mode comm \\
+        --output runs/pursuit/alpha/comm_vs_alpha.png
 """
 
 from __future__ import annotations
@@ -39,6 +47,23 @@ DEFAULT_METRICS = (
     ("entropy", "Policy entropy", False),
     ("explained_variance", "Explained variance", False),
 )
+
+# Metrics shown in comm-sweep mode (fewer panels for legibility in the grid).
+COMM_METRICS = (
+    ("capture", "Capture rate (train)", False),
+    ("pursuer_target_distance", "Pursuer-target distance", True),
+    ("episode_return", "Episode return (train)", False),
+    ("explained_variance", "Explained variance", False),
+)
+
+# Fixed colors and display order for comm modules so plots are consistent.
+COMM_MODULE_ORDER = ["identity", "broadcast", "attention", "graph"]
+COMM_MODULE_COLORS = {
+    "identity":  "#888888",
+    "broadcast": "#1f77b4",
+    "attention": "#ff7f0e",
+    "graph":     "#2ca02c",
+}
 
 
 def _cfg_get(cfg: dict, dotted_key: str):
@@ -258,21 +283,204 @@ def plot_alpha_sweep(
     return fig
 
 
+def _load_run_metadata(run_dir: Path) -> tuple[object, str] | None:
+    """
+    Return (alpha, comm_module) for a run directory or None if unresolvable.
+
+    Reads config.yaml for comm.module; falls back to parent directory name if
+    config is absent.  Alpha is read from config then from metrics.csv.
+    """
+    config_path = run_dir / "config.yaml"
+    alpha = None
+    comm_module = None
+
+    if config_path.exists():
+        with config_path.open() as f:
+            cfg = yaml.safe_load(f) or {}
+        alpha = _cfg_get(cfg, "env.alpha")
+        comm_module = _cfg_get(cfg, "comm.module")
+
+    if alpha is None or comm_module is None:
+        csv_path = run_dir / "metrics.csv"
+        if csv_path.exists():
+            df = pd.read_csv(csv_path, nrows=5)
+            if alpha is None:
+                val = _csv_group_value(df, "env.alpha")
+                if val is not None:
+                    alpha = val
+        # fallback: infer comm module from grandparent directory name
+        if comm_module is None:
+            for part in run_dir.parts:
+                if part.lower() in COMM_MODULE_ORDER:
+                    comm_module = part.lower()
+                    break
+
+    if alpha is None or comm_module is None:
+        return None
+    return alpha, comm_module
+
+
+def load_comm_runs(
+    paths: Sequence[str | Path],
+) -> dict[str, dict[object, list[pd.DataFrame]]]:
+    """
+    Return nested dict: comm_module -> alpha -> [seed DataFrames].
+
+    Discovers all runs with metrics.csv under *paths*, then reads each run's
+    config.yaml to obtain comm.module and env.alpha.
+    """
+    result: dict[str, dict[object, list[pd.DataFrame]]] = {}
+    for run_dir in _discover_runs(paths):
+        meta = _load_run_metadata(run_dir)
+        if meta is None:
+            continue
+        alpha, comm_module = meta
+        df = pd.read_csv(run_dir / "metrics.csv")
+        if df.empty:
+            continue
+        result.setdefault(comm_module, {}).setdefault(alpha, []).append(df)
+    return result
+
+
+def plot_comm_sweep(
+    paths: Sequence[str | Path],
+    *,
+    output: str | Path | None = None,
+    metrics: Sequence[tuple[str, str, bool]] = COMM_METRICS,
+    x_column: str = "iter",
+    rolling: int = 10,
+    band: str = "std",
+    dpi: int = 220,
+    show: bool = False,
+):
+    """
+    Plot a grid: rows = metrics, cols = alpha values.
+
+    Within each cell, one learning curve per comm module (identity/broadcast/
+    attention/graph) with a shaded across-seed band.  Colors are consistent
+    across all cells so the legend only appears once.
+    """
+    comm_runs = load_comm_runs(paths)
+    if not comm_runs:
+        raise FileNotFoundError(
+            "No runs with metrics.csv and resolvable (alpha, comm.module) found."
+        )
+
+    all_alphas: list[object] = sorted(
+        {a for module_data in comm_runs.values() for a in module_data}
+    )
+    present_modules = [m for m in COMM_MODULE_ORDER if m in comm_runs]
+    if not present_modules:
+        present_modules = sorted(comm_runs.keys())
+
+    n_rows = len(metrics)
+    n_cols = len(all_alphas)
+    fig, axes = plt.subplots(
+        n_rows, n_cols,
+        figsize=(4.5 * n_cols, 3.8 * n_rows),
+        squeeze=False,
+        sharey="row",
+    )
+    rolling = max(1, int(rolling))
+
+    for row_idx, (metric, title, lower_better) in enumerate(metrics):
+        for col_idx, alpha in enumerate(all_alphas):
+            ax = axes[row_idx][col_idx]
+            any_plotted = False
+
+            for module in present_modules:
+                seed_frames = comm_runs.get(module, {}).get(alpha, [])
+                if not seed_frames:
+                    continue
+                aligned = _aligned_matrix(seed_frames, metric, x_column)
+                if aligned is None:
+                    continue
+                x, mat = aligned
+                if rolling > 1:
+                    smoothed = (
+                        pd.DataFrame(mat.T)
+                        .rolling(rolling, min_periods=1)
+                        .mean()
+                        .to_numpy()
+                        .T
+                    )
+                else:
+                    smoothed = mat
+                mean = smoothed.mean(axis=0)
+                if band == "minmax":
+                    low, high = smoothed.min(axis=0), smoothed.max(axis=0)
+                else:
+                    sd = smoothed.std(axis=0)
+                    low, high = mean - sd, mean + sd
+                color = COMM_MODULE_COLORS.get(module, None)
+                n_seeds = mat.shape[0]
+                ax.plot(x, mean, color=color, linewidth=1.8,
+                        label=f"{module} (n={n_seeds})")
+                ax.fill_between(x, low, high, color=color, alpha=0.18, linewidth=0)
+                any_plotted = True
+
+            suffix = " ↓" if lower_better else ""
+            if row_idx == 0:
+                ax.set_title(f"α = {alpha}", fontsize=11, fontweight="bold")
+            if col_idx == 0:
+                ax.set_ylabel(title + suffix, fontsize=9)
+            ax.set_xlabel(x_column if row_idx == n_rows - 1 else "", fontsize=8)
+            ax.tick_params(labelsize=7)
+            ax.grid(True, alpha=0.25)
+            if not any_plotted:
+                ax.text(0.5, 0.5, f"no data\n{metric}", ha="center", va="center",
+                        transform=ax.transAxes, fontsize=8, color="gray")
+
+    band_label = "min/max" if band == "minmax" else "±1 std"
+    fig.suptitle(
+        f"Comm module comparison across α levels  "
+        f"(mean over seeds, shaded {band_label}, rolling={rolling})",
+        fontsize=13,
+    )
+
+    handles = [
+        Line2D([0], [0], color=COMM_MODULE_COLORS.get(m, "black"), linewidth=2.2)
+        for m in present_modules
+    ]
+    labels = [m for m in present_modules]
+    fig.legend(handles, labels, loc="lower center",
+               ncol=len(labels), fontsize=10, frameon=False,
+               title="comm module")
+    fig.tight_layout(rect=(0.0, 0.04, 1.0, 0.96))
+
+    if output is not None:
+        out = Path(output).expanduser()
+        out.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out, dpi=dpi, bbox_inches="tight")
+        print(f"[plot_comm_sweep] saved → {out}")
+    if show:
+        plt.show()
+    return fig
+
+
 def _parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Plot per-group (default env.alpha) mean +/- seed-spread curves."
+        description=(
+            "Plot sweep learning curves.  "
+            "--mode alpha (default): one curve per alpha value.  "
+            "--mode comm: grid of alpha cols x metric rows, one line per comm module."
+        )
     )
     p.add_argument("paths", nargs="+",
                    help="Sweep parent dir(s) or run dir(s) containing metrics.csv.")
+    p.add_argument("--mode", choices=("alpha", "comm"), default="alpha",
+                   help="alpha: group by a single config key (default).  "
+                        "comm: comm-module vs alpha grid.")
     p.add_argument("--output", default=None, help="Output image path (PNG).")
     p.add_argument("--group-key", default="env.alpha",
-                   help="Dotted config key to group runs by (default env.alpha).")
+                   help="[--mode alpha] Dotted config key to group runs by.")
     p.add_argument("--x", default="iter", help="X-axis column (default iter).")
     p.add_argument("--rolling", type=int, default=10,
                    help="Rolling-mean window applied per seed before aggregating.")
     p.add_argument("--band", choices=("std", "minmax"), default="std",
                    help="Shaded band: +/-1 std (default) or min/max envelope.")
-    p.add_argument("--columns", type=int, default=2, help="Subplot columns.")
+    p.add_argument("--columns", type=int, default=2,
+                   help="[--mode alpha] Subplot columns.")
     p.add_argument("--dpi", type=int, default=220, help="Output resolution.")
     p.add_argument("--show", action="store_true",
                    help="Open an interactive window after plotting.")
@@ -281,17 +489,28 @@ def _parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = _parse_args()
-    plot_alpha_sweep(
-        args.paths,
-        output=args.output,
-        group_key=args.group_key,
-        x_column=args.x,
-        rolling=args.rolling,
-        band=args.band,
-        columns=args.columns,
-        dpi=args.dpi,
-        show=args.show,
-    )
+    if args.mode == "comm":
+        plot_comm_sweep(
+            args.paths,
+            output=args.output,
+            x_column=args.x,
+            rolling=args.rolling,
+            band=args.band,
+            dpi=args.dpi,
+            show=args.show,
+        )
+    else:
+        plot_alpha_sweep(
+            args.paths,
+            output=args.output,
+            group_key=args.group_key,
+            x_column=args.x,
+            rolling=args.rolling,
+            band=args.band,
+            columns=args.columns,
+            dpi=args.dpi,
+            show=args.show,
+        )
 
 
 if __name__ == "__main__":

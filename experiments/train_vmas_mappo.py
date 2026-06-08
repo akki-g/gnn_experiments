@@ -32,7 +32,7 @@ import torch
 from backbone.utils import load_yaml_config, set_seed, get_device, make_optimizer
 from backbone import MAPPO, RolloutBuffer
 from backbone.ppo_update import ppo_update
-from comm import IdentityComm
+from comm import IdentityComm, BroadcastComm, AttentionComm, GraphComm
 from envs.adapters import VMASAdapter
 
 import yaml
@@ -115,16 +115,67 @@ class _Tee:
         self._logfile.flush()
 
 
-def _build_comm_module(comm_cfg: dict):
-    """Instantiate the comm module named in the config (identity only for Phase 1/2)."""
+def _build_comm_module(comm_cfg: dict, model_cfg: dict):
+    """
+    Instantiate the comm module named in the config.
+
+    Parameters
+    ----------
+    comm_cfg  : the "comm" sub-dict from the YAML config.
+    model_cfg : the "model" sub-dict (used to read hidden_dim).
+    """
     name = comm_cfg.get("module", "identity").lower()
+    hidden_dim = model_cfg.get("hidden_dim", 64)
     if name == "identity":
         return IdentityComm()
-    raise ValueError(
-        f"Unknown comm module '{name}'. "
-        "Phase 2 supports only 'identity'. "
-        "Future modules (broadcast, attention, graph) are not yet implemented."
+    elif name == "broadcast":
+        return BroadcastComm(hidden_dim, rounds=comm_cfg.get("rounds", 1))
+    elif name == "attention":
+        return AttentionComm(
+            hidden_dim,
+            num_heads=comm_cfg.get("num_heads", 1),
+            rounds=comm_cfg.get("rounds", 1),
+        )
+    elif name == "graph":
+        return GraphComm(
+            hidden_dim,
+            num_heads=comm_cfg.get("num_heads", 4),
+            num_layers=comm_cfg.get("num_hops", 2),
+        )
+    else:
+        raise ValueError(
+            f"Unknown comm module '{name}'. "
+            "Supported: 'identity', 'broadcast', 'attention', 'graph'."
+        )
+
+
+def build_radius_mask(positions: "Tensor", radius: float) -> "Tensor":
+    """
+    Build a boolean comm mask from agent positions and a communication radius.
+
+    Parameters
+    ----------
+    positions : [B, N, 2]  agent 2D positions.
+    radius    : float communication range (inclusive).
+
+    Returns
+    -------
+    mask : [B, N, N] bool  True if receiver i can receive from sender j,
+           i.e. dist(i, j) <= radius.  Diagonal is always False (no self-loop).
+    """
+    import torch
+    assert positions.dim() == 3 and positions.shape[-1] == 2, (
+        f"positions must be [B, N, 2], got {positions.shape}"
     )
+    # diff[b, i, j, :] = pos[b, i, :] - pos[b, j, :]
+    diff = positions.unsqueeze(2) - positions.unsqueeze(1)  # [B, N, N, 2]
+    dist = diff.norm(dim=-1)  # [B, N, N]
+    mask = dist <= radius     # [B, N, N] bool
+    # Zero diagonal: no self-communication
+    N = positions.shape[1]
+    idx = torch.arange(N, device=positions.device)
+    mask[:, idx, idx] = False
+    return mask
 
 
 def _safe_run_label(label: str | None) -> str:
@@ -467,7 +518,7 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
         action_dim=env.action_dim,
         num_agents=env.num_agents,
         hidden_dim=model_cfg.get("hidden_dim", 64),
-        comm_module=_build_comm_module(cfg.get("comm", {})),
+        comm_module=_build_comm_module(cfg.get("comm", {}), model_cfg),
         share_encoder=algo_cfg["share_encoder"],
         encoder_layers=model_cfg.get("encoder_layers", 2),
         actor_layers=model_cfg.get("actor_layers", 1),
@@ -555,6 +606,9 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
     task_score_kind    = env_cfg.get("task_score_kind",       "spread")
     env_kind           = env_cfg.get("kind", "vmas")
 
+    # Comm radius for Option B dynamic radius-mask plumbing (None = full comm)
+    comm_radius = cfg.get("comm", {}).get("comm_radius", None)
+
     for it in range(total_iters):
         buffer.clear()
         rollout_step_rewards = []
@@ -569,7 +623,14 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
         # ------------------------------------------------------------------ #
         model.eval()
         for t in range(T):
-            out = model.act(obs, state)
+            # Build radius-based comm mask if comm_radius is set and env exposes positions.
+            positions = getattr(env, "agent_positions", None)
+            if comm_radius is not None and positions is not None:
+                comm_mask = build_radius_mask(positions.to(device), comm_radius)
+            else:
+                comm_mask = None
+
+            out = model.act(obs, state, mask=comm_mask)
             next_obs, next_state, reward, done, info = env.step(out["action"].cpu())
             reward = reward.to(device)
             optimized_reward = reward + reward_shift
@@ -587,6 +648,7 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
                 reward=optimized_reward,
                 done=done,
                 bad_mask=bad_mask,
+                comm_mask=comm_mask,
             )
 
             # Track per-env episode return using the first agent's reward (team reward)

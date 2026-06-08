@@ -108,6 +108,16 @@ class PursuitAdapter(VectorEnvAdapter):
         # Phase 2 IdentityComm ignores it; do NOT thread into model.act/evaluate.
         self.class_id = self.env.class_id
 
+    @property
+    def agent_positions(self) -> "Tensor":
+        """
+        Read-only property returning pursuer positions: [B, N, 2].
+
+        Used by the training loop to build radius-based comm masks when
+        comm.comm_radius is set in the config.
+        """
+        return self.env.pursuer_pos.clone()
+
     def reset(self) -> Tuple[Tensor, Tensor]:
         """
         Delegate to PursuitEnv.reset().
