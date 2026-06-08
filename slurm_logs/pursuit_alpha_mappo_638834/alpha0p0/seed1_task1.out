@@ -1,0 +1,10 @@
+[setup] Required Python imports are available.
+[setup] Required Python imports are available.
+=== Job info ===
+Job      : 638837  array=1
+Node     : evc18
+Submit   : /lustre/fs1/home/ak565492/gnn_experiments
+Repo     : /lustre/fs1/home/ak565492/gnn_experiments
+Git rev  : 6097a4b
+Python   : /home/ak565492/expenv/bin/python
+Python 3.11.4
