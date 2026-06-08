@@ -63,9 +63,20 @@ if [[ ! -f "${BASE_CONFIG}" ]]; then
     exit 2
 fi
 
+# Shared datetime stamp: first array task wins via atomic mv -n; others read the file.
+# Keyed on SLURM_ARRAY_JOB_ID so every re-submission gets a fresh stamp.
+STAMP_FILE="${SLURM_SUBMIT_DIR:-${REPO_ROOT}}/runs/.sweep_stamp_${SLURM_ARRAY_JOB_ID:-0}"
+mkdir -p "$(dirname "${STAMP_FILE}")"
+if [[ ! -f "${STAMP_FILE}" ]]; then
+    _TMP="$(mktemp "${STAMP_FILE}.XXXXXX")"
+    date +%Y%m%d_%H%M%S > "${_TMP}"
+    mv -n "${_TMP}" "${STAMP_FILE}" 2>/dev/null || rm -f "${_TMP}"
+fi
+SWEEP_DT="$(cat "${STAMP_FILE}" 2>/dev/null || date +%Y%m%d_%H%M%S)"
+
 ALPHA_LABEL="alpha${ALPHA//./p}"
 RUN_LABEL="${COMM_MODULE}_${ALPHA_LABEL}_seed${SEED}"
-RUN_DIR="runs/pursuit/alpha/${COMM_MODULE}/${ALPHA_LABEL}/seed${SEED}"
+RUN_DIR="runs/pursuit_${SWEEP_DT}/alpha/${COMM_MODULE}/${ALPHA_LABEL}/seed${SEED}"
 JOB_TAG="${SLURM_ARRAY_JOB_ID:-manual}_${TASK_ID}"
 GENERATED_CONFIG="${TMPDIR:-/tmp}/${JOB_TAG}_${RUN_LABEL}.yaml"
 
