@@ -49,7 +49,7 @@ class PursuitAdapter(VectorEnvAdapter):
 
     Plus pursuit-specific params forwarded to PursuitEnv:
         alpha, num_full_sight, observe_teammates, world_size, capture_radius,
-        move_step, target_speed, dist_coef, step_penalty, capture_bonus
+        move_step, target_speed, dist_coef, step_penalty, capture_bonus, capture_k
     """
 
     def __init__(
@@ -72,6 +72,7 @@ class PursuitAdapter(VectorEnvAdapter):
         dist_coef: float = 1.0,
         step_penalty: float = 0.01,
         capture_bonus: float = 10.0,
+        capture_k: int = 1,
     ):
         self.B = num_envs
         self.num_agents = n_agents
@@ -95,6 +96,7 @@ class PursuitAdapter(VectorEnvAdapter):
             dist_coef=dist_coef,
             step_penalty=step_penalty,
             capture_bonus=capture_bonus,
+            capture_k=capture_k,
         )
 
         # Mirror the attribute surface VMASAdapter exposes to the trainer

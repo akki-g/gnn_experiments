@@ -69,7 +69,8 @@ env:
 
   # World geometry:
   world_size: 5.0
-  capture_radius: 0.1
+  capture_radius: 0.5
+  capture_k: 2
   move_step: 0.05
   target_speed: 0.03
 

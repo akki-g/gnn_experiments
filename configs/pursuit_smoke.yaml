@@ -48,6 +48,7 @@ env:
   observe_teammates: false
   world_size: 1.0
   capture_radius: 0.1
+  capture_k: 2
   move_step: 0.05
   target_speed: 0.03
   dist_coef: 1.0

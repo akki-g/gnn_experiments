@@ -287,3 +287,96 @@ def test_class_id_shape_and_values():
     assert cid.shape == (4,)
     assert (cid[:2] == 0).all(), "First 2 agents should be class 0 (full-sight)"
     assert (cid[2:] == 1).all(), "Last 2 agents should be class 1 (sensor-limited)"
+
+
+# ---------------------------------------------------------------------------
+# capture_k coalition semantics
+# ---------------------------------------------------------------------------
+
+def test_k2_capture_requires_two_agents():
+    """
+    k=2 semantics: exactly testing the three cases.
+
+    Row 0: 1 agent inside capture_radius -> captured_now False.
+    Row 1: 2 agents inside capture_radius -> captured_now True.
+    Row 2: 2 agents exactly AT capture_radius (strict <) -> captured_now False.
+    """
+    env = PursuitEnv(
+        num_envs=3,
+        num_agents=3,
+        max_steps=5,
+        capture_k=2,
+        capture_radius=0.5,
+        world_size=10.0,
+        target_speed=0.0,
+        move_step=0.0,
+        seed=0,
+    )
+    env.reset()
+
+    # Fix target at origin, pursuers placed as axis-aligned points
+    # so vector_norm returns the x-coordinate exactly.
+    env.target_pos = torch.zeros(3, 2)
+    env.pursuer_pos = torch.tensor([
+        # Row 0: dists [0.3, 0.9, 0.9] -> 1 inside  -> not captured
+        [[0.3, 0.0], [0.9, 0.0], [0.9, 0.0]],
+        # Row 1: dists [0.3, 0.4, 0.9] -> 2 inside  -> captured
+        [[0.3, 0.0], [0.4, 0.0], [0.9, 0.0]],
+        # Row 2: dists [0.5, 0.5, 0.9] -> 0 inside (strict <) -> not captured
+        [[0.5, 0.0], [0.5, 0.0], [0.9, 0.0]],
+    ])  # [3, 3, 2]
+
+    actions = torch.zeros(3, 3, dtype=torch.long)
+    _, _, _, _, info = env.step(actions)
+
+    assert info["capture"][0].item() == pytest.approx(0.0), "Row 0: 1 agent inside should not capture"
+    assert info["capture"][1].item() == pytest.approx(1.0), "Row 1: 2 agents inside should capture"
+    assert info["capture"][2].item() == pytest.approx(0.0), "Row 2: boundary (d==r) should not capture"
+
+    # Dense term for Row 1: mean of 2 smallest = (0.3 + 0.4) / 2 = 0.35
+    assert info["pursuer_k_distance"][1].item() == pytest.approx(0.35, abs=1e-5), \
+        "pursuer_k_distance must equal mean of k smallest distances"
+
+    # For Row 1, min_dist should be 0.3 (continuity key unchanged)
+    assert info["pursuer_target_distance"][1].item() == pytest.approx(0.3, abs=1e-5), \
+        "pursuer_target_distance must still equal min_dist"
+
+
+def test_k1_backward_compat():
+    """
+    k=1 (default) behavior must be bit-identical to old single-agent capture.
+    - 1 agent inside capture_radius is sufficient for captured_now=True.
+    - pursuer_k_distance == pursuer_target_distance (dist_term == min_dist when k=1).
+    """
+    env = PursuitEnv(
+        num_envs=3,
+        num_agents=3,
+        max_steps=5,
+        capture_k=1,
+        capture_radius=0.5,
+        world_size=10.0,
+        target_speed=0.0,
+        move_step=0.0,
+        seed=0,
+    )
+    env.reset()
+
+    env.target_pos = torch.zeros(3, 2)
+    env.pursuer_pos = torch.tensor([
+        [[0.3, 0.0], [0.9, 0.0], [0.9, 0.0]],
+        [[0.3, 0.0], [0.4, 0.0], [0.9, 0.0]],
+        [[0.5, 0.0], [0.5, 0.0], [0.9, 0.0]],
+    ])
+
+    actions = torch.zeros(3, 3, dtype=torch.long)
+    _, _, _, _, info = env.step(actions)
+
+    # k=1: any single agent inside suffices
+    assert info["capture"][0].item() == pytest.approx(1.0), "k=1 Row 0: 1 agent inside should capture"
+    assert info["capture"][1].item() == pytest.approx(1.0), "k=1 Row 1: 2 agents inside should capture"
+    assert info["capture"][2].item() == pytest.approx(0.0), "k=1 Row 2: boundary should not capture"
+
+    # dist_term == min_dist when k=1
+    assert torch.allclose(
+        info["pursuer_k_distance"], info["pursuer_target_distance"], atol=1e-6
+    ), "pursuer_k_distance must equal pursuer_target_distance when capture_k=1"

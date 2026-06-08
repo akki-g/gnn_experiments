@@ -89,6 +89,7 @@ def _build_env(env_cfg: dict, num_envs: int, seed: int, device: str):
             dist_coef=float(env_cfg.get("dist_coef", 1.0)),
             step_penalty=float(env_cfg.get("step_penalty", 0.01)),
             capture_bonus=float(env_cfg.get("capture_bonus", 10.0)),
+            capture_k=int(env_cfg.get("capture_k", 1)),
         )
     else:
         raise ValueError(

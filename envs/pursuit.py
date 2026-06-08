@@ -40,10 +40,14 @@ Each action moves a pursuer by move_step in the given direction (clamped to worl
 
 Reward (mode A — dense, NOT terminating)
 -----------------------------------------
-    min_dist     = min over agents of ||pursuer_i - target||  [B]
-    captured_now = (min_dist < capture_radius)                [B] bool
-    team_reward  = -dist_coef*min_dist - step_penalty + capture_bonus*captured_now
+    dist_term    = mean of capture_k smallest ||pursuer_i - target||  [B]
+    n_within     = count of pursuers with dist < capture_radius        [B] int
+    captured_now = (n_within >= capture_k)                             [B] bool
+    team_reward  = -dist_coef*dist_term - step_penalty + capture_bonus*captured_now
     reward [B,N] = team_reward.unsqueeze(1).expand(B, N)  (shared team reward)
+
+    min_dist is also computed and logged separately under "pursuer_target_distance"
+    for continuity with prior k=1 runs and to feed _pursuit_task_score.
 
 Target motion
 -------------
@@ -66,6 +70,7 @@ Info dict keys (required by trainer + probe)
     "terminal_obs"            [B, N, obs_dim]
     "terminal_state"          [B, state_dim]
     "pursuer_target_distance" [B] float  — min_dist (primary diagnostic; lower better)
+    "pursuer_k_distance"      [B] float  — mean of capture_k smallest dists (optimized by reward)
     "capture"                 [B] float  — captured_now.float() (per-step capture)
     "captured_episode"        [B] float  — ever_captured this episode
     "target_pos"              [B, 2]    — ground-truth xy for probe (NEVER from obs)
@@ -129,6 +134,7 @@ class PursuitEnv:
         dist_coef: float = 1.0,
         step_penalty: float = 0.01,
         capture_bonus: float = 10.0,
+        capture_k: int = 1,
         terminate_on_capture: bool = False,
     ):
         """
@@ -147,9 +153,10 @@ class PursuitEnv:
         num_full_sight  : number of class-0 (full-sight) agents; rest are class 1.
         observe_teammates: if True, teammates' positions are included in obs (obs_dim grows).
         include_timestep: if True, append normalized t/max_steps to critic state.
-        dist_coef       : weight for min_dist in team reward.
+        dist_coef       : weight for the coalition distance term (mean of capture_k smallest dists) in team reward.
         step_penalty    : constant per-step penalty.
         capture_bonus   : bonus reward on capture event.
+        capture_k       : number of pursuers required within capture_radius for a capture event.
         terminate_on_capture: if True, raise NotImplementedError (mode B not implemented).
         """
         if terminate_on_capture:
@@ -175,6 +182,7 @@ class PursuitEnv:
         self.dist_coef = float(dist_coef)
         self.step_penalty = float(step_penalty)
         self.capture_bonus = float(capture_bonus)
+        self.capture_k = int(capture_k)
 
         # R_max = 2 * world_size * sqrt(2) — diameter of the bounding box,
         # guaranteed >= max possible distance within [-world_size, world_size]^2.
@@ -290,16 +298,28 @@ class PursuitEnv:
         -------
         team_reward  : [B]      — one scalar reward per env
         min_dist     : [B]      — min pursuer-target distance (primary diagnostic)
-        captured_now : [B] bool — True if any pursuer is within capture_radius
+        captured_now : [B] bool — True if >= capture_k pursuers are within capture_radius
         """
         # distances: [B, N]
-        diff = self.pursuer_pos - self.target_pos.unsqueeze(1)  # [B, N, 2]
-        dists = torch.linalg.vector_norm(diff, dim=-1)          # [B, N]
-        min_dist = dists.min(dim=1).values                      # [B]
+        diff  = self.pursuer_pos - self.target_pos.unsqueeze(1)   # [B, N, 2]
+        dists = torch.linalg.vector_norm(diff, dim=-1)             # [B, N]
+        min_dist = dists.min(dim=1).values                         # [B]  (continuity key)
 
-        captured_now = (min_dist < self.capture_radius)         # [B] bool
+        # Coalition-distance dense term: mean of k smallest distances.
+        # Guard k <= N so topk never requests more elements than available.
+        k = min(self.capture_k, self.N)
+        dist_term = torch.topk(dists, k=k, largest=False).values.mean(dim=1)  # [B]
+
+        # Capture: require >= capture_k agents strictly within capture_radius.
+        n_within     = (dists < self.capture_radius).sum(dim=1)    # [B] int
+        captured_now = n_within >= self.capture_k                   # [B] bool
+
+        # Stash dist_term so step() can include it in the info dict without
+        # changing this method's return signature.
+        self._last_dist_term = dist_term
+
         team_reward = (
-            -self.dist_coef * min_dist
+            -self.dist_coef * dist_term
             - self.step_penalty
             + self.capture_bonus * captured_now.float()
         )
@@ -417,6 +437,7 @@ class PursuitEnv:
             "terminal_obs":            terminal_obs,
             "terminal_state":          terminal_state,
             "pursuer_target_distance": min_dist.clone(),
+            "pursuer_k_distance":      self._last_dist_term.clone(),
             "capture":                 captured_now.float().clone(),
             "captured_episode":        captured_episode.float(),
             "target_pos":              self.target_pos.clone(),  # ground-truth for probe
