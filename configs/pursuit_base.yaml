@@ -71,8 +71,8 @@ env:
   world_size: 12.0
   capture_radius: 0.5
   capture_k: 5
-  move_step: 0.05
-  target_speed: 0.03
+  move_step: 0.2
+  target_speed: 0.05
 
   # Reward coefficients:
   dist_coef: 1.0
