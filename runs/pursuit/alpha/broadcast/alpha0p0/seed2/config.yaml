@@ -23,7 +23,8 @@ device: auto
 env:
   alpha: 0.0
   capture_bonus: 10.0
-  capture_radius: 0.1
+  capture_k: 2
+  capture_radius: 0.5
   dist_coef: 1.0
   include_timestep_in_state: true
   kind: pursuit
