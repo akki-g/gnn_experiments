@@ -50,7 +50,7 @@ Find the sweep-stamped run dir under `runs/pursuit_<DT>/alpha/<module>/alpha0p0/
 ```bash
 python -m experiments.run_probe \
   --config configs/pursuit_base.yaml \
-  --ckpt runs/pursuit_<DT>/alpha/broadcast/alpha0p0/seed0/ckpt/final.pt \
+  --ckpt runs/pursuit_20260608_181436/alpha/broadcast/alpha0p0/seed0/ckpt/final.pt \
   --probe-mode post --alpha 0.0 --seed 0
 ```
 Prints `R2_c1_post / R2_c1_raw / R2_c0_local(ceil)` and a branch label:
@@ -85,8 +85,8 @@ real-broadcast at low alpha, the gain was capacity, not communication.
 
 ### F2. Regenerate the comparison figure
 ```bash
-python -m experiments.plot_alpha_sweep runs/pursuit_<DT>/alpha \
-  --mode comm --output runs/pursuit_<DT>/alpha/comm_vs_alpha.png
+python -m experiments.plot_alpha_sweep runs/pursuit_20260608_192647/alpha \
+  --mode comm --output runs/pursuit_20260608_192647/alpha/comm_vs_alpha.png
 ```
 Read separation specifically at alpha 0.0 and 0.25 (where capture_k > num_full_sight forces
 blind agents in). Report per-seed alpha=0 capture-rate and return gaps (comm vs identity) with
