@@ -1,0 +1,11 @@
+[setup] imports ok
+=== probe job info ===
+Task     : 2/11
+Module   : identity
+Seed     : 2
+Ckpt     : runs/pursuit_20260608_192647/alpha/identity/alpha0p0/seed2/ckpt/final.pt
+Start    : Tue Jun  9 12:56:34 EDT 2026
+======================
+[probe-post] alpha=0.0 seed=2 N=10 B=16 obs_dim=5 D=64 steps=200 ckpt=runs/pursuit_20260608_192647/alpha/identity/alpha0p0/seed2/ckpt/final.pt
+[probe-post] R2_c1_post=0.0894 R2_c1_raw=0.0313 R2_c0_local(ceil)=0.9858 branch=LOW
+=== done Tue Jun  9 12:58:21 EDT 2026 ===

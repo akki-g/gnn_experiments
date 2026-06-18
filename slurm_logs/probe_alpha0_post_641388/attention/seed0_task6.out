@@ -1,0 +1,12 @@
+[setup] imports ok
+=== probe job info ===
+Task     : 6/11
+Module   : attention
+Seed     : 0
+Ckpt     : runs/pursuit_20260608_192647/alpha/attention/alpha0p0/seed0/ckpt/final.pt
+Start    : Tue Jun  9 12:56:34 EDT 2026
+======================
+[probe-post] alpha=0.0 seed=0 N=10 B=16 obs_dim=5 D=64 steps=200 ckpt=runs/pursuit_20260608_192647/alpha/attention/alpha0p0/seed0/ckpt/final.pt
+[probe-post] R2_c1_post=0.3943 R2_c1_raw=0.0537 R2_c0_local(ceil)=0.9860 branch=INTERMEDIATE
+[probe-post] INTERMEDIATE -> apply capture_k=4 first; aux-loss only second-line if still intermediate AND capture<0.15
+=== done Tue Jun  9 12:58:21 EDT 2026 ===
