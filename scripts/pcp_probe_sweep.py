@@ -27,6 +27,7 @@ Usage:
 """
 
 import argparse
+import csv
 import re
 import subprocess
 import sys
@@ -62,25 +63,32 @@ def main():
     ap.add_argument("--probe-seed", type=int, default=0,
                     help="Fixed probe rollout seed for cross-cell comparability.")
     ap.add_argument("--ckpt-name", default="final.pt")
+    ap.add_argument("--out-csv", default=None,
+                    help="Optional path to write per-(cell,seed) rows for sync-back.")
     args = ap.parse_args()
 
     run_dir = Path(args.run_dir)
     per_cell = {c: {"post": [], "raw": [], "ceil": [], "branch": [], "missing": []} for c in CELLS}
+    rows = []  # per-(cell,seed) for CSV
 
     for cell in CELLS:
         for s in SEEDS:
             ckpt = run_dir / cell / f"seed{s}" / "ckpt" / args.ckpt_name
             if not ckpt.exists():
                 per_cell[cell]["missing"].append(s)
+                rows.append(dict(cell=cell, seed=s, r2_post="", r2_raw="", r2_ceil="", branch="MISSING_CKPT"))
                 continue
             r = run_one(args.config, ckpt, args.probe_seed)
             if r is None:
                 per_cell[cell]["missing"].append(s)
+                rows.append(dict(cell=cell, seed=s, r2_post="", r2_raw="", r2_ceil="", branch="PARSE_FAIL"))
                 continue
             per_cell[cell]["post"].append(r["post"])
             per_cell[cell]["raw"].append(r["raw"])
             per_cell[cell]["ceil"].append(r["ceil"])
             per_cell[cell]["branch"].append(r["branch"])
+            rows.append(dict(cell=cell, seed=s, r2_post=r["post"], r2_raw=r["raw"],
+                             r2_ceil=r["ceil"], branch=r["branch"]))
             print(f"  {cell}/seed{s}: R2_post={r['post']:.4f} R2_raw={r['raw']:.4f} "
                   f"ceil={r['ceil']:.4f} branch={r['branch']}")
 
@@ -102,6 +110,15 @@ def main():
     print(f"  identity (no-channel control) R2_post = {avg(per_cell['identity']['post']):.4f}")
     print("\nVerdict guide: channel CARRIES the signal if live R2_post is high AND")
     print("delta(live - _zm) is large AND _zm/identity R2_post collapse to ~R2_raw.")
+
+    if args.out_csv:
+        out = Path(args.out_csv)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with out.open("w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["cell", "seed", "r2_post", "r2_raw", "r2_ceil", "branch"])
+            w.writeheader()
+            w.writerows(rows)
+        print(f"\n[probe-sweep] wrote per-run rows to {out}")
 
 
 if __name__ == "__main__":
