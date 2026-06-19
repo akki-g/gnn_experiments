@@ -37,6 +37,45 @@ from envs.pursuit_adapter import PursuitAdapter
 from probes.predictability import train_probe, probe_gap, fit_probe_on_features
 
 
+def _build_probe_env(env_cfg, num_envs: int, seed: int, device_str: str):
+    """
+    Build the probe env from env_cfg, dispatching on env_cfg['kind'].
+
+    Returns a PursuitAdapter (kind='pursuit', default) or PCPAdapter (kind='pcp').
+    Both expose the same reset/step/agent_positions/class_id surface, so the rest
+    of the probe is env-agnostic. PCP forwards detect_radius/detection_window.
+    """
+    kind = env_cfg.get("kind", "pursuit")
+    common = dict(
+        scenario=env_cfg.get("name", kind),
+        num_envs=num_envs,
+        n_agents=int(env_cfg.get("num_agents", 3)),
+        max_steps=int(env_cfg.get("max_steps", 100)),
+        seed=seed,
+        device=device_str,
+        include_timestep=bool(env_cfg.get("include_timestep_in_state", True)),
+        alpha=float(env_cfg.get("alpha", 1.0)),
+        num_full_sight=int(env_cfg.get("num_full_sight", 2)),
+        observe_teammates=bool(env_cfg.get("observe_teammates", False)),
+        world_size=float(env_cfg.get("world_size", 1.0)),
+        capture_radius=float(env_cfg.get("capture_radius", 0.1)),
+        move_step=float(env_cfg.get("move_step", 0.05)),
+        target_speed=float(env_cfg.get("target_speed", 0.03)),
+        dist_coef=float(env_cfg.get("dist_coef", 1.0)),
+        step_penalty=float(env_cfg.get("step_penalty", 0.01)),
+        capture_bonus=float(env_cfg.get("capture_bonus", 10.0)),
+        capture_k=int(env_cfg.get("capture_k", 1)),
+    )
+    if kind == "pcp":
+        from envs.pcp_adapter import PCPAdapter
+        return PCPAdapter(
+            detect_radius=float(env_cfg["detect_radius"]),
+            detection_window=int(env_cfg["detection_window"]),
+            **common,
+        )
+    return PursuitAdapter(**common)
+
+
 def main(
     config_path: str,
     alpha: Optional[float] = None,
@@ -89,25 +128,10 @@ def _run_raw_probe(config_path: str, alpha=None, seed=None) -> None:
     probe_num_envs = 16
     probe_steps    = 200
 
-    env = PursuitAdapter(
-        scenario=env_cfg.get("name", "pursuit"),
-        num_envs=probe_num_envs,
-        n_agents=int(env_cfg.get("num_agents", 3)),
-        max_steps=int(env_cfg.get("max_steps", 100)),
-        seed=run_seed,
-        device=cfg.get("device", "cpu") if cfg.get("device", "cpu") != "auto" else "cpu",
-        include_timestep=bool(env_cfg.get("include_timestep_in_state", True)),
-        alpha=actual_alpha,
-        num_full_sight=int(env_cfg.get("num_full_sight", 2)),
-        observe_teammates=bool(env_cfg.get("observe_teammates", False)),
-        world_size=float(env_cfg.get("world_size", 1.0)),
-        capture_radius=float(env_cfg.get("capture_radius", 0.1)),
-        move_step=float(env_cfg.get("move_step", 0.05)),
-        target_speed=float(env_cfg.get("target_speed", 0.03)),
-        dist_coef=float(env_cfg.get("dist_coef", 1.0)),
-        step_penalty=float(env_cfg.get("step_penalty", 0.01)),
-        capture_bonus=float(env_cfg.get("capture_bonus", 10.0)),
-    )
+    raw_device = cfg.get("device", "cpu")
+    if raw_device == "auto":
+        raw_device = "cpu"
+    env = _build_probe_env(env_cfg, probe_num_envs, run_seed, raw_device)
 
     N        = env.num_agents
     B        = env.B
@@ -230,26 +254,8 @@ def _run_post_probe(config_path: str, alpha=None, seed=None, ckpt=None) -> None:
         device_str = "cpu"
     dev = torch.device(device_str)
 
-    # A4.1: Build env identically to raw path
-    env = PursuitAdapter(
-        scenario=env_cfg.get("name", "pursuit"),
-        num_envs=probe_num_envs,
-        n_agents=int(env_cfg.get("num_agents", 3)),
-        max_steps=int(env_cfg.get("max_steps", 100)),
-        seed=run_seed,
-        device=device_str,
-        include_timestep=bool(env_cfg.get("include_timestep_in_state", True)),
-        alpha=actual_alpha,
-        num_full_sight=int(env_cfg.get("num_full_sight", 2)),
-        observe_teammates=bool(env_cfg.get("observe_teammates", False)),
-        world_size=float(env_cfg.get("world_size", 1.0)),
-        capture_radius=float(env_cfg.get("capture_radius", 0.1)),
-        move_step=float(env_cfg.get("move_step", 0.05)),
-        target_speed=float(env_cfg.get("target_speed", 0.03)),
-        dist_coef=float(env_cfg.get("dist_coef", 1.0)),
-        step_penalty=float(env_cfg.get("step_penalty", 0.01)),
-        capture_bonus=float(env_cfg.get("capture_bonus", 10.0)),
-    )
+    # A4.1: Build env identically to raw path (kind-dispatched: pursuit or pcp)
+    env = _build_probe_env(env_cfg, probe_num_envs, run_seed, device_str)
 
     N        = env.num_agents
     B        = env.B
