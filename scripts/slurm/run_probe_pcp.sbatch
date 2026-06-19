@@ -36,6 +36,7 @@ module load python/python-3.11.4-gcc-12.2.0
 module load cuda/cuda-12.1.0
 
 export PYTHONUNBUFFERED=1
+export CUDA_VISIBLE_DEVICES=""   # CPU-only job; probe forces device=cpu regardless
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-1}"
 export MKL_NUM_THREADS="${SLURM_CPUS_PER_TASK:-1}"
 export OPENBLAS_NUM_THREADS=1

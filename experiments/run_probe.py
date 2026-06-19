@@ -264,7 +264,12 @@ def _run_post_probe(config_path: str, alpha=None, seed=None, ckpt=None) -> None:
 
     # A4.2: Load checkpoint
     ckpt_dict = torch.load(ckpt, map_location="cpu", weights_only=False)
-    model_ctor_cfg = ckpt_dict["config"]
+    # Copy + force the probe device: the saved config carries the TRAINING device
+    # (e.g. "cuda" for GPU-trained ckpts). MAPPO.__init__ does self.to(device) and
+    # MAPPO.load maps to self.device, so an unforced "cuda" here crashes the
+    # CPU-only probe node with "No CUDA GPUs are available".
+    model_ctor_cfg = dict(ckpt_dict["config"])
+    model_ctor_cfg["device"] = device_str
 
     # A4.3: Read sibling config.yaml for comm/model sub-keys
     run_cfg_path = Path(ckpt).parent.parent / "config.yaml"
@@ -283,7 +288,7 @@ def _run_post_probe(config_path: str, alpha=None, seed=None, ckpt=None) -> None:
         **model_ctor_cfg,
         comm_module=comm_module,
     )
-    model.load(ckpt)
+    model.load(ckpt, map_location=dev)
     model.eval()
     model.to(dev)
 
