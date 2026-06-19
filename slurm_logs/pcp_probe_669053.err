@@ -1,0 +1,195 @@
+[warn] no probe line for runs/pcp_smoke_20260619_113708/identity/seed0/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/identity/seed1/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/identity/seed2/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/broadcast/seed0/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/broadcast/seed1/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/broadcast/seed2/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/broadcast_zm/seed0/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/broadcast_zm/seed1/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/broadcast_zm/seed2/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/attention/seed0/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/attention/seed1/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/attention/seed2/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/attention_zm/seed0/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/attention_zm/seed1/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+
+[warn] no probe line for runs/pcp_smoke_20260619_113708/attention_zm/seed2/ckpt/final.pt
+
+e._apply(fn)
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 927, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1326, in convert
+    return t.to(
+           ^^^^^
+  File "/home/ak565492/expenv/lib/python3.11/site-packages/torch/cuda/__init__.py", line 319, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
+

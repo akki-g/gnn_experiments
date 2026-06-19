@@ -1,0 +1,16 @@
+cell,seed,r2_post,r2_raw,r2_ceil,branch
+identity,0,,,,PARSE_FAIL
+identity,1,,,,PARSE_FAIL
+identity,2,,,,PARSE_FAIL
+broadcast,0,,,,PARSE_FAIL
+broadcast,1,,,,PARSE_FAIL
+broadcast,2,,,,PARSE_FAIL
+broadcast_zm,0,,,,PARSE_FAIL
+broadcast_zm,1,,,,PARSE_FAIL
+broadcast_zm,2,,,,PARSE_FAIL
+attention,0,,,,PARSE_FAIL
+attention,1,,,,PARSE_FAIL
+attention,2,,,,PARSE_FAIL
+attention_zm,0,,,,PARSE_FAIL
+attention_zm,1,,,,PARSE_FAIL
+attention_zm,2,,,,PARSE_FAIL

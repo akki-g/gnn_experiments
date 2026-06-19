@@ -1,0 +1,23 @@
+[setup] Required Python imports are available.
+[pcp-probe] repo=/lustre/fs1/home/ak565492/gnn_experiments
+[pcp-probe] run_dir=runs/pcp_smoke_20260619_113708
+[pcp-probe] config=configs/pcp_smoke.yaml probe_seed=0
+
+=== per-cell (seed-averaged) ===
+cell             R2_post    R2_raw      ceil   n    missing
+identity             nan       nan       nan   0  [0, 1, 2]
+broadcast            nan       nan       nan   0  [0, 1, 2]
+broadcast_zm         nan       nan       nan   0  [0, 1, 2]
+attention            nan       nan       nan   0  [0, 1, 2]
+attention_zm         nan       nan       nan   0  [0, 1, 2]
+
+=== decisive contrast: R2_post(live) - R2_post(_zm) ===
+  attention  nan  -  attention_zm  nan  =  delta +nan
+  broadcast  nan  -  broadcast_zm  nan  =  delta +nan
+  identity (no-channel control) R2_post = nan
+
+Verdict guide: channel CARRIES the signal if live R2_post is high AND
+delta(live - _zm) is large AND _zm/identity R2_post collapse to ~R2_raw.
+
+[probe-sweep] wrote per-run rows to runs/pcp_smoke_20260619_113708/probe_results.csv
+[pcp-probe] done. CSV at runs/pcp_smoke_20260619_113708/probe_results.csv
