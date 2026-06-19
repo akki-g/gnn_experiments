@@ -91,9 +91,33 @@ def _build_env(env_cfg: dict, num_envs: int, seed: int, device: str):
             capture_bonus=float(env_cfg.get("capture_bonus", 10.0)),
             capture_k=int(env_cfg.get("capture_k", 1)),
         )
+    elif kind == "pcp":
+        from envs.pcp_adapter import PCPAdapter
+        return PCPAdapter(
+            scenario=env_cfg.get("name", "pcp"),
+            num_envs=num_envs,
+            n_agents=env_cfg["num_agents"],
+            max_steps=env_cfg["max_steps"],
+            seed=seed,
+            device=device,
+            include_timestep=env_cfg.get("include_timestep_in_state", True),
+            alpha=float(env_cfg.get("alpha", 0.0)),
+            num_full_sight=int(env_cfg.get("num_full_sight", 3)),
+            observe_teammates=bool(env_cfg.get("observe_teammates", False)),
+            world_size=float(env_cfg.get("world_size", 12.0)),
+            capture_radius=float(env_cfg.get("capture_radius", 0.6)),
+            move_step=float(env_cfg.get("move_step", 0.2)),
+            target_speed=float(env_cfg.get("target_speed", 0.0)),
+            dist_coef=float(env_cfg.get("dist_coef", 0.1)),
+            step_penalty=float(env_cfg.get("step_penalty", 0.01)),
+            capture_bonus=float(env_cfg.get("capture_bonus", 10.0)),
+            capture_k=int(env_cfg.get("capture_k", 1)),
+            detect_radius=float(env_cfg.get("detect_radius", 2.0)),
+            detection_window=int(env_cfg.get("detection_window", 5)),
+        )
     else:
         raise ValueError(
-            f"Unknown env kind '{kind}'. Supported: 'vmas', 'pursuit'."
+            f"Unknown env kind '{kind}'. Supported: 'vmas', 'pursuit', 'pcp'."
         )
 
 
@@ -129,16 +153,24 @@ def _build_comm_module(comm_cfg: dict, model_cfg: dict):
     hidden_dim = model_cfg.get("hidden_dim", 64)
     # D1: read zero_messages flag (default False; IdentityComm ignores it)
     zero_messages = bool(comm_cfg.get("zero_messages", False))
+    # C3: num_classes for per-class embedding/bias (default 2: scout + interceptor)
+    num_classes = int(comm_cfg.get("num_classes", 2))
     if name == "identity":
         return IdentityComm()
     elif name == "broadcast":
-        return BroadcastComm(hidden_dim, rounds=comm_cfg.get("rounds", 1), zero_messages=zero_messages)
+        return BroadcastComm(
+            hidden_dim,
+            rounds=comm_cfg.get("rounds", 1),
+            zero_messages=zero_messages,
+            num_classes=num_classes,
+        )
     elif name == "attention":
         return AttentionComm(
             hidden_dim,
             num_heads=comm_cfg.get("num_heads", 1),
             rounds=comm_cfg.get("rounds", 1),
             zero_messages=zero_messages,
+            num_classes=num_classes,
         )
     elif name == "graph":
         return GraphComm(
@@ -146,6 +178,7 @@ def _build_comm_module(comm_cfg: dict, model_cfg: dict):
             num_heads=comm_cfg.get("num_heads", 4),
             num_layers=comm_cfg.get("num_hops", 2),
             zero_messages=zero_messages,
+            num_classes=num_classes,
         )
     else:
         raise ValueError(
@@ -703,6 +736,11 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
         rollout_marginal_c1_rate         = []
         # C5: kNN sighted-neighbor fraction (only when topology=="knn" and pursuit)
         rollout_knn_c1_sighted_frac      = []
+        # PCP-specific diagnostic accumulators
+        rollout_pcp_detection_event_rate        = []
+        rollout_pcp_cap_without_recent_rate     = []
+        rollout_pcp_window_open                 = []
+        rollout_pcp_steps_since_detection       = []
 
         # ------------------------------------------------------------------ #
         # Rollout collection (eval mode -- no dropout / batchnorm training)  #
@@ -780,8 +818,8 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
                 )
                 ep_return[truncated_env] = 0.0
                 optimized_ep_return[truncated_env] = 0.0
-                # Pursuit: log capture_rate at episode boundary (captured_episode = ever captured)
-                if env_kind == "pursuit" and "captured_episode" in info:
+                # Pursuit/PCP: log capture_rate at episode boundary (captured_episode = ever captured)
+                if env_kind in ("pursuit", "pcp") and "captured_episode" in info:
                     cap_ep = torch.as_tensor(info["captured_episode"], device=device).float()
                     rollout_capture_rate_nums.append(cap_ep[truncated_env].mean().item())
 
@@ -802,6 +840,25 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
                 if "marginal_is_sensor_limited" in info:
                     rollout_marginal_c1_rate.append(
                         torch.as_tensor(info["marginal_is_sensor_limited"], device=device).float().mean().item()
+                    )
+
+            # PCP diagnostics (per step, not per episode)
+            if env_kind == "pcp":
+                if "detection_event" in info:
+                    rollout_pcp_detection_event_rate.append(
+                        torch.as_tensor(info["detection_event"], device=device).float().mean().item()
+                    )
+                if "capture_without_recent_detection" in info:
+                    rollout_pcp_cap_without_recent_rate.append(
+                        torch.as_tensor(info["capture_without_recent_detection"], device=device).float().mean().item()
+                    )
+                if "window_open" in info:
+                    rollout_pcp_window_open.append(
+                        torch.as_tensor(info["window_open"], device=device).float().mean().item()
+                    )
+                if "steps_since_detection" in info:
+                    rollout_pcp_steps_since_detection.append(
+                        torch.as_tensor(info["steps_since_detection"], device=device).float().mean().item()
                     )
 
             global_step += B
@@ -924,6 +981,27 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
             if rollout_knn_c1_sighted_frac
             else float("nan")
         )
+        # PCP diagnostic averages
+        mean_pcp_detection_event_rate = (
+            sum(rollout_pcp_detection_event_rate) / len(rollout_pcp_detection_event_rate)
+            if rollout_pcp_detection_event_rate
+            else float("nan")
+        )
+        mean_pcp_cap_without_recent_rate = (
+            sum(rollout_pcp_cap_without_recent_rate) / len(rollout_pcp_cap_without_recent_rate)
+            if rollout_pcp_cap_without_recent_rate
+            else float("nan")
+        )
+        mean_pcp_window_open = (
+            sum(rollout_pcp_window_open) / len(rollout_pcp_window_open)
+            if rollout_pcp_window_open
+            else float("nan")
+        )
+        mean_pcp_steps_since_detection = (
+            sum(rollout_pcp_steps_since_detection) / len(rollout_pcp_steps_since_detection)
+            if rollout_pcp_steps_since_detection
+            else float("nan")
+        )
         if start_ep_return is None and not math.isnan(mean_ep_ret):
             start_ep_return = mean_ep_ret
         if start_step_reward is None and not math.isnan(mean_step_rew):
@@ -1015,6 +1093,13 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
             row["dist_sensor_limited"]       = mean_dist_sensor_limited
             row["marginal_c1_rate"]          = mean_marginal_c1_rate
             row["knn_c1_sighted_frac"]       = mean_knn_c1_sighted_frac
+        # PCP-only extra columns (absent for VMAS and pure pursuit).
+        if env_kind == "pcp":
+            row["capture_rate"]                         = mean_capture_rate
+            row["detection_event_rate"]                 = mean_pcp_detection_event_rate
+            row["capture_without_recent_detection_rate"] = mean_pcp_cap_without_recent_rate
+            row["window_open"]                          = mean_pcp_window_open
+            row["steps_since_detection"]                = mean_pcp_steps_since_detection
         metrics_rows.append(row)
 
         if it % console_log_interval == 0:
@@ -1060,8 +1145,11 @@ def _train(cfg, device, run_dir, ckpt_dir, resume, render_mode: str):
                     extra={"episode_return": best_return},
                 )
 
-        # Periodic checkpoint
-        if save_checkpoints and it > 0 and it % checkpoint_interval == 0:
+        # Periodic checkpoint: fire on the configured interval, or on the last
+        # iteration so at least one periodic checkpoint exists when checkpoint_interval
+        # exceeds total_iters (common in short smoke / sweep runs).
+        is_last_iter = (it == total_iters - 1)
+        if save_checkpoints and ((it > 0 and it % checkpoint_interval == 0) or is_last_iter):
             model.save(
                 os.path.join(ckpt_dir, f"ckpt_{it}.pt"),
                 optimizer=optimizer,

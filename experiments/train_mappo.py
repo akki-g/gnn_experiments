@@ -196,7 +196,8 @@ def main(config_path: str, resume: str = None) -> None:
                 f"r0={metrics['mean_ratio_epoch0']:.4f} lr={cfg['algo']['lr']:.1e} seed={cfg['seed']}"
             )
 
-        if it > 0 and it % cfg["runtime"]["checkpoint_interval"] == 0:
+        is_last_iter = (it == total_iters - 1)
+        if (it > 0 and it % cfg["runtime"]["checkpoint_interval"] == 0) or is_last_iter:
             os.makedirs(cfg["logging"]["checkpoint_dir"], exist_ok=True)
             ckpt_path = os.path.join(cfg["logging"]["checkpoint_dir"], f"ckpt_{it}.pt")
             model.save(ckpt_path, optimizer=optimizer, global_step=global_step)

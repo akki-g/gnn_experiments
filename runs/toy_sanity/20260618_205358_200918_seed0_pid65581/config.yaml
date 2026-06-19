@@ -1,0 +1,41 @@
+algo:
+  clip_eps: 0.2
+  entropy_coef: 0.01
+  gae_lambda: 0.95
+  gamma: 0.99
+  lr: 0.0003
+  max_grad_norm: 10.0
+  name: mappo
+  normalize_advantages: true
+  num_minibatches: 4
+  ppo_epochs: 4
+  share_encoder: true
+  value_clip_eps: 0.2
+  value_coef: 0.5
+comm:
+  module: identity
+device: auto
+env:
+  episode_length: 32
+  name: toy
+  num_agents: 2
+logging:
+  checkpoint_dir: runs/toy_sanity/ckpt
+  console_log_interval: 1
+  log_dir: runs/toy_sanity
+  wandb: false
+  wandb_project: marl-thesis
+model:
+  actor_layers: 1
+  critic_layers: 2
+  encoder_layers: 2
+  hidden_dim: 32
+render:
+  mode: 'off'
+runtime:
+  checkpoint_interval: 50
+  eval_interval: 10
+  num_envs: 4
+  rollout_length: 32
+  total_env_steps: 5000
+seed: 0

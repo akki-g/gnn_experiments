@@ -40,15 +40,23 @@ class BroadcastComm(CommModule):
 
     Parameters
     ----------
-    hidden_dim : D — embedding dimension.
-    rounds     : number of message-passing rounds (weights shared).
+    hidden_dim  : D — embedding dimension.
+    rounds      : number of message-passing rounds (weights shared).
+    num_classes : number of agent class types for per-class embedding (default 2).
     """
 
-    def __init__(self, hidden_dim: int, rounds: int = 1, zero_messages: bool = False):
+    def __init__(
+        self,
+        hidden_dim: int,
+        rounds: int = 1,
+        zero_messages: bool = False,
+        num_classes: int = 2,
+    ):
         super().__init__()
         self.hidden_dim = hidden_dim
         self.rounds = rounds
         self.zero_messages = zero_messages
+        self.num_classes = num_classes
 
         # Weights SHARED across rounds
         self.W_H = nn.Linear(hidden_dim, hidden_dim, bias=False)
@@ -57,6 +65,15 @@ class BroadcastComm(CommModule):
         # Orthogonal init: W_H with gain=sqrt(2), W_C with small gain (near pass-through)
         nn.init.orthogonal_(self.W_H.weight, gain=math.sqrt(2))
         nn.init.orthogonal_(self.W_C.weight, gain=0.01)
+
+        # Per-class embedding [num_classes, D]: added to h before message passing so
+        # each agent class gets a distinct bias in embedding space.
+        # Initialized near-zero (std=0.01) so at init the module output is close to
+        # the pre-class_id behavior, preserving the mean_ratio_epoch0 ≈ 1.0 property.
+        # Present regardless of zero_messages (class_emb is an input feature shift,
+        # not a cross-agent message) so the _zm twin has identical parameter count.
+        self.class_emb = nn.Embedding(num_classes, hidden_dim)
+        nn.init.normal_(self.class_emb.weight, std=0.01)
 
     def forward(
         self,
@@ -69,7 +86,9 @@ class BroadcastComm(CommModule):
         ----------
         h        : [B, N, D] or [T, B, N, D]
         mask     : [B, N, N] or [T, B, N, N] bool, or None (full comm)
-        class_id : Optional [N] — accepted, carried, unused this phase.
+        class_id : Optional [N] long — per-agent class index (0 or 1).
+                   If provided, adds a learned per-class embedding to h before
+                   message passing. If None, behaves exactly as before (backward compat).
 
         Returns
         -------
@@ -81,6 +100,18 @@ class BroadcastComm(CommModule):
         assert h.shape[-1] == self.hidden_dim, (
             f"BroadcastComm: h.shape[-1]={h.shape[-1]} != hidden_dim={self.hidden_dim}"
         )
+
+        # Apply per-class embedding BEFORE reshape so we handle both [B,N,D] and
+        # [T,B,N,D] uniformly: emb is [N, D], broadcast-add across all leading dims.
+        if class_id is not None:
+            # class_id: [N] long -> emb: [N, D]
+            emb = self.class_emb(class_id)  # [N, D]
+            # Reshape to match leading dims of h
+            if h.dim() == 4:
+                emb = emb.reshape(1, 1, emb.shape[0], emb.shape[1])  # [1,1,N,D]
+            else:
+                emb = emb.unsqueeze(0)  # [1, N, D]
+            h = h + emb  # broadcast-add across batch/time dims
 
         # Handle [T, B, N, D] by reshaping to [T*B, N, D]
         reshaped = False
@@ -130,5 +161,7 @@ class BroadcastComm(CommModule):
         return h
 
     def message_bits(self) -> int:
-        """Total bits a receiver ingests per sender across all rounds."""
+        """Total bits a receiver ingests per sender across all rounds.
+        Note: class_emb is an input-feature shift, not a cross-agent message.
+        """
         return self.rounds * self.hidden_dim * 32

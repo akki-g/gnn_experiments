@@ -48,12 +48,20 @@ class GraphComm(CommModule):
 
     Parameters
     ----------
-    hidden_dim : D — embedding dimension. Must be divisible by num_heads.
-    num_heads  : H — number of attention heads (shared within each layer).
-    num_layers : L — number of GNN message-passing layers.
+    hidden_dim  : D — embedding dimension. Must be divisible by num_heads.
+    num_heads   : H — number of attention heads (shared within each layer).
+    num_layers  : L — number of GNN message-passing layers.
+    num_classes : number of agent class types for per-class conditioning (default 2).
     """
 
-    def __init__(self, hidden_dim: int, num_heads: int = 4, num_layers: int = 2, zero_messages: bool = False):
+    def __init__(
+        self,
+        hidden_dim: int,
+        num_heads: int = 4,
+        num_layers: int = 2,
+        zero_messages: bool = False,
+        num_classes: int = 2,
+    ):
         super().__init__()
         assert hidden_dim % num_heads == 0, (
             f"hidden_dim ({hidden_dim}) must be divisible by num_heads ({num_heads})"
@@ -64,6 +72,7 @@ class GraphComm(CommModule):
         self.zero_messages = zero_messages
         self.d_k = hidden_dim // num_heads
         self.tau = 1.0 / math.sqrt(self.d_k)
+        self.num_classes = num_classes
 
         # PER-LAYER weight matrices (nn.ModuleList length L)
         self.W_q_layers = nn.ModuleList()
@@ -90,6 +99,21 @@ class GraphComm(CommModule):
             self.proj_layers.append(proj)
             self.ln_layers.append(ln_l)
 
+        # Per-class embedding [num_classes, D]: shifts h by a class-specific offset
+        # before Q/K/V projections so each agent class sees a distinct initial embedding.
+        # Initialized near-zero (std=0.01) so at init output ≈ pre-change behavior,
+        # preserving mean_ratio_epoch0 ≈ 1.0. Present regardless of zero_messages so
+        # _zm twin has identical parameter count.
+        self.class_emb = nn.Embedding(num_classes, hidden_dim)
+        nn.init.normal_(self.class_emb.weight, std=0.01)
+
+        # Per-class-pair bias on graph attention logits [num_classes, num_classes].
+        # Added to scores[b, i, j, head] for each (i,j) pair based on their class ids,
+        # BEFORE masked_softmax so masked edges remain masked (masked_fill(-inf) applied
+        # after this add). Zeros init is critical: at init adds nothing, preserving
+        # ratio ≈ 1.0. Present regardless of zero_messages (same-param _zm twin).
+        self.class_bias = nn.Parameter(torch.zeros(num_classes, num_classes))
+
     def forward(
         self,
         h: Tensor,
@@ -101,7 +125,13 @@ class GraphComm(CommModule):
         ----------
         h        : [B, N, D] or [T, B, N, D]
         mask     : [B, N, N] or [T, B, N, N] bool, or None (full comm)
-        class_id : Optional [N] — accepted, carried, unused this phase.
+        class_id : Optional [N] long — per-agent class index (0 or 1).
+                   If provided:
+                     1. Adds a learned per-class embedding to h at the start of each
+                        GNN layer (h is re-conditioned per layer so the embedding is
+                        added once before the per-layer Q/K/V projections).
+                     2. Adds a learned class-pair bias to attention logits before softmax.
+                   If None, behaves exactly as before (backward compat).
 
         Returns
         -------
@@ -113,6 +143,23 @@ class GraphComm(CommModule):
         assert h.shape[-1] == self.hidden_dim, (
             f"GraphComm: h.shape[-1]={h.shape[-1]} != hidden_dim={self.hidden_dim}"
         )
+
+        # Apply per-class embedding BEFORE reshape so we handle both [B,N,D] and
+        # [T,B,N,D] uniformly.  emb: [N, D] broadcast-added across all leading dims.
+        # Applied once at the start (before any GNN layer) to the input h.
+        if class_id is not None:
+            emb = self.class_emb(class_id)  # [N, D]
+            if h.dim() == 4:
+                emb = emb.reshape(1, 1, emb.shape[0], emb.shape[1])  # [1,1,N,D]
+            else:
+                emb = emb.unsqueeze(0)  # [1, N, D]
+            h = h + emb
+
+        # Precompute class-pair bias [N, N] for use inside the layer loop.
+        # class_bias[class_id[i], class_id[j]] — scalar added to scores[b,i,j,head].
+        pair_bias = None
+        if class_id is not None:
+            pair_bias = self.class_bias[class_id[:, None], class_id[None, :]]  # [N, N]
 
         # Handle [T, B, N, D] by reshaping to [T*B, N, D]
         reshaped = False
@@ -162,6 +209,12 @@ class GraphComm(CommModule):
             Q_e = Q.unsqueeze(2)  # [B, N, 1, H, d_k]
             K_e = K.unsqueeze(1)  # [B, 1, N, H, d_k]
             scores = self.tau * (Q_e * K_e).sum(dim=-1)  # [B, N, N, H]
+
+            # Add class-pair bias to scores BEFORE masked_softmax so masked entries
+            # (filled to -inf in masked_softmax) are not resurrected by the bias.
+            # pair_bias: [N, N] -> [1, N, N, 1] -> broadcast to [B, N, N, H]
+            if pair_bias is not None:
+                scores = scores + pair_bias.unsqueeze(0).unsqueeze(-1)
 
             # Expand graph_mask to [B, N, N, H]
             graph_mask_4d = graph_mask.unsqueeze(-1).expand_as(scores)
