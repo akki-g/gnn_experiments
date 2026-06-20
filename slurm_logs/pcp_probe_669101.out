@@ -1,0 +1,38 @@
+[setup] Required Python imports are available.
+[pcp-probe] repo=/lustre/fs1/home/ak565492/gnn_experiments
+[pcp-probe] run_dir=runs/pcp_smoke_20260619_113708
+[pcp-probe] config=configs/pcp_smoke.yaml probe_seed=0
+  identity/seed0: R2_post=0.1799 R2_raw=0.1092 ceil=0.9921 branch=INTERMEDIATE
+  identity/seed1: R2_post=0.1702 R2_raw=0.0887 ceil=0.9912 branch=INTERMEDIATE
+  identity/seed2: R2_post=0.2205 R2_raw=0.1038 ceil=0.9909 branch=INTERMEDIATE
+  broadcast/seed0: R2_post=0.8793 R2_raw=0.0877 ceil=0.9909 branch=HIGH
+  broadcast/seed1: R2_post=0.8628 R2_raw=0.0977 ceil=0.9913 branch=HIGH
+  broadcast/seed2: R2_post=0.8470 R2_raw=0.0946 ceil=0.9914 branch=HIGH
+  broadcast_zm/seed0: R2_post=0.2459 R2_raw=0.1159 ceil=0.9916 branch=INTERMEDIATE
+  broadcast_zm/seed1: R2_post=0.2224 R2_raw=0.0943 ceil=0.9914 branch=INTERMEDIATE
+  broadcast_zm/seed2: R2_post=0.2193 R2_raw=0.0958 ceil=0.9915 branch=INTERMEDIATE
+  attention/seed0: R2_post=0.7625 R2_raw=0.1004 ceil=0.9917 branch=HIGH
+  attention/seed1: R2_post=0.7149 R2_raw=0.0957 ceil=0.9908 branch=HIGH
+  attention/seed2: R2_post=0.7956 R2_raw=0.0937 ceil=0.9909 branch=HIGH
+  attention_zm/seed0: R2_post=0.2194 R2_raw=0.0936 ceil=0.9916 branch=INTERMEDIATE
+  attention_zm/seed1: R2_post=0.2383 R2_raw=0.1109 ceil=0.9911 branch=INTERMEDIATE
+  attention_zm/seed2: R2_post=0.2066 R2_raw=0.0950 ceil=0.9912 branch=INTERMEDIATE
+
+=== per-cell (seed-averaged) ===
+cell             R2_post    R2_raw      ceil   n    missing
+identity          0.1902    0.1006    0.9914   3         []
+broadcast         0.8630    0.0933    0.9912   3         []
+broadcast_zm      0.2292    0.1020    0.9915   3         []
+attention         0.7577    0.0966    0.9911   3         []
+attention_zm      0.2214    0.0998    0.9913   3         []
+
+=== decisive contrast: R2_post(live) - R2_post(_zm) ===
+  attention  0.7577  -  attention_zm  0.2214  =  delta +0.5362
+  broadcast  0.8630  -  broadcast_zm  0.2292  =  delta +0.6338
+  identity (no-channel control) R2_post = 0.1902
+
+Verdict guide: channel CARRIES the signal if live R2_post is high AND
+delta(live - _zm) is large AND _zm/identity R2_post collapse to ~R2_raw.
+
+[probe-sweep] wrote per-run rows to runs/pcp_smoke_20260619_113708/probe_results.csv
+[pcp-probe] done. CSV at runs/pcp_smoke_20260619_113708/probe_results.csv
