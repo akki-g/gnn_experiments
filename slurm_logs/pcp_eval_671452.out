@@ -1,0 +1,34 @@
+[setup] Required Python imports are available.
+[pcp-eval] repo=/lustre/fs1/home/ak565492/gnn_experiments
+[pcp-eval] run_dir=runs/pcp_smoke_v2_20260623_190304 episodes=100
+  identity/seed0: eval_capture=0.0021 (episodes=100)
+  identity/seed1: eval_capture=0.0095 (episodes=100)
+  identity/seed2: eval_capture=0.0013 (episodes=100)
+  broadcast/seed0: eval_capture=0.0045 (episodes=100)
+  broadcast/seed1: eval_capture=0.0451 (episodes=100)
+  broadcast/seed2: eval_capture=0.0193 (episodes=100)
+  broadcast_zm/seed0: eval_capture=0.0000 (episodes=100)
+  broadcast_zm/seed1: eval_capture=0.0036 (episodes=100)
+  broadcast_zm/seed2: eval_capture=0.0008 (episodes=100)
+  attention/seed0: eval_capture=0.0262 (episodes=100)
+  attention/seed1: eval_capture=0.0365 (episodes=100)
+  attention/seed2: eval_capture=0.0618 (episodes=100)
+  attention_zm/seed0: eval_capture=0.0000 (episodes=100)
+  attention_zm/seed1: eval_capture=0.0033 (episodes=100)
+  attention_zm/seed2: eval_capture=0.0072 (episodes=100)
+
+=== per-cell eval_capture (deterministic, 100 episodes) ===
+  identity       0.0043  n=3  seeds=[0.0021, 0.0095, 0.0013]
+  broadcast      0.0230  n=3  seeds=[0.0045, 0.0451, 0.0193]
+  broadcast_zm   0.0015  n=3  seeds=[0.0, 0.0036, 0.0008]
+  attention      0.0415  n=3  seeds=[0.0262, 0.0365, 0.0618]
+  attention_zm   0.0035  n=3  seeds=[0.0, 0.0033, 0.0072]
+
+=== paired bootstrap deltas (eval_capture) ===
+  broadcast  - broadcast_zm  delta=+0.0215 95%CI[+0.0045,+0.0415] CI excludes 0
+  attention  - attention_zm  delta=+0.0380 95%CI[+0.0262,+0.0546] CI excludes 0
+  broadcast  - identity      delta=+0.0187 95%CI[+0.0024,+0.0356] CI excludes 0
+  attention  - identity      delta=+0.0372 95%CI[+0.0241,+0.0605] CI excludes 0
+
+[eval-sweep] wrote runs/pcp_smoke_v2_20260623_190304/eval_results.csv
+[pcp-eval] done. CSV at runs/pcp_smoke_v2_20260623_190304/eval_results.csv
