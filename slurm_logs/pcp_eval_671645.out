@@ -1,0 +1,93 @@
+[setup] Required Python imports are available.
+[pcp-eval] repo=/lustre/fs1/home/ak565492/gnn_experiments
+[pcp-eval] run_dir=runs/pcp_v2_full_20260623_213327 episodes=100
+  attention/seed0: eval_capture=0.0262 (episodes=100)
+  attention/seed1: eval_capture=0.0365 (episodes=100)
+  attention/seed2: eval_capture=0.0618 (episodes=100)
+  attention/seed3: eval_capture=0.0185 (episodes=100)
+  attention/seed4: eval_capture=0.0237 (episodes=100)
+  attention/seed5: eval_capture=0.0213 (episodes=100)
+  attention/seed6: eval_capture=0.0184 (episodes=100)
+  attention/seed7: eval_capture=0.0131 (episodes=100)
+  attention/seed8: eval_capture=0.0109 (episodes=100)
+  attention/seed9: eval_capture=0.0097 (episodes=100)
+  attention_zm/seed0: eval_capture=0.0017 (episodes=100)
+  attention_zm/seed1: eval_capture=0.0065 (episodes=100)
+  attention_zm/seed2: eval_capture=0.0072 (episodes=100)
+  attention_zm/seed3: eval_capture=0.0059 (episodes=100)
+  attention_zm/seed4: eval_capture=0.0088 (episodes=100)
+  attention_zm/seed5: eval_capture=0.0103 (episodes=100)
+  attention_zm/seed6: eval_capture=0.0000 (episodes=100)
+  attention_zm/seed7: eval_capture=0.0000 (episodes=100)
+  attention_zm/seed8: eval_capture=0.0168 (episodes=100)
+  attention_zm/seed9: eval_capture=0.0003 (episodes=100)
+  broadcast/seed0: eval_capture=0.0045 (episodes=100)
+  broadcast/seed1: eval_capture=0.0451 (episodes=100)
+  broadcast/seed2: eval_capture=0.0193 (episodes=100)
+  broadcast/seed3: eval_capture=0.0005 (episodes=100)
+  broadcast/seed4: eval_capture=0.0258 (episodes=100)
+  broadcast/seed5: eval_capture=0.0321 (episodes=100)
+  broadcast/seed6: eval_capture=0.0205 (episodes=100)
+  broadcast/seed7: eval_capture=0.0159 (episodes=100)
+  broadcast/seed8: eval_capture=0.0165 (episodes=100)
+  broadcast/seed9: eval_capture=0.0255 (episodes=100)
+  broadcast_zm/seed0: eval_capture=0.0027 (episodes=100)
+  broadcast_zm/seed1: eval_capture=0.0120 (episodes=100)
+  broadcast_zm/seed2: eval_capture=0.0131 (episodes=100)
+  broadcast_zm/seed3: eval_capture=0.0000 (episodes=100)
+  broadcast_zm/seed4: eval_capture=0.0042 (episodes=100)
+  broadcast_zm/seed5: eval_capture=0.0000 (episodes=100)
+  broadcast_zm/seed6: eval_capture=0.0011 (episodes=100)
+  broadcast_zm/seed7: eval_capture=0.0028 (episodes=100)
+  broadcast_zm/seed8: eval_capture=0.0008 (episodes=100)
+  broadcast_zm/seed9: eval_capture=0.0015 (episodes=100)
+  graph/seed0: eval_capture=0.0160 (episodes=100)
+  graph/seed1: eval_capture=0.0178 (episodes=100)
+  graph/seed2: eval_capture=0.0087 (episodes=100)
+  graph/seed3: eval_capture=0.0193 (episodes=100)
+  graph/seed4: eval_capture=0.0262 (episodes=100)
+  graph/seed5: eval_capture=0.0242 (episodes=100)
+  graph/seed6: eval_capture=0.0213 (episodes=100)
+  graph/seed7: eval_capture=0.0210 (episodes=100)
+  graph/seed8: eval_capture=0.0064 (episodes=100)
+  graph/seed9: eval_capture=0.0210 (episodes=100)
+  graph_zm/seed0: eval_capture=0.0111 (episodes=100)
+  graph_zm/seed1: eval_capture=0.0019 (episodes=100)
+  graph_zm/seed2: eval_capture=0.0097 (episodes=100)
+  graph_zm/seed3: eval_capture=0.0008 (episodes=100)
+  graph_zm/seed4: eval_capture=0.0161 (episodes=100)
+  graph_zm/seed5: eval_capture=0.0025 (episodes=100)
+  graph_zm/seed6: eval_capture=0.0165 (episodes=100)
+  graph_zm/seed7: eval_capture=0.0062 (episodes=100)
+  graph_zm/seed8: eval_capture=0.0101 (episodes=100)
+  graph_zm/seed9: eval_capture=0.0010 (episodes=100)
+  identity/seed0: eval_capture=0.0021 (episodes=100)
+  identity/seed1: eval_capture=0.0095 (episodes=100)
+  identity/seed2: eval_capture=0.0013 (episodes=100)
+  identity/seed3: eval_capture=0.0015 (episodes=100)
+  identity/seed4: eval_capture=0.0016 (episodes=100)
+  identity/seed5: eval_capture=0.0000 (episodes=100)
+  identity/seed6: eval_capture=0.0086 (episodes=100)
+  identity/seed7: eval_capture=0.0089 (episodes=100)
+  identity/seed8: eval_capture=0.0100 (episodes=100)
+  identity/seed9: eval_capture=0.0054 (episodes=100)
+
+=== per-cell eval_capture (deterministic, 100 episodes) ===
+  attention      0.0240  n=10  seeds=[0.0262, 0.0365, 0.0618, 0.0185, 0.0237, 0.0213, 0.0184, 0.0131, 0.0109, 0.0097]
+  attention_zm   0.0057  n=10  seeds=[0.0017, 0.0065, 0.0072, 0.0059, 0.0088, 0.0103, 0.0, 0.0, 0.0168, 0.0003]
+  broadcast      0.0206  n=10  seeds=[0.0045, 0.0451, 0.0193, 0.0005, 0.0258, 0.0321, 0.0205, 0.0159, 0.0165, 0.0255]
+  broadcast_zm   0.0038  n=10  seeds=[0.0027, 0.012, 0.0131, 0.0, 0.0042, 0.0, 0.0011, 0.0028, 0.0008, 0.0015]
+  graph          0.0182  n=10  seeds=[0.016, 0.0178, 0.0087, 0.0193, 0.0262, 0.0242, 0.0213, 0.021, 0.0064, 0.021]
+  graph_zm       0.0076  n=10  seeds=[0.0111, 0.0019, 0.0097, 0.0008, 0.0161, 0.0025, 0.0165, 0.0062, 0.0101, 0.001]
+  identity       0.0049  n=10  seeds=[0.0021, 0.0095, 0.0013, 0.0015, 0.0016, 0.0, 0.0086, 0.0089, 0.01, 0.0054]
+
+=== paired bootstrap deltas (eval_capture) ===
+  attention  - attention_zm  delta=+0.0183 95%CI[+0.0098,+0.0282] CI excludes 0
+  attention  - identity      delta=+0.0191 95%CI[+0.0101,+0.0303] CI excludes 0
+  broadcast  - broadcast_zm  delta=+0.0167 95%CI[+0.0100,+0.0236] CI excludes 0
+  broadcast  - identity      delta=+0.0157 95%CI[+0.0086,+0.0232] CI excludes 0
+  graph      - graph_zm      delta=+0.0106 95%CI[+0.0053,+0.0157] CI excludes 0
+  graph      - identity      delta=+0.0133 95%CI[+0.0083,+0.0180] CI excludes 0
+
+[eval-sweep] wrote runs/pcp_v2_full_20260623_213327/eval_results.csv
+[pcp-eval] done. CSV at runs/pcp_v2_full_20260623_213327/eval_results.csv

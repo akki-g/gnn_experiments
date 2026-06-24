@@ -1,0 +1,96 @@
+[setup] Required Python imports are available.
+[pcp-probe] repo=/lustre/fs1/home/ak565492/gnn_experiments
+[pcp-probe] run_dir=runs/pcp_v2_full_20260623_213327
+[pcp-probe] config=configs/pcp_smoke.yaml probe_seed=0
+  attention/seed0: R2_post=0.7796 R2_raw=0.0947 ceil=0.9914 branch=HIGH
+  attention/seed1: R2_post=0.7487 R2_raw=0.0965 ceil=0.9911 branch=HIGH
+  attention/seed2: R2_post=0.7266 R2_raw=0.0910 ceil=0.9916 branch=HIGH
+  attention/seed3: R2_post=0.7920 R2_raw=0.0999 ceil=0.9915 branch=HIGH
+  attention/seed4: R2_post=0.7278 R2_raw=0.0956 ceil=0.9921 branch=HIGH
+  attention/seed5: R2_post=0.7238 R2_raw=0.1030 ceil=0.9914 branch=HIGH
+  attention/seed6: R2_post=0.7272 R2_raw=0.0988 ceil=0.9917 branch=HIGH
+  attention/seed7: R2_post=0.7804 R2_raw=0.0919 ceil=0.9910 branch=HIGH
+  attention/seed8: R2_post=0.7790 R2_raw=0.0902 ceil=0.9920 branch=HIGH
+  attention/seed9: R2_post=0.7061 R2_raw=0.1032 ceil=0.9915 branch=HIGH
+  attention_zm/seed0: R2_post=0.1521 R2_raw=0.0937 ceil=0.9913 branch=INTERMEDIATE
+  attention_zm/seed1: R2_post=0.1969 R2_raw=0.1111 ceil=0.9916 branch=INTERMEDIATE
+  attention_zm/seed2: R2_post=0.1656 R2_raw=0.1094 ceil=0.9916 branch=INTERMEDIATE
+  attention_zm/seed3: R2_post=0.2084 R2_raw=0.1091 ceil=0.9919 branch=INTERMEDIATE
+  attention_zm/seed4: R2_post=0.2153 R2_raw=0.0975 ceil=0.9915 branch=INTERMEDIATE
+  attention_zm/seed5: R2_post=0.1624 R2_raw=0.0945 ceil=0.9918 branch=INTERMEDIATE
+  attention_zm/seed6: R2_post=0.1519 R2_raw=0.0882 ceil=0.9912 branch=INTERMEDIATE
+  attention_zm/seed7: R2_post=0.1877 R2_raw=0.1041 ceil=0.9913 branch=INTERMEDIATE
+  attention_zm/seed8: R2_post=0.1793 R2_raw=0.0924 ceil=0.9918 branch=INTERMEDIATE
+  attention_zm/seed9: R2_post=0.1576 R2_raw=0.0831 ceil=0.9917 branch=INTERMEDIATE
+  broadcast/seed0: R2_post=0.8571 R2_raw=0.0991 ceil=0.9921 branch=HIGH
+  broadcast/seed1: R2_post=0.9008 R2_raw=0.0968 ceil=0.9917 branch=HIGH
+  broadcast/seed2: R2_post=0.8876 R2_raw=0.0965 ceil=0.9912 branch=HIGH
+  broadcast/seed3: R2_post=0.8549 R2_raw=0.0930 ceil=0.9909 branch=HIGH
+  broadcast/seed4: R2_post=0.8671 R2_raw=0.0974 ceil=0.9908 branch=HIGH
+  broadcast/seed5: R2_post=0.8817 R2_raw=0.0995 ceil=0.9912 branch=HIGH
+  broadcast/seed6: R2_post=0.8829 R2_raw=0.1105 ceil=0.9911 branch=HIGH
+  broadcast/seed7: R2_post=0.8798 R2_raw=0.0938 ceil=0.9914 branch=HIGH
+  broadcast/seed8: R2_post=0.8633 R2_raw=0.1029 ceil=0.9917 branch=HIGH
+  broadcast/seed9: R2_post=0.8923 R2_raw=0.1024 ceil=0.9913 branch=HIGH
+  broadcast_zm/seed0: R2_post=0.2334 R2_raw=0.0976 ceil=0.9911 branch=INTERMEDIATE
+  broadcast_zm/seed1: R2_post=0.1814 R2_raw=0.1083 ceil=0.9909 branch=INTERMEDIATE
+  broadcast_zm/seed2: R2_post=0.2184 R2_raw=0.0963 ceil=0.9903 branch=INTERMEDIATE
+  broadcast_zm/seed3: R2_post=0.1705 R2_raw=0.0910 ceil=0.9918 branch=INTERMEDIATE
+  broadcast_zm/seed4: R2_post=0.2000 R2_raw=0.1055 ceil=0.9917 branch=INTERMEDIATE
+  broadcast_zm/seed5: R2_post=0.2185 R2_raw=0.1018 ceil=0.9916 branch=INTERMEDIATE
+  broadcast_zm/seed6: R2_post=0.2464 R2_raw=0.0883 ceil=0.9915 branch=INTERMEDIATE
+  broadcast_zm/seed7: R2_post=0.2318 R2_raw=0.0973 ceil=0.9911 branch=INTERMEDIATE
+  broadcast_zm/seed8: R2_post=0.2084 R2_raw=0.1107 ceil=0.9912 branch=INTERMEDIATE
+  broadcast_zm/seed9: R2_post=0.1741 R2_raw=0.1064 ceil=0.9916 branch=INTERMEDIATE
+  graph/seed0: R2_post=0.8354 R2_raw=0.0905 ceil=0.9915 branch=HIGH
+  graph/seed1: R2_post=0.8735 R2_raw=0.0916 ceil=0.9916 branch=HIGH
+  graph/seed2: R2_post=0.8565 R2_raw=0.0922 ceil=0.9912 branch=HIGH
+  graph/seed3: R2_post=0.8707 R2_raw=0.1017 ceil=0.9912 branch=HIGH
+  graph/seed4: R2_post=0.8568 R2_raw=0.0985 ceil=0.9911 branch=HIGH
+  graph/seed5: R2_post=0.8711 R2_raw=0.0956 ceil=0.9914 branch=HIGH
+  graph/seed6: R2_post=0.8607 R2_raw=0.0955 ceil=0.9912 branch=HIGH
+  graph/seed7: R2_post=0.8750 R2_raw=0.1118 ceil=0.9919 branch=HIGH
+  graph/seed8: R2_post=0.8839 R2_raw=0.0909 ceil=0.9916 branch=HIGH
+  graph/seed9: R2_post=0.8385 R2_raw=0.1125 ceil=0.9916 branch=HIGH
+  graph_zm/seed0: R2_post=0.1601 R2_raw=0.0962 ceil=0.9903 branch=INTERMEDIATE
+  graph_zm/seed1: R2_post=0.2265 R2_raw=0.0923 ceil=0.9917 branch=INTERMEDIATE
+  graph_zm/seed2: R2_post=0.1944 R2_raw=0.0961 ceil=0.9919 branch=INTERMEDIATE
+  graph_zm/seed3: R2_post=0.2093 R2_raw=0.0899 ceil=0.9914 branch=INTERMEDIATE
+  graph_zm/seed4: R2_post=0.1807 R2_raw=0.0997 ceil=0.9917 branch=INTERMEDIATE
+  graph_zm/seed5: R2_post=0.2393 R2_raw=0.0882 ceil=0.9904 branch=INTERMEDIATE
+  graph_zm/seed6: R2_post=0.2695 R2_raw=0.1071 ceil=0.9920 branch=INTERMEDIATE
+  graph_zm/seed7: R2_post=0.2666 R2_raw=0.0980 ceil=0.9911 branch=INTERMEDIATE
+  graph_zm/seed8: R2_post=0.1975 R2_raw=0.0995 ceil=0.9906 branch=INTERMEDIATE
+  graph_zm/seed9: R2_post=0.2244 R2_raw=0.0989 ceil=0.9916 branch=INTERMEDIATE
+  identity/seed0: R2_post=0.2166 R2_raw=0.0938 ceil=0.9918 branch=INTERMEDIATE
+  identity/seed1: R2_post=0.2086 R2_raw=0.1028 ceil=0.9910 branch=INTERMEDIATE
+  identity/seed2: R2_post=0.2093 R2_raw=0.1088 ceil=0.9916 branch=INTERMEDIATE
+  identity/seed3: R2_post=0.1842 R2_raw=0.1194 ceil=0.9911 branch=INTERMEDIATE
+  identity/seed4: R2_post=0.1921 R2_raw=0.0994 ceil=0.9915 branch=INTERMEDIATE
+  identity/seed5: R2_post=0.1841 R2_raw=0.1009 ceil=0.9903 branch=INTERMEDIATE
+  identity/seed6: R2_post=0.2272 R2_raw=0.1000 ceil=0.9920 branch=INTERMEDIATE
+  identity/seed7: R2_post=0.1676 R2_raw=0.0878 ceil=0.9914 branch=INTERMEDIATE
+  identity/seed8: R2_post=0.1757 R2_raw=0.0985 ceil=0.9904 branch=INTERMEDIATE
+  identity/seed9: R2_post=0.2142 R2_raw=0.0978 ceil=0.9916 branch=INTERMEDIATE
+
+=== per-cell (seed-averaged) ===
+cell             R2_post    R2_raw      ceil   n    missing
+attention         0.7491    0.0965    0.9915  10         []
+attention_zm      0.1777    0.0983    0.9916  10         []
+broadcast         0.8768    0.0992    0.9913  10         []
+broadcast_zm      0.2083    0.1003    0.9913  10         []
+graph             0.8622    0.0981    0.9914  10         []
+graph_zm          0.2168    0.0966    0.9913  10         []
+identity          0.1980    0.1009    0.9913  10         []
+
+=== decisive contrast: R2_post(live) - R2_post(_zm) ===
+  attention  0.7491  -  attention_zm  0.1777  =  delta +0.5714
+  broadcast  0.8768  -  broadcast_zm  0.2083  =  delta +0.6685
+  graph      0.8622  -  graph_zm      0.2168  =  delta +0.6454
+  identity (no-channel control) R2_post = 0.1980
+
+Verdict guide: channel CARRIES the signal if live R2_post is high AND
+delta(live - _zm) is large AND _zm/identity R2_post collapse to ~R2_raw.
+
+[probe-sweep] wrote per-run rows to runs/pcp_v2_full_20260623_213327/probe_results.csv
+[pcp-probe] done. CSV at runs/pcp_v2_full_20260623_213327/probe_results.csv
