@@ -31,8 +31,31 @@ from backbone.utils import load_yaml_config
 from backbone import MAPPO
 from experiments.train_vmas_mappo import _build_comm_module, _evaluate_deterministic_policy
 
-CELLS = ["identity", "broadcast", "broadcast_zm", "attention", "attention_zm"]
-SEEDS = [0, 1, 2]
+def discover_cells(run_dir: Path):
+    """Cells = subdirs containing seed* dirs. Auto-handles 5 or 7 cells, any seed count."""
+    return sorted(
+        p.name for p in run_dir.iterdir()
+        if p.is_dir() and any(d.is_dir() and d.name.startswith("seed") for d in p.iterdir())
+    )
+
+
+def discover_seeds(run_dir: Path, cell: str):
+    return sorted(
+        int(d.name[4:]) for d in (run_dir / cell).iterdir()
+        if d.is_dir() and d.name.startswith("seed") and d.name[4:].isdigit()
+    )
+
+
+def build_contrasts(cells):
+    """(live, control) pairs: each comm module vs its _zm twin and vs identity."""
+    comm_mods = [c for c in cells if c != "identity" and not c.endswith("_zm")]
+    out = []
+    for m in comm_mods:
+        if f"{m}_zm" in cells:
+            out.append((m, f"{m}_zm"))
+        if "identity" in cells:
+            out.append((m, "identity"))
+    return out
 
 
 def load_model(ckpt: str, device_str: str):
@@ -67,11 +90,15 @@ def main():
     args = ap.parse_args()
 
     run_dir = Path(args.run_dir)
-    per = {c: [] for c in CELLS}
+    cells = discover_cells(run_dir)
+    if not cells:
+        sys.stderr.write(f"[err] no cell/seed dirs found under {run_dir}\n")
+        return
+    per = {c: [] for c in cells}
     rows = []
 
-    for c in CELLS:
-        for s in SEEDS:
+    for c in cells:
+        for s in discover_seeds(run_dir, c):
             ckpt = run_dir / c / f"seed{s}" / "ckpt" / args.ckpt_name
             if not ckpt.exists():
                 rows.append(dict(cell=c, seed=s, eval_capture="", eval_dist="", eval_return="", note="MISSING_CKPT"))
@@ -94,12 +121,12 @@ def main():
         return sum(xs) / len(xs) if xs else float("nan")
 
     print(f"\n=== per-cell eval_capture (deterministic, {args.episodes} episodes) ===")
-    for c in CELLS:
+    for c in cells:
         print(f"  {c:<14} {mean(per[c]):.4f}  n={len(per[c])}  seeds={[round(x,4) for x in per[c]]}")
 
     random.seed(0)
     def boot(live, ctrl, n=20000):
-        a, b = per[live], per[ctrl]
+        a, b = per.get(live, []), per.get(ctrl, [])
         if not a or not b:
             return float("nan"), float("nan"), float("nan")
         pairs = list(zip(a, b))
@@ -111,8 +138,7 @@ def main():
         return mean([x - y for x, y in pairs]), ds[int(0.025 * n)], ds[int(0.975 * n)]
 
     print("\n=== paired bootstrap deltas (eval_capture) ===")
-    for live, ctrl in [("broadcast", "broadcast_zm"), ("attention", "attention_zm"),
-                       ("broadcast", "identity"), ("attention", "identity")]:
+    for live, ctrl in build_contrasts(cells):
         dd, lo, hi = boot(live, ctrl)
         tag = "CI excludes 0" if (lo > 0 or hi < 0) else "CI includes 0"
         print(f"  {live:<10} - {ctrl:<13} delta={dd:+.4f} 95%CI[{lo:+.4f},{hi:+.4f}] {tag}")

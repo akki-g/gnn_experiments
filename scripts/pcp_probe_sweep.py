@@ -34,11 +34,36 @@ import sys
 from pathlib import Path
 from statistics import mean
 
-CELLS = ["identity", "broadcast", "broadcast_zm", "attention", "attention_zm"]
-SEEDS = [0, 1, 2]
 LINE_RE = re.compile(
     r"R2_c1_post=([-\d.]+)\s+R2_c1_raw=([-\d.]+)\s+R2_c0_local\(ceil\)=([-\d.]+)\s+branch=(\w+)"
 )
+
+
+def discover_cells(run_dir: Path):
+    """Cells = subdirs containing seed* dirs. Auto-handles 5 or 7 cells, any seed count."""
+    return sorted(
+        p.name for p in run_dir.iterdir()
+        if p.is_dir() and any(d.is_dir() and d.name.startswith("seed") for d in p.iterdir())
+    )
+
+
+def discover_seeds(run_dir: Path, cell: str):
+    return sorted(
+        int(d.name[4:]) for d in (run_dir / cell).iterdir()
+        if d.is_dir() and d.name.startswith("seed") and d.name[4:].isdigit()
+    )
+
+
+def build_contrasts(cells):
+    """(live, control) pairs: each comm module vs its _zm twin and vs identity."""
+    comm_mods = [c for c in cells if c != "identity" and not c.endswith("_zm")]
+    out = []
+    for m in comm_mods:
+        if f"{m}_zm" in cells:
+            out.append((m, f"{m}_zm"))
+        if "identity" in cells:
+            out.append((m, "identity"))
+    return out
 
 
 def run_one(config: str, ckpt: Path, probe_seed: int):
@@ -68,11 +93,15 @@ def main():
     args = ap.parse_args()
 
     run_dir = Path(args.run_dir)
-    per_cell = {c: {"post": [], "raw": [], "ceil": [], "branch": [], "missing": []} for c in CELLS}
+    cells = discover_cells(run_dir)
+    if not cells:
+        sys.stderr.write(f"[err] no cell/seed dirs found under {run_dir}\n")
+        return
+    per_cell = {c: {"post": [], "raw": [], "ceil": [], "branch": [], "missing": []} for c in cells}
     rows = []  # per-(cell,seed) for CSV
 
-    for cell in CELLS:
-        for s in SEEDS:
+    for cell in cells:
+        for s in discover_seeds(run_dir, cell):
             ckpt = run_dir / cell / f"seed{s}" / "ckpt" / args.ckpt_name
             if not ckpt.exists():
                 per_cell[cell]["missing"].append(s)
@@ -97,17 +126,20 @@ def main():
 
     print("\n=== per-cell (seed-averaged) ===")
     print(f"{'cell':<14} {'R2_post':>9} {'R2_raw':>9} {'ceil':>9} {'n':>3} {'missing':>10}")
-    for cell in CELLS:
+    for cell in cells:
         d = per_cell[cell]
         print(f"{cell:<14} {avg(d['post']):>9.4f} {avg(d['raw']):>9.4f} {avg(d['ceil']):>9.4f} "
               f"{len(d['post']):>3} {str(d['missing']):>10}")
 
-    # Decisive deltas: live - zm
+    # Decisive deltas: live - zm (and a note vs identity)
     print("\n=== decisive contrast: R2_post(live) - R2_post(_zm) ===")
-    for live, zm in [("attention", "attention_zm"), ("broadcast", "broadcast_zm")]:
-        lv, zv = avg(per_cell[live]["post"]), avg(per_cell[zm]["post"])
-        print(f"  {live:<10} {lv:.4f}  -  {zm:<13} {zv:.4f}  =  delta {lv - zv:+.4f}")
-    print(f"  identity (no-channel control) R2_post = {avg(per_cell['identity']['post']):.4f}")
+    for live, ctrl in build_contrasts(cells):
+        if not ctrl.endswith("_zm"):
+            continue
+        lv, zv = avg(per_cell[live]["post"]), avg(per_cell[ctrl]["post"])
+        print(f"  {live:<10} {lv:.4f}  -  {ctrl:<13} {zv:.4f}  =  delta {lv - zv:+.4f}")
+    if "identity" in per_cell:
+        print(f"  identity (no-channel control) R2_post = {avg(per_cell['identity']['post']):.4f}")
     print("\nVerdict guide: channel CARRIES the signal if live R2_post is high AND")
     print("delta(live - _zm) is large AND _zm/identity R2_post collapse to ~R2_raw.")
 
