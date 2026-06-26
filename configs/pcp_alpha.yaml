@@ -1,0 +1,102 @@
+# PCP alpha-continuum sweep base config.
+#
+# Identical to configs/pcp_smoke_v2.yaml (capture_radius=1.0, entropy floor) EXCEPT
+# that env.alpha (the capturer observation-radius fraction) is the SWEPT axis here —
+# the sbatch overrides it per alpha cell. This converts the binary PCP-vs-PP contrast
+# into a continuum: comm necessity is expected to decay as alpha 0 -> 1 because
+# capturers can increasingly see the prey themselves.
+#
+#   alpha=0.0  -> capturers hard-blind  -> comm a structural precondition (necessity high)
+#   alpha=1.0  -> capturers full-sight  -> comm redundant (necessity ~0)
+#
+# Detectors (class 0) stay full-sight regardless of alpha; only capturer sight varies.
+# Report the GAP (live - control) vs alpha, NOT absolute capture (the task gets easier
+# for everyone as alpha rises).
+#
+# "Smoke" continuum = small grid (subset of cells, 3 seeds), full 2M-step budget.
+
+algo:
+  name: "mappo"
+  lr: 7.0e-4
+  lr_final: 1.0e-5
+  reward_shift: 0.0
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_eps: 0.2
+  value_clip_eps: 0.2
+  entropy_coef: 0.01
+  entropy_coef_final: 0.01    # entropy floor (matches pcp_smoke_v2)
+  value_coef: 0.5
+  max_grad_norm: 10.0
+  ppo_epochs: 10
+  num_minibatches: 1
+  normalize_advantages: true
+  share_encoder: true
+  use_value_norm: true
+
+runtime:
+  rollout_length: 100
+  num_envs: 32
+  total_env_steps: 2000000
+  checkpoint_interval: 20
+  eval_interval: 20
+
+model:
+  hidden_dim: 64
+  encoder_layers: 2
+  actor_layers: 1
+  critic_layers: 2
+
+# Comm slot — overridden per-cell by the sbatch sweep.
+comm:
+  module: "identity"
+  topology: "knn"
+  knn_k: 4
+  symmetrize: "or"
+  zero_messages: false
+
+env:
+  name: "pcp"
+  kind: "pcp"
+  num_agents: 5
+  num_full_sight: 3        # 3 detectors (class 0), 2 capturers (class 1)
+  alpha: 0.0               # SWEPT AXIS — overridden per cell by the sbatch
+  target_speed: 0.0        # REQUIRED: stationary prey
+  max_steps: 100
+  include_timestep_in_state: true
+
+  observe_teammates: false
+
+  world_size: 12.0
+  move_step: 0.2
+  capture_radius: 1.0      # eased (matches pcp_smoke_v2)
+  capture_k: 1
+
+  detect_radius: 2.0
+  detection_window: 5
+
+  dist_coef: 0.1
+  step_penalty: 0.01
+  capture_bonus: 10.0
+
+  primary_diagnostic: "pursuer_target_distance"
+  secondary_diagnostic: "capture"
+  task_score_kind: "pursuit"
+
+logging:
+  log_dir: "runs/pcp_alpha"
+  run_label: "pcp_alpha_default"
+  wandb: false
+  wandb_project: "marl-thesis"
+  console_log_interval: 1
+  save_checkpoints: true
+
+render:
+  mode: "off"
+  eval_seed: 1000
+  episodes: 2
+  fps: 15
+  frame_size: 512
+
+seed: 0
+device: "auto"

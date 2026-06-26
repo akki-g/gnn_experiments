@@ -67,14 +67,17 @@ def test_construction_defaults_works():
     assert env.detection_window == 5
 
 
-def test_construction_alpha_nonzero_raises():
-    with pytest.raises(ValueError, match="alpha=0.0"):
-        _make_env(alpha=0.5)
+def test_construction_alpha_in_range_works():
+    # alpha in [0,1] is the observation-heterogeneity continuum axis — all valid.
+    for a in (0.0, 0.25, 0.5, 1.0):
+        env = _make_env(alpha=a)
+        assert env.alpha == a
 
 
-def test_construction_alpha_one_raises():
-    with pytest.raises(ValueError, match="alpha=0.0"):
-        _make_env(alpha=1.0)
+def test_construction_alpha_out_of_range_raises():
+    for a in (-0.1, 1.5):
+        with pytest.raises(ValueError, match=r"must be in"):
+            _make_env(alpha=a)
 
 
 def test_construction_observe_teammates_true_raises():
@@ -166,6 +169,30 @@ def test_detector_obs_changes_with_prey_position():
         "Detector (class-0) obs must change when prey moves. "
         "If this fails, the isolation test above is vacuous."
     )
+
+
+def test_capturer_obs_continuum_alpha_gt_zero():
+    """
+    Continuum axis: at alpha>0 a capturer's obs MUST become prey-dependent (within
+    its alpha*r_max radius) — the intended relaxation of isolation, not a leak.
+    Complements test_capturer_obs_independent_of_prey_position (alpha=0).
+    """
+    B, N = 4, 5
+    num_full_sight = 3  # capturers = indices 3,4
+    env = _make_env(num_envs=B, num_agents=N, num_full_sight=num_full_sight, alpha=0.5)
+    env.reset()
+    env.pursuer_pos = torch.zeros(B, N, 2)  # all capturers at origin
+
+    env.target_pos = torch.zeros(B, 2)      # prey on top of capturer (visible at alpha>0)
+    obs_a = env._build_obs()
+    env.target_pos = torch.full((B, 2), 1.0)  # prey nearby (within alpha*r_max)
+    obs_b = env._build_obs()
+
+    for n in range(num_full_sight, N):  # capturers
+        assert not torch.equal(obs_a[:, n, :], obs_b[:, n, :]), (
+            f"At alpha=0.5 capturer {n} obs must vary with prey position (continuum). "
+            "Isolation is relaxed by exactly alpha — this is the knob, not a bug."
+        )
 
 
 # ---------------------------------------------------------------------------

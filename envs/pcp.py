@@ -5,7 +5,16 @@ PCP semantics
 -------------
 Two agent classes, determined by class_id (same as PursuitEnv):
   class 0 = detectors  (full-sight, use r_max; observe the prey)
-  class 1 = capturers  (hard-blind, alpha MUST be 0.0; cannot see prey in obs)
+  class 1 = capturers  (observation radius = alpha * r_max; alpha=0.0 default => hard-blind)
+
+alpha = capturer observation-radius fraction (the OBSERVATION-HETEROGENEITY axis):
+  alpha=0.0 (default): capturers cannot see the prey at all -> communication is a
+    STRUCTURAL precondition for capture (the canonical PCP comm-necessity regime).
+  alpha in (0,1]: capturers see the prey within alpha*r_max themselves, so they
+    depend on the detector relay less and less. Sweeping alpha 0 -> 1 turns the
+    binary PCP-vs-PP contrast into a continuum: comm necessity is expected to decay
+    smoothly toward alpha=1. Detectors (class 0) are ALWAYS full-sight regardless
+    of alpha; only capturer sight varies.
 
 Prey (target): STATIONARY (target_speed=0.0, enforced).
 
@@ -25,9 +34,12 @@ Reward (Scheme B):
   - team_reward     = dist_contrib - step_penalty + capture_contrib
 
 Observation isolation:
-  - alpha MUST be 0.0 (capturers are structurally blind to prey).
-  - observe_teammates MUST be False (no cross-agent position leakage).
-  - Capturers' obs are byte-identical regardless of prey position.
+  - At alpha=0.0 (default): capturers are structurally blind; their obs are
+    byte-identical regardless of prey position (the strict-isolation regime that
+    makes comm the ONLY route to prey location).
+  - At alpha>0: isolation is intentionally relaxed by exactly alpha — capturer obs
+    becomes prey-dependent within alpha*r_max. This is the continuum knob, not a leak.
+  - observe_teammates MUST be False regardless (no cross-agent position leakage).
 
 CONSTRUCT-VALIDITY caveat:
   PCP capture is position+class+detection-window based, not an explicit capture
@@ -73,20 +85,25 @@ class PCPEnv(PursuitEnv):
         **kwargs         : forwarded to PursuitEnv.__init__.
 
         Enforced constraints (ValueError/AssertionError on violation):
-          - alpha must be 0.0 (PCP requires capturer hard-blindness).
+          - alpha must be in [0, 1] (capturer observation-radius fraction; default 0.0
+            = hard-blind canonical regime; >0 = observation-heterogeneity continuum).
           - target_speed must be 0.0 (prey is stationary in PCP).
           - observe_teammates must be False (no inter-agent position leakage).
           - num_full_sight >= 1 (need at least 1 detector).
           - num_agents - num_full_sight >= 1 (need at least 1 capturer).
         """
         # --- Pre-construction guards ---
-        alpha = float(kwargs.get("alpha", 1.0))
-        if alpha != 0.0:
+        # alpha = capturer (class-1) observation-radius fraction. Default 0.0 keeps
+        # the canonical hard-blind comm-necessity regime so existing configs are
+        # unchanged; alpha in (0,1] enables the observation-heterogeneity continuum
+        # (capturers see the prey within alpha*r_max; detectors stay full-sight).
+        alpha = float(kwargs.get("alpha", 0.0))
+        if not (0.0 <= alpha <= 1.0):
             raise ValueError(
-                f"PCPEnv requires alpha=0.0 for structural capturer blindness "
-                f"(capturers are class 1; alpha=0 => prey features zeroed). "
-                f"Got alpha={alpha}."
+                f"PCPEnv alpha (capturer observation-radius fraction) must be in "
+                f"[0, 1], got alpha={alpha}."
             )
+        kwargs["alpha"] = alpha  # make the default explicit for super().__init__
 
         # Force stationary prey before calling super().__init__
         kwargs["target_speed"] = 0.0
@@ -121,8 +138,8 @@ class PCPEnv(PursuitEnv):
         assert self.target_speed == 0.0, (
             f"PCP requires stationary prey (target_speed=0.0), got {self.target_speed}"
         )
-        assert self.alpha == 0.0, (
-            f"PCP requires alpha=0.0, got {self.alpha}"
+        assert 0.0 <= self.alpha <= 1.0, (
+            f"PCP capturer alpha must be in [0,1], got {self.alpha}"
         )
         assert not self.observe_teammates, (
             "PCP requires observe_teammates=False"
