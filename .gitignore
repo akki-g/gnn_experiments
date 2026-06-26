@@ -40,3 +40,7 @@ CLAUDE.md
 old/
 current_task/
 old_runs/
+
+
+*.md
+!README.md
