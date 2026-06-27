@@ -1,0 +1,75 @@
+algo:
+  double_q: true
+  eps_anneal_steps: 50000
+  eps_end: 0.05
+  eps_start: 1.0
+  gamma: 0.99
+  grad_clip: 10.0
+  hypernet_embed: 64
+  lr: 0.0005
+  mixing_embed_dim: 32
+  name: qmix
+  target_update_interval: 200
+comm:
+  knn_k: 4
+  module: broadcast
+  rounds: 1
+  symmetrize: or
+  topology: knn
+  zero_messages: false
+device: auto
+env:
+  alpha: 0.0
+  capture_bonus: 10.0
+  capture_k: 1
+  capture_radius: 1.0
+  detect_radius: 2.0
+  detection_window: 5
+  dist_coef: 0.1
+  include_timestep_in_state: true
+  kind: pcp
+  max_steps: 100
+  move_step: 0.2
+  name: pcp
+  num_agents: 5
+  num_full_sight: 3
+  observe_teammates: false
+  primary_diagnostic: pursuer_target_distance
+  secondary_diagnostic: capture
+  step_penalty: 0.01
+  target_speed: 0.0
+  task_score_kind: pursuit
+  world_size: 12.0
+logging:
+  console_log_interval: 1
+  log_dir: runs/qmix_pcp_smoke_20260627_142223/broadcast
+  run_dir: runs/qmix_pcp_smoke_20260627_142223/broadcast/seed2
+  run_label: broadcast_seed2
+  save_checkpoints: true
+  save_config: true
+  save_console_log: false
+  save_metrics_json: false
+  wandb: false
+  wandb_project: marl-thesis
+model:
+  actor_layers: 1
+  critic_layers: 2
+  encoder_layers: 2
+  head_layers: 1
+  hidden_dim: 64
+render:
+  episodes: 2
+  eval_seed: 1000
+  fps: 15
+  frame_size: 512
+  mode: 'off'
+runtime:
+  batch_size: 256
+  checkpoint_interval: 250000
+  eval_interval: 25000
+  num_envs: 32
+  replay_capacity: 100000
+  total_env_steps: 500000
+  train_interval: 1
+  warmup_steps: 5000
+seed: 2

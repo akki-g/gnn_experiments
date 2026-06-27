@@ -1,0 +1,49 @@
+[setup] Required Python imports are available.
+[setup] Required Python imports are available.
+=== qmix_pcp_smoke task 2/9: identity seed2 (git 814efee) ===
+Run dir: runs/qmix_pcp_smoke_20260627_142223/identity/seed2  Start: Sat Jun 27 14:22:24 EDT 2026
+Sat Jun 27 14:22:24 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-16GB           Off |   00000000:D8:00.0 Off |                    0 |
+| N/A   30C    P0             25W /  250W |       0MiB /  16384MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+[env] kind=pcp name=pcp n_agents=5 obs_dim=5 action_dim=5 state_dim=13 num_envs=32
+[train] QMIX start: total_iters=15625 B=32 device=cuda:0 seed=2 warmup=5000 batch=256 target_update(updates)=200 render=off
+step=   25024 ep_ret=-90.130 eval_ret=-76.173 pursuer_target_distance=6.765 capture=0.000 cap=0.000 td_loss=0.1533 q_tot=+11.856 tgt=+11.850 gnorm=35.63 w_min=1.30e-08 eps=0.525 buf=25024 upd=626 seed=2
+step=   50016 ep_ret=-110.168 eval_ret=-5.951 pursuer_target_distance=7.409 capture=0.000 cap=0.000 td_loss=0.1092 q_tot=+12.431 tgt=+12.425 gnorm=32.65 w_min=1.86e-09 eps=0.050 buf=50016 upd=1407 seed=2
+step=   75008 ep_ret=-78.980 eval_ret=-75.701 pursuer_target_distance=7.179 capture=0.004 cap=0.016 td_loss=0.1996 q_tot=+11.909 tgt=+11.907 gnorm=45.58 w_min=0.00e+00 eps=0.050 buf=75008 upd=2188 seed=2
+step=  100000 ep_ret=-75.721 eval_ret=-69.658 pursuer_target_distance=6.052 capture=0.000 cap=0.000 td_loss=0.2431 q_tot=+10.124 tgt=+10.121 gnorm=50.73 w_min=5.12e-09 eps=0.050 buf=100000 upd=2969 seed=2
+step=  125024 ep_ret=-62.295 eval_ret=-63.461 pursuer_target_distance=4.874 capture=0.000 cap=0.004 td_loss=0.2511 q_tot=+8.721 tgt=+8.717 gnorm=53.14 w_min=5.59e-09 eps=0.050 buf=100000 upd=3751 seed=2
+step=  150016 ep_ret=-57.238 eval_ret=-36.962 pursuer_target_distance=4.149 capture=0.000 cap=0.004 td_loss=0.2871 q_tot=+7.734 tgt=+7.732 gnorm=59.22 w_min=9.31e-10 eps=0.050 buf=100000 upd=4532 seed=2
+step=  175008 ep_ret=-32.316 eval_ret=-34.316 pursuer_target_distance=3.472 capture=0.002 cap=0.020 td_loss=0.2933 q_tot=+7.315 tgt=+7.312 gnorm=59.86 w_min=2.79e-08 eps=0.050 buf=100000 upd=5313 seed=2
+step=  200000 ep_ret=-25.928 eval_ret=-19.347 pursuer_target_distance=3.489 capture=0.002 cap=0.016 td_loss=0.3255 q_tot=+7.304 tgt=+7.301 gnorm=61.37 w_min=7.45e-09 eps=0.050 buf=100000 upd=6094 seed=2
+step=  225024 ep_ret=-39.911 eval_ret=-25.930 pursuer_target_distance=2.896 capture=0.003 cap=0.039 td_loss=0.4128 q_tot=+7.219 tgt=+7.218 gnorm=70.35 w_min=1.12e-08 eps=0.050 buf=100000 upd=6876 seed=2
+step=  250016 ep_ret=-22.873 eval_ret=-15.960 pursuer_target_distance=2.802 capture=0.004 cap=0.027 td_loss=0.5061 q_tot=+7.928 tgt=+7.926 gnorm=76.93 w_min=0.00e+00 eps=0.050 buf=100000 upd=7657 seed=2
+step=  275008 ep_ret=-32.182 eval_ret=-19.193 pursuer_target_distance=2.833 capture=0.002 cap=0.027 td_loss=0.5837 q_tot=+7.926 tgt=+7.925 gnorm=84.26 w_min=6.52e-09 eps=0.050 buf=100000 upd=8438 seed=2
+step=  300000 ep_ret=-20.977 eval_ret=+23.748 pursuer_target_distance=3.013 capture=0.003 cap=0.031 td_loss=0.6068 q_tot=+7.758 tgt=+7.756 gnorm=89.45 w_min=1.49e-08 eps=0.050 buf=100000 upd=9219 seed=2
+step=  325024 ep_ret=-36.127 eval_ret=-26.991 pursuer_target_distance=2.829 capture=0.002 cap=0.012 td_loss=0.5958 q_tot=+8.181 tgt=+8.182 gnorm=89.61 w_min=7.08e-08 eps=0.050 buf=100000 upd=10001 seed=2
+step=  350016 ep_ret=-26.945 eval_ret=-21.137 pursuer_target_distance=2.781 capture=0.002 cap=0.027 td_loss=0.5343 q_tot=+8.123 tgt=+8.121 gnorm=85.20 w_min=4.10e-08 eps=0.050 buf=100000 upd=10782 seed=2
+step=  375008 ep_ret=-41.281 eval_ret=-23.006 pursuer_target_distance=2.963 capture=0.001 cap=0.008 td_loss=0.4995 q_tot=+8.106 tgt=+8.103 gnorm=87.47 w_min=1.86e-09 eps=0.050 buf=100000 upd=11563 seed=2
+step=  400000 ep_ret=-35.849 eval_ret=-24.628 pursuer_target_distance=2.880 capture=0.003 cap=0.043 td_loss=0.5020 q_tot=+7.896 tgt=+7.896 gnorm=87.65 w_min=2.98e-08 eps=0.050 buf=100000 upd=12344 seed=2
+step=  425024 ep_ret=-33.814 eval_ret=-20.974 pursuer_target_distance=2.920 capture=0.001 cap=0.018 td_loss=0.5082 q_tot=+6.983 tgt=+6.978 gnorm=90.18 w_min=3.73e-09 eps=0.050 buf=100000 upd=13126 seed=2
+step=  450016 ep_ret=-32.420 eval_ret=-23.262 pursuer_target_distance=2.908 capture=0.001 cap=0.016 td_loss=0.5128 q_tot=+6.255 tgt=+6.253 gnorm=91.21 w_min=2.24e-08 eps=0.050 buf=100000 upd=13907 seed=2
+step=  475008 ep_ret=-24.814 eval_ret=-22.854 pursuer_target_distance=2.779 capture=0.004 cap=0.027 td_loss=0.4915 q_tot=+5.560 tgt=+5.557 gnorm=89.48 w_min=5.59e-08 eps=0.050 buf=100000 upd=14688 seed=2
+step=  500000 ep_ret=-18.863 eval_ret=-21.828 pursuer_target_distance=2.758 capture=0.004 cap=0.031 td_loss=0.5408 q_tot=+5.398 tgt=+5.397 gnorm=96.85 w_min=3.73e-08 eps=0.050 buf=100000 upd=15469 seed=2
+[train] Final checkpoint saved to runs/qmix_pcp_smoke_20260627_142223/identity/seed2/ckpt/final.pt
+[train] Run artifacts in runs/qmix_pcp_smoke_20260627_142223/identity/seed2
+=== done Sat Jun 27 14:26:06 EDT 2026 ===
