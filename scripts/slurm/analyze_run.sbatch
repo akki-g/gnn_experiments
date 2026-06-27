@@ -2,29 +2,33 @@
 # ============================================================================
 # Analyze a completed sweep run: plot training metrics + run post-comm probes.
 #
+# Works for any sweep size:
+#   smoke : 3 cells x  3 seeds =  9 probe runs  (~30 min)
+#   full  : 7 cells x 10 seeds = 70 probe runs  (~6 h)
+#
 # Outputs everything under <RUN_DIR>/analysis/:
-#   metrics.png           -- all training metrics (rolling=5)
-#   summary.csv           -- ranked per-run summary
-#   probe_results.csv     -- per-(cell,seed) R2_post / R2_raw / R2_ceil / branch
+#   metrics.png        -- seed-averaged training curves (±1 std band) per comm module
+#   summary.csv        -- ranked per-run summary (one row per seed)
+#   probe_results.csv  -- per-(cell,seed) R2_post / R2_raw / R2_ceil / branch
 #
-# Override defaults via --export=ALL,...:
-#   RUN_DIR   path to sweep run dir (required; defaults shown below)
-#   CONFIG    base config yaml (auto-detected from run dir name if unset)
-#   PROBE_SEED fixed probe rollout seed for cross-cell comparability (default 0)
+# Config is auto-detected from the run dir name:
+#   qmix_pcp*  -> configs/qmix_pcp.yaml
+#   pcp_v2*    -> configs/pcp_smoke_v2.yaml
+#   pcp*       -> configs/pcp_smoke.yaml
+#   pursuit*   -> configs/pursuit_base.yaml
+#   pp_*       -> configs/pp_smoke.yaml
+# Override with CONFIG=configs/foo.yaml via --export if needed.
 #
-# Examples:
-#   sbatch scripts/slurm/analyze_run.sbatch \
-#       --export=ALL,RUN_DIR=runs/qmix_pcp_smoke_20260627_142223
-#
-#   sbatch scripts/slurm/analyze_run.sbatch \
-#       --export=ALL,RUN_DIR=runs/pcp_smoke_20260619_113708,CONFIG=configs/pcp_smoke.yaml
+# Submit:
+#   sbatch scripts/slurm/analyze_run.sbatch runs/qmix_pcp_smoke_20260627_142223
+#   sbatch scripts/slurm/analyze_run.sbatch runs/qmix_pcp_full_20260627_XXXXXX
 # ============================================================================
 #SBATCH --job-name=analyze_run
 #SBATCH --partition=normal
 #SBATCH --account=cenyioha
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
-#SBATCH --time=02:00:00
+#SBATCH --time=08:00:00
 #SBATCH --output=slurm_logs/%x_%j.out
 #SBATCH --error=slurm_logs/%x_%j.err
 
@@ -90,13 +94,17 @@ fi
 OUT_DIR="${RUN_DIR}/analysis"
 mkdir -p "${OUT_DIR}"
 
+N_CELLS=$(find "${RUN_DIR}" -mindepth 1 -maxdepth 1 -type d | wc -l)
+N_SEEDS=$(find "${RUN_DIR}" -mindepth 2 -maxdepth 2 -type d -name 'seed*' | wc -l)
+
 echo "[analyze] ============================================================="
-echo "[analyze] repo     = ${REPO_ROOT}"
-echo "[analyze] run_dir  = ${RUN_DIR}"
-echo "[analyze] config   = ${CONFIG}"
-echo "[analyze] out_dir  = ${OUT_DIR}"
+echo "[analyze] repo       = ${REPO_ROOT}"
+echo "[analyze] run_dir    = ${RUN_DIR}"
+echo "[analyze] config     = ${CONFIG}"
+echo "[analyze] out_dir    = ${OUT_DIR}"
 echo "[analyze] probe_seed = ${PROBE_SEED}"
-echo "[analyze] start    = $(date)"
+echo "[analyze] cells      = ${N_CELLS}  seeds = ${N_SEEDS}  (total probe runs = ${N_SEEDS})"
+echo "[analyze] start      = $(date)"
 echo "[analyze] ============================================================="
 
 # ── venv setup ────────────────────────────────────────────────────────────────
@@ -143,7 +151,7 @@ check_hpc_imports
 echo ""
 echo "[analyze] ===== Step 1/3: Plotting training metrics ====="
 python -m experiments.plot_run_metrics "${RUN_DIR}" \
-    --recursive --rolling 5 \
+    --recursive --rolling 5 --avg-seeds \
     --output "${OUT_DIR}/metrics.png"
 echo "[analyze] Saved ${OUT_DIR}/metrics.png"
 

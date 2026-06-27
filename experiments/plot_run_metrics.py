@@ -389,6 +389,11 @@ def metric_columns(
     return [col for col in numeric_cols if col not in exclude]
 
 
+def _derive_comm_label(source_path: str) -> str:
+    """Extract comm module name from the cell directory (parent of the seed dir)."""
+    return Path(source_path).parent.parent.name
+
+
 def plot_run_metrics(
     paths: Sequence[str | Path],
     *,
@@ -400,13 +405,15 @@ def plot_run_metrics(
     columns: int = 3,
     dpi: int = 220,
     show: bool = False,
+    aggregate_seeds: bool = False,
 ):
     """
     Plot every numeric metric across one or more runs.
 
-    The function overlays one line per run/seed on each metric subplot. Columns
-    used for indexing/grouping (`global_step`, `iter`, `seed`) are not plotted as
-    y-axis metrics by default.
+    When aggregate_seeds=True, groups runs by comm module (the cell directory,
+    i.e. parent of each seed dir), averages across seeds at each x step, and
+    draws one line per comm module with a shaded ±1 std band.
+    Otherwise overlays one line per run/seed.
     """
     metrics_df = load_run_metrics(paths, recursive=recursive)
 
@@ -436,31 +443,65 @@ def plot_run_metrics(
     axes_flat = axes.ravel()
 
     rolling = max(1, int(rolling))
-    grouped = list(metrics_df.groupby("run_label", sort=False))
 
-    for ax, metric in zip(axes_flat, metrics_to_plot):
-        for run_label, run_df in grouped:
-            run_df = run_df.sort_values(x_column)
-            x_values = pd.to_numeric(run_df[x_column], errors="coerce")
-            y_values = pd.to_numeric(run_df[metric], errors="coerce")
-            valid = x_values.notna() & y_values.notna()
-            if rolling > 1:
-                y_values = y_values.rolling(rolling, min_periods=1).mean()
-            ax.plot(
-                x_values[valid],
-                y_values[valid],
-                linewidth=1.4,
-                alpha=0.9,
-                label=run_label,
-            )
-        ax.set_title(metric)
-        ax.set_xlabel(x_column)
-        ax.grid(True, alpha=0.25)
+    if aggregate_seeds:
+        metrics_df["comm_label"] = metrics_df["source_path"].map(_derive_comm_label)
+        grouped = sorted(metrics_df["comm_label"].unique())
+
+        for ax, metric in zip(axes_flat, metrics_to_plot):
+            for comm_label in grouped:
+                comm_df = metrics_df[metrics_df["comm_label"] == comm_label]
+                agg = (
+                    comm_df.groupby(x_column, sort=True)[metric]
+                    .agg(["mean", "std"])
+                    .reset_index()
+                )
+                x_vals = pd.to_numeric(agg[x_column], errors="coerce")
+                y_mean = pd.to_numeric(agg["mean"], errors="coerce")
+                y_std = pd.to_numeric(agg["std"], errors="coerce").fillna(0)
+                if rolling > 1:
+                    y_mean = y_mean.rolling(rolling, min_periods=1).mean()
+                    y_std = y_std.rolling(rolling, min_periods=1).mean()
+                valid = x_vals.notna() & y_mean.notna()
+                (line,) = ax.plot(
+                    x_vals[valid], y_mean[valid],
+                    linewidth=1.6, alpha=0.9, label=comm_label,
+                )
+                ax.fill_between(
+                    x_vals[valid],
+                    (y_mean - y_std)[valid],
+                    (y_mean + y_std)[valid],
+                    alpha=0.15, color=line.get_color(),
+                )
+            ax.set_title(metric)
+            ax.set_xlabel(x_column)
+            ax.grid(True, alpha=0.25)
+    else:
+        grouped = list(metrics_df.groupby("run_label", sort=False))
+
+        for ax, metric in zip(axes_flat, metrics_to_plot):
+            for run_label, run_df in grouped:
+                run_df = run_df.sort_values(x_column)
+                x_values = pd.to_numeric(run_df[x_column], errors="coerce")
+                y_values = pd.to_numeric(run_df[metric], errors="coerce")
+                valid = x_values.notna() & y_values.notna()
+                if rolling > 1:
+                    y_values = y_values.rolling(rolling, min_periods=1).mean()
+                ax.plot(
+                    x_values[valid],
+                    y_values[valid],
+                    linewidth=1.4,
+                    alpha=0.9,
+                    label=run_label,
+                )
+            ax.set_title(metric)
+            ax.set_xlabel(x_column)
+            ax.grid(True, alpha=0.25)
 
     for ax in axes_flat[len(metrics_to_plot):]:
         ax.set_visible(False)
 
-    title = "Training metrics"
+    title = "Training metrics (seed-averaged)" if aggregate_seeds else "Training metrics"
     if rolling > 1:
         title += f" (rolling={rolling})"
     fig.suptitle(title)
@@ -572,6 +613,15 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Sort summary in ascending order.",
     )
+    parser.add_argument(
+        "--avg-seeds",
+        action="store_true",
+        dest="aggregate_seeds",
+        help=(
+            "Average metrics across seeds and show one line per comm module "
+            "(cell directory). Draws a shaded ±1 std band."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -601,6 +651,7 @@ def main() -> None:
             columns=args.columns,
             dpi=args.dpi,
             show=args.show,
+            aggregate_seeds=args.aggregate_seeds,
         )
 
 
