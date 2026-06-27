@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import torch
 
 from backbone.utils import load_yaml_config
-from backbone import MAPPO
+from backbone import build_agent_from_ckpt
 from experiments.train_vmas_mappo import _build_comm_module, _evaluate_deterministic_policy
 
 def discover_cells(run_dir: Path):
@@ -79,15 +79,12 @@ def discover_alphas(run_dir: Path):
 
 
 def load_model(ckpt: str, device_str: str):
-    ck = torch.load(ckpt, map_location="cpu", weights_only=False)
-    # Force probe/eval device: GPU-trained ckpts save device="cuda".
-    mcfg = dict(ck["config"])
-    mcfg["device"] = device_str
+    # Algo-aware load (MAPPO or QMIX QAgent) — dispatches on the saved config["algo"];
+    # device_str forces the eval device so GPU-trained ckpts load on a CPU node. Eval
+    # only calls act(), which both backbones provide, so the QMIX mixer isn't needed.
     run_cfg = load_yaml_config(str(Path(ckpt).parent.parent / "config.yaml"))
     comm = _build_comm_module(run_cfg.get("comm", {}), run_cfg.get("model", {}))
-    model = MAPPO(**mcfg, comm_module=comm)
-    model.load(ckpt, map_location=torch.device(device_str))
-    model.eval()
+    model = build_agent_from_ckpt(ckpt, comm, device_str)
     return model, run_cfg
 
 

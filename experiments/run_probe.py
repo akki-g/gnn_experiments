@@ -232,7 +232,7 @@ def _run_post_probe(config_path: str, alpha=None, seed=None, ckpt=None) -> None:
     Loads a trained checkpoint, collects encoder embeddings under a random policy,
     then trains probes on those embeddings to measure R2_c1_post vs R2_c1_raw.
     """
-    from backbone import MAPPO
+    from backbone import build_agent_from_ckpt
     from experiments.train_vmas_mappo import _build_comm_module, build_knn_mask, build_radius_mask
 
     cfg = load_yaml_config(config_path)
@@ -263,14 +263,6 @@ def _run_post_probe(config_path: str, alpha=None, seed=None, ckpt=None) -> None:
     class_id = env.class_id  # [N] long
 
     # A4.2: Load checkpoint
-    ckpt_dict = torch.load(ckpt, map_location="cpu", weights_only=False)
-    # Copy + force the probe device: the saved config carries the TRAINING device
-    # (e.g. "cuda" for GPU-trained ckpts). MAPPO.__init__ does self.to(device) and
-    # MAPPO.load maps to self.device, so an unforced "cuda" here crashes the
-    # CPU-only probe node with "No CUDA GPUs are available".
-    model_ctor_cfg = dict(ckpt_dict["config"])
-    model_ctor_cfg["device"] = device_str
-
     # A4.3: Read sibling config.yaml for comm/model sub-keys
     run_cfg_path = Path(ckpt).parent.parent / "config.yaml"
     if run_cfg_path.exists():
@@ -282,14 +274,13 @@ def _run_post_probe(config_path: str, alpha=None, seed=None, ckpt=None) -> None:
     comm_cfg_run  = run_cfg.get("comm", {})
     model_cfg_run = run_cfg.get("model", {})
 
-    # A4.4: Build model with the checkpoint's comm module
+    # A4.4: Build model with the checkpoint's comm module via the algo-aware factory.
+    # Dispatches on the saved config["algo"] (MAPPO or QMIX QAgent); device_str forces
+    # the probe device so GPU-trained ckpts load on a CPU probe node (the factory does
+    # the device override internally). The probe only calls encode(), which both
+    # backbones provide, so the QMIX mixer is not needed here.
     comm_module = _build_comm_module(comm_cfg_run, model_cfg_run)
-    model = MAPPO(
-        **model_ctor_cfg,
-        comm_module=comm_module,
-    )
-    model.load(ckpt, map_location=dev)
-    model.eval()
+    model = build_agent_from_ckpt(ckpt, comm_module, device_str)
     model.to(dev)
 
     # Topology settings for mask construction

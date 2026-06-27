@@ -1,0 +1,100 @@
+# QMIX on PCP (Predator-Capture-Prey) — cross-algorithm comm-necessity config.
+#
+# PARITY PRINCIPLE: env / comm / model blocks are copied VERBATIM from
+# pcp_smoke_v2.yaml so the task + comm slot are byte-identical to the MAPPO run.
+# ONLY the learning algorithm changes (algo + runtime blocks below). This turns
+# "comm necessity in MAPPO" into "comm necessity is algorithm-invariant".
+#
+# Cadence units (read by experiments/train_qmix.py):
+#   - target_update_interval : UPDATE-steps  (gated on the learner update count)
+#   - all runtime.* step counts (total/warmup/eval/checkpoint/eps_anneal) : ENV-steps
+#     (gated on global_env_step += num_envs per iteration; warmup compared to len(buffer))
+
+algo:
+  name: "qmix"
+  lr: 5.0e-4
+  gamma: 0.99
+  grad_clip: 10.0
+  double_q: true
+  mixing_embed_dim: 32             # -> QMixer(embed_dim=...)
+  hypernet_embed: 64
+  target_update_interval: 200      # in UPDATE-steps
+  eps_start: 1.0
+  eps_end: 0.05
+  eps_anneal_steps: 50000          # ENV-steps over which epsilon decays
+
+runtime:
+  num_envs: 32
+  total_env_steps: 2000000
+  replay_capacity: 100000
+  batch_size: 256
+  warmup_steps: 5000               # ENV-steps (compared to len(buffer))
+  train_interval: 1                # update every env-step-batch once warm
+  eval_interval: 20000             # ENV-steps
+  checkpoint_interval: 20000       # ENV-steps
+
+model:
+  hidden_dim: 64
+  encoder_layers: 2
+  actor_layers: 1                  # capacity reference (MAPPO actor depth)
+  critic_layers: 2                 # unused by QMIX (mixer replaces critic); harmless
+  head_layers: 1                   # QAgent Q-head trunk depth == actor_layers (capacity parity)
+
+# Comm slot — the path under test. Overridden per-cell by the sbatch sweep.
+comm:
+  module: "identity"
+  topology: "knn"
+  knn_k: 4
+  symmetrize: "or"
+  zero_messages: false
+
+env:
+  name: "pcp"
+  kind: "pcp"
+  num_agents: 5
+  num_full_sight: 3        # 3 detectors (class 0), 2 capturers (class 1)
+  alpha: 0.0               # REQUIRED: capturer hard-blindness
+  target_speed: 0.0        # REQUIRED: stationary prey
+  max_steps: 100
+  include_timestep_in_state: true
+
+  # Observation isolation guarantee
+  observe_teammates: false
+
+  # World geometry
+  world_size: 12.0
+  move_step: 0.2
+  capture_radius: 1.0      # v2: eased from 0.6 (still < detect_radius=2.0)
+  capture_k: 1             # 1 class-1 capturer within capture_radius suffices
+
+  # PCP-specific: detection mechanism
+  detect_radius: 2.0
+  detection_window: 5      # window open for 5 steps after last detection event
+
+  # Reward coefficients (Scheme B)
+  dist_coef: 0.1           # detector-only dense term
+  step_penalty: 0.01
+  capture_bonus: 10.0
+
+  # Trainer diagnostics (key names match PCPEnv info dict via parent PursuitEnv)
+  primary_diagnostic: "pursuer_target_distance"
+  secondary_diagnostic: "capture"
+  task_score_kind: "pursuit"
+
+logging:
+  log_dir: "runs/qmix_pcp"
+  run_label: "qmix_pcp_default"
+  wandb: false
+  wandb_project: "marl-thesis"
+  console_log_interval: 1
+  save_checkpoints: true
+
+render:
+  mode: "off"
+  eval_seed: 1000
+  episodes: 2
+  fps: 15
+  frame_size: 512
+
+seed: 0
+device: "auto"
