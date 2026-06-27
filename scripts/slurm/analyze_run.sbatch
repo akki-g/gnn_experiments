@@ -49,9 +49,11 @@ cd "${REPO_ROOT}"
 mkdir -p slurm_logs
 
 # ── required args ─────────────────────────────────────────────────────────────
-RUN_DIR="${RUN_DIR:-}"
+# Accept RUN_DIR as positional arg $1 or env var (--export=ALL,RUN_DIR=...)
+RUN_DIR="${1:-${RUN_DIR:-}}"
 if [[ -z "${RUN_DIR}" ]]; then
-    echo "[analyze] ERROR: RUN_DIR not set. Pass via --export=ALL,RUN_DIR=runs/..."
+    echo "[analyze] ERROR: RUN_DIR not set."
+    echo "          Usage: sbatch scripts/slurm/analyze_run.sbatch runs/<your_run_dir>"
     exit 2
 fi
 if [[ ! -d "${RUN_DIR}" ]]; then
