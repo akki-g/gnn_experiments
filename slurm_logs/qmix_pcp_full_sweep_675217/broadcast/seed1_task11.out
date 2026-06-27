@@ -1,0 +1,129 @@
+[setup] Required Python imports are available.
+[setup] Required Python imports are available.
+=== qmix_pcp_full task 11/70: broadcast seed1 (git 5e3950a) ===
+Run dir: runs/qmix_pcp_full_20260627_165504/broadcast/seed1  Start: Sat Jun 27 16:55:04 EDT 2026
+Sat Jun 27 16:55:04 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-32GB           Off |   00000000:3B:00.0 Off |                    0 |
+| N/A   27C    P0             27W /  250W |       0MiB /  32768MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+[env] kind=pcp name=pcp n_agents=5 obs_dim=5 action_dim=5 state_dim=13 num_envs=32
+[train] QMIX start: total_iters=62500 B=32 device=cuda:0 seed=1 warmup=5000 batch=256 target_update(updates)=200 render=off
+step=   20000 ep_ret=-75.893 eval_ret=-119.224 pursuer_target_distance=6.357 capture=0.000 cap=0.000 td_loss=0.3552 q_tot=+10.700 tgt=+10.695 gnorm=50.32 w_min=1.86e-09 eps=0.621 buf=20000 upd=469 seed=1
+step=   40000 ep_ret=-90.168 eval_ret=-93.181 pursuer_target_distance=6.624 capture=0.001 cap=0.005 td_loss=0.1317 q_tot=+12.372 tgt=+12.366 gnorm=35.32 w_min=1.86e-09 eps=0.241 buf=40000 upd=1094 seed=1
+step=   60000 ep_ret=-80.357 eval_ret=-97.308 pursuer_target_distance=6.735 capture=0.001 cap=0.016 td_loss=0.1800 q_tot=+13.082 tgt=+13.080 gnorm=43.94 w_min=2.47e-08 eps=0.050 buf=60000 upd=1719 seed=1
+step=   80000 ep_ret=-83.105 eval_ret=-96.115 pursuer_target_distance=6.183 capture=0.000 cap=0.013 td_loss=0.2224 q_tot=+12.878 tgt=+12.875 gnorm=50.56 w_min=0.00e+00 eps=0.050 buf=80000 upd=2344 seed=1
+step=  100000 ep_ret=-65.390 eval_ret=-66.138 pursuer_target_distance=5.803 capture=0.001 cap=0.016 td_loss=0.2375 q_tot=+11.979 tgt=+11.977 gnorm=56.37 w_min=5.40e-08 eps=0.050 buf=100000 upd=2969 seed=1
+step=  120000 ep_ret=-53.130 eval_ret=-81.849 pursuer_target_distance=4.764 capture=0.001 cap=0.005 td_loss=0.2647 q_tot=+11.879 tgt=+11.878 gnorm=59.24 w_min=1.12e-08 eps=0.050 buf=100000 upd=3594 seed=1
+step=  140000 ep_ret=-35.326 eval_ret=-72.430 pursuer_target_distance=4.240 capture=0.005 cap=0.036 td_loss=0.3114 q_tot=+12.425 tgt=+12.422 gnorm=67.32 w_min=2.24e-08 eps=0.050 buf=100000 upd=4219 seed=1
+step=  160000 ep_ret=-31.204 eval_ret=-62.856 pursuer_target_distance=3.829 capture=0.004 cap=0.049 td_loss=0.4296 q_tot=+12.106 tgt=+12.107 gnorm=78.08 w_min=3.73e-09 eps=0.050 buf=100000 upd=4844 seed=1
+step=  180000 ep_ret=-39.206 eval_ret=-62.623 pursuer_target_distance=3.165 capture=0.005 cap=0.052 td_loss=0.5122 q_tot=+12.071 tgt=+12.070 gnorm=83.84 w_min=4.00e-08 eps=0.050 buf=100000 upd=5469 seed=1
+step=  200000 ep_ret=-34.781 eval_ret=-62.390 pursuer_target_distance=3.268 capture=0.006 cap=0.047 td_loss=0.6635 q_tot=+12.565 tgt=+12.565 gnorm=100.89 w_min=6.71e-08 eps=0.050 buf=100000 upd=6094 seed=1
+step=  220000 ep_ret=-51.042 eval_ret=-71.766 pursuer_target_distance=3.122 capture=0.001 cap=0.031 td_loss=0.7725 q_tot=+12.745 tgt=+12.749 gnorm=107.27 w_min=7.45e-09 eps=0.050 buf=100000 upd=6719 seed=1
+step=  240000 ep_ret=-47.603 eval_ret=-69.290 pursuer_target_distance=3.134 capture=0.001 cap=0.013 td_loss=0.7966 q_tot=+12.560 tgt=+12.559 gnorm=110.05 w_min=2.24e-08 eps=0.050 buf=100000 upd=7344 seed=1
+step=  260000 ep_ret=-40.372 eval_ret=-60.085 pursuer_target_distance=3.172 capture=0.003 cap=0.036 td_loss=0.7259 q_tot=+12.520 tgt=+12.517 gnorm=110.85 w_min=5.26e-08 eps=0.050 buf=100000 upd=7969 seed=1
+step=  280000 ep_ret=-39.349 eval_ret=-30.623 pursuer_target_distance=2.940 capture=0.002 cap=0.016 td_loss=0.7260 q_tot=+12.547 tgt=+12.546 gnorm=113.29 w_min=1.49e-08 eps=0.050 buf=100000 upd=8594 seed=1
+step=  300000 ep_ret=-25.627 eval_ret=-49.839 pursuer_target_distance=2.816 capture=0.005 cap=0.052 td_loss=0.6767 q_tot=+12.417 tgt=+12.414 gnorm=103.22 w_min=0.00e+00 eps=0.050 buf=100000 upd=9219 seed=1
+step=  320000 ep_ret=-28.870 eval_ret=-62.537 pursuer_target_distance=2.775 capture=0.001 cap=0.009 td_loss=0.6378 q_tot=+11.909 tgt=+11.909 gnorm=99.99 w_min=5.22e-08 eps=0.050 buf=100000 upd=9844 seed=1
+step=  340000 ep_ret=-23.214 eval_ret=-24.673 pursuer_target_distance=2.801 capture=0.002 cap=0.031 td_loss=0.6753 q_tot=+12.306 tgt=+12.307 gnorm=108.66 w_min=7.45e-09 eps=0.050 buf=100000 upd=10469 seed=1
+step=  360000 ep_ret=-37.900 eval_ret=-30.565 pursuer_target_distance=3.036 capture=0.000 cap=0.010 td_loss=0.6821 q_tot=+12.444 tgt=+12.445 gnorm=107.09 w_min=2.61e-08 eps=0.050 buf=100000 upd=11094 seed=1
+step=  380000 ep_ret=-13.783 eval_ret=-35.350 pursuer_target_distance=2.971 capture=0.006 cap=0.042 td_loss=0.6901 q_tot=+12.441 tgt=+12.441 gnorm=108.05 w_min=3.35e-08 eps=0.050 buf=100000 upd=11719 seed=1
+step=  400000 ep_ret=-15.880 eval_ret=-33.495 pursuer_target_distance=2.663 capture=0.003 cap=0.045 td_loss=0.6981 q_tot=+12.113 tgt=+12.117 gnorm=111.48 w_min=3.35e-08 eps=0.050 buf=100000 upd=12344 seed=1
+step=  420000 ep_ret=-41.738 eval_ret=-59.625 pursuer_target_distance=2.978 capture=0.006 cap=0.057 td_loss=0.8458 q_tot=+12.007 tgt=+12.007 gnorm=118.85 w_min=3.73e-08 eps=0.050 buf=100000 upd=12969 seed=1
+step=  440000 ep_ret=-15.958 eval_ret=-30.915 pursuer_target_distance=2.705 capture=0.005 cap=0.047 td_loss=0.8433 q_tot=+11.621 tgt=+11.622 gnorm=117.77 w_min=5.96e-08 eps=0.050 buf=100000 upd=13594 seed=1
+step=  460000 ep_ret=-22.010 eval_ret=-41.446 pursuer_target_distance=2.914 capture=0.007 cap=0.068 td_loss=0.9305 q_tot=+11.546 tgt=+11.546 gnorm=124.95 w_min=1.40e-09 eps=0.050 buf=100000 upd=14219 seed=1
+step=  480000 ep_ret=-39.368 eval_ret=-38.867 pursuer_target_distance=3.017 capture=0.001 cap=0.022 td_loss=1.0452 q_tot=+11.576 tgt=+11.574 gnorm=133.92 w_min=5.03e-08 eps=0.050 buf=100000 upd=14844 seed=1
+step=  500000 ep_ret=-26.727 eval_ret=-31.797 pursuer_target_distance=2.810 capture=0.003 cap=0.036 td_loss=1.0422 q_tot=+12.251 tgt=+12.254 gnorm=134.16 w_min=4.47e-08 eps=0.050 buf=100000 upd=15469 seed=1
+step=  520000 ep_ret=-34.626 eval_ret=-54.740 pursuer_target_distance=2.854 capture=0.001 cap=0.021 td_loss=0.8922 q_tot=+12.349 tgt=+12.349 gnorm=128.19 w_min=1.86e-08 eps=0.050 buf=100000 upd=16094 seed=1
+step=  540000 ep_ret=-38.275 eval_ret=-48.533 pursuer_target_distance=3.013 capture=0.006 cap=0.057 td_loss=0.9731 q_tot=+12.796 tgt=+12.796 gnorm=138.94 w_min=6.89e-08 eps=0.050 buf=100000 upd=16719 seed=1
+step=  560000 ep_ret=-29.638 eval_ret=-51.895 pursuer_target_distance=2.837 capture=0.003 cap=0.036 td_loss=0.9224 q_tot=+12.798 tgt=+12.798 gnorm=133.30 w_min=1.68e-08 eps=0.050 buf=100000 upd=17344 seed=1
+step=  580000 ep_ret=-35.748 eval_ret=-68.301 pursuer_target_distance=2.914 capture=0.006 cap=0.036 td_loss=0.9151 q_tot=+12.894 tgt=+12.893 gnorm=136.31 w_min=4.47e-08 eps=0.050 buf=100000 upd=17969 seed=1
+step=  600000 ep_ret=-26.856 eval_ret=-37.670 pursuer_target_distance=3.041 capture=0.002 cap=0.031 td_loss=0.9394 q_tot=+12.219 tgt=+12.218 gnorm=132.80 w_min=5.03e-08 eps=0.050 buf=100000 upd=18594 seed=1
+step=  620000 ep_ret=-27.779 eval_ret=-53.856 pursuer_target_distance=2.827 capture=0.002 cap=0.021 td_loss=0.9450 q_tot=+11.657 tgt=+11.658 gnorm=141.77 w_min=9.69e-08 eps=0.050 buf=100000 upd=19219 seed=1
+step=  640000 ep_ret=-41.000 eval_ret=-36.772 pursuer_target_distance=2.944 capture=0.010 cap=0.036 td_loss=0.9485 q_tot=+11.220 tgt=+11.222 gnorm=138.28 w_min=3.17e-08 eps=0.050 buf=100000 upd=19844 seed=1
+step=  660000 ep_ret=-35.155 eval_ret=-41.594 pursuer_target_distance=3.116 capture=0.000 cap=0.010 td_loss=0.9763 q_tot=+10.962 tgt=+10.963 gnorm=138.08 w_min=5.22e-08 eps=0.050 buf=100000 upd=20469 seed=1
+step=  680000 ep_ret=-33.150 eval_ret=-32.887 pursuer_target_distance=3.016 capture=0.001 cap=0.016 td_loss=0.9111 q_tot=+10.686 tgt=+10.688 gnorm=139.17 w_min=2.24e-08 eps=0.050 buf=100000 upd=21094 seed=1
+step=  700000 ep_ret=-7.476 eval_ret=-38.139 pursuer_target_distance=3.127 capture=0.006 cap=0.021 td_loss=0.8740 q_tot=+11.194 tgt=+11.199 gnorm=143.71 w_min=2.61e-08 eps=0.050 buf=100000 upd=21719 seed=1
+step=  720000 ep_ret=-33.767 eval_ret=-30.177 pursuer_target_distance=2.964 capture=0.006 cap=0.054 td_loss=0.9640 q_tot=+10.764 tgt=+10.764 gnorm=148.94 w_min=0.00e+00 eps=0.050 buf=100000 upd=22344 seed=1
+step=  740000 ep_ret=-24.180 eval_ret=-31.515 pursuer_target_distance=2.853 capture=0.002 cap=0.021 td_loss=0.9437 q_tot=+9.835 tgt=+9.830 gnorm=141.11 w_min=2.61e-08 eps=0.050 buf=100000 upd=22969 seed=1
+step=  760000 ep_ret=-29.335 eval_ret=-34.106 pursuer_target_distance=2.834 capture=0.005 cap=0.042 td_loss=0.9683 q_tot=+10.229 tgt=+10.225 gnorm=142.02 w_min=1.19e-07 eps=0.050 buf=100000 upd=23594 seed=1
+step=  780000 ep_ret=-33.184 eval_ret=-33.887 pursuer_target_distance=3.064 capture=0.006 cap=0.042 td_loss=0.9863 q_tot=+10.463 tgt=+10.462 gnorm=138.75 w_min=6.33e-08 eps=0.050 buf=100000 upd=24219 seed=1
+step=  800000 ep_ret=-31.762 eval_ret=-42.480 pursuer_target_distance=2.794 capture=0.004 cap=0.031 td_loss=1.0970 q_tot=+9.931 tgt=+9.930 gnorm=148.95 w_min=6.15e-08 eps=0.050 buf=100000 upd=24844 seed=1
+step=  820000 ep_ret=-32.206 eval_ret=-29.730 pursuer_target_distance=3.083 capture=0.008 cap=0.089 td_loss=1.1042 q_tot=+9.773 tgt=+9.769 gnorm=153.88 w_min=4.47e-08 eps=0.050 buf=100000 upd=25469 seed=1
+step=  840000 ep_ret=-29.649 eval_ret=-51.817 pursuer_target_distance=3.101 capture=0.007 cap=0.052 td_loss=1.1410 q_tot=+9.786 tgt=+9.783 gnorm=149.02 w_min=4.47e-08 eps=0.050 buf=100000 upd=26094 seed=1
+step=  860000 ep_ret=-26.060 eval_ret=-37.827 pursuer_target_distance=2.863 capture=0.005 cap=0.052 td_loss=1.2733 q_tot=+9.715 tgt=+9.714 gnorm=160.45 w_min=1.22e-07 eps=0.050 buf=100000 upd=26719 seed=1
+step=  880000 ep_ret=-41.929 eval_ret=-31.021 pursuer_target_distance=3.233 capture=0.001 cap=0.031 td_loss=1.2388 q_tot=+9.877 tgt=+9.875 gnorm=163.47 w_min=3.07e-08 eps=0.050 buf=100000 upd=27344 seed=1
+step=  900000 ep_ret=-32.321 eval_ret=-35.966 pursuer_target_distance=3.106 capture=0.004 cap=0.026 td_loss=1.2587 q_tot=+9.967 tgt=+9.971 gnorm=176.08 w_min=1.19e-07 eps=0.050 buf=100000 upd=27969 seed=1
+step=  920000 ep_ret=-25.512 eval_ret=-44.648 pursuer_target_distance=2.797 capture=0.010 cap=0.073 td_loss=1.3046 q_tot=+9.591 tgt=+9.590 gnorm=175.49 w_min=1.49e-08 eps=0.050 buf=100000 upd=28594 seed=1
+step=  940000 ep_ret=-35.677 eval_ret=-28.812 pursuer_target_distance=2.920 capture=0.010 cap=0.068 td_loss=1.3491 q_tot=+9.430 tgt=+9.427 gnorm=187.73 w_min=3.73e-08 eps=0.050 buf=100000 upd=29219 seed=1
+step=  960000 ep_ret=-36.672 eval_ret=+5.086 pursuer_target_distance=3.103 capture=0.004 cap=0.036 td_loss=1.3874 q_tot=+9.857 tgt=+9.856 gnorm=183.89 w_min=7.45e-08 eps=0.050 buf=100000 upd=29844 seed=1
+step=  980000 ep_ret=-36.980 eval_ret=-31.790 pursuer_target_distance=3.161 capture=0.004 cap=0.042 td_loss=1.3734 q_tot=+10.395 tgt=+10.396 gnorm=176.54 w_min=1.58e-08 eps=0.050 buf=100000 upd=30469 seed=1
+step= 1000000 ep_ret=-39.035 eval_ret=-38.759 pursuer_target_distance=2.952 capture=0.005 cap=0.042 td_loss=1.3130 q_tot=+9.910 tgt=+9.910 gnorm=165.12 w_min=3.73e-08 eps=0.050 buf=100000 upd=31094 seed=1
+step= 1020000 ep_ret=-25.705 eval_ret=-31.317 pursuer_target_distance=2.882 capture=0.007 cap=0.062 td_loss=1.3081 q_tot=+9.953 tgt=+9.955 gnorm=165.93 w_min=1.49e-08 eps=0.050 buf=100000 upd=31719 seed=1
+step= 1040000 ep_ret=-23.115 eval_ret=-35.385 pursuer_target_distance=2.612 capture=0.005 cap=0.058 td_loss=1.3285 q_tot=+9.446 tgt=+9.446 gnorm=178.26 w_min=7.45e-09 eps=0.050 buf=100000 upd=32344 seed=1
+step= 1060000 ep_ret=-23.712 eval_ret=-36.275 pursuer_target_distance=2.838 capture=0.007 cap=0.078 td_loss=1.2802 q_tot=+9.339 tgt=+9.344 gnorm=170.87 w_min=1.97e-07 eps=0.050 buf=100000 upd=32969 seed=1
+step= 1080000 ep_ret=-26.495 eval_ret=-31.400 pursuer_target_distance=2.919 capture=0.008 cap=0.068 td_loss=1.4032 q_tot=+10.547 tgt=+10.551 gnorm=180.31 w_min=7.45e-08 eps=0.050 buf=100000 upd=33594 seed=1
+step= 1100000 ep_ret=-29.259 eval_ret=-37.038 pursuer_target_distance=2.738 capture=0.007 cap=0.083 td_loss=1.4714 q_tot=+11.116 tgt=+11.125 gnorm=179.23 w_min=2.98e-08 eps=0.050 buf=100000 upd=34219 seed=1
+step= 1120000 ep_ret=-23.185 eval_ret=-30.507 pursuer_target_distance=2.716 capture=0.010 cap=0.067 td_loss=1.5735 q_tot=+11.592 tgt=+11.591 gnorm=194.07 w_min=7.45e-09 eps=0.050 buf=100000 upd=34844 seed=1
+step= 1140000 ep_ret=-9.897 eval_ret=-28.236 pursuer_target_distance=2.776 capture=0.015 cap=0.109 td_loss=1.6799 q_tot=+11.932 tgt=+11.929 gnorm=200.12 w_min=7.45e-09 eps=0.050 buf=100000 upd=35469 seed=1
+step= 1160000 ep_ret=-22.519 eval_ret=-39.346 pursuer_target_distance=2.783 capture=0.010 cap=0.083 td_loss=1.8582 q_tot=+12.067 tgt=+12.067 gnorm=207.86 w_min=1.19e-07 eps=0.050 buf=100000 upd=36094 seed=1
+step= 1180000 ep_ret=-35.747 eval_ret=-37.901 pursuer_target_distance=3.135 capture=0.010 cap=0.099 td_loss=1.8741 q_tot=+11.958 tgt=+11.964 gnorm=195.91 w_min=4.19e-09 eps=0.050 buf=100000 upd=36719 seed=1
+step= 1200000 ep_ret=-27.810 eval_ret=-30.534 pursuer_target_distance=2.880 capture=0.009 cap=0.080 td_loss=1.9415 q_tot=+12.251 tgt=+12.259 gnorm=213.33 w_min=6.71e-08 eps=0.050 buf=100000 upd=37344 seed=1
+step= 1220000 ep_ret=-26.068 eval_ret=-35.369 pursuer_target_distance=2.708 capture=0.009 cap=0.078 td_loss=2.0535 q_tot=+12.887 tgt=+12.893 gnorm=229.68 w_min=3.73e-09 eps=0.050 buf=100000 upd=37969 seed=1
+step= 1240000 ep_ret=-20.514 eval_ret=-33.915 pursuer_target_distance=2.988 capture=0.009 cap=0.068 td_loss=2.0849 q_tot=+14.280 tgt=+14.285 gnorm=234.88 w_min=2.98e-08 eps=0.050 buf=100000 upd=38594 seed=1
+step= 1260000 ep_ret=-32.188 eval_ret=-27.630 pursuer_target_distance=2.899 capture=0.010 cap=0.083 td_loss=1.9543 q_tot=+14.914 tgt=+14.913 gnorm=232.56 w_min=0.00e+00 eps=0.050 buf=100000 upd=39219 seed=1
+step= 1280000 ep_ret=-22.180 eval_ret=-42.868 pursuer_target_distance=2.793 capture=0.015 cap=0.107 td_loss=2.1028 q_tot=+16.129 tgt=+16.136 gnorm=253.68 w_min=1.49e-07 eps=0.050 buf=100000 upd=39844 seed=1
+step= 1300000 ep_ret=-31.433 eval_ret=-27.257 pursuer_target_distance=3.063 capture=0.008 cap=0.062 td_loss=2.1725 q_tot=+16.594 tgt=+16.594 gnorm=256.43 w_min=0.00e+00 eps=0.050 buf=100000 upd=40469 seed=1
+step= 1320000 ep_ret=-21.532 eval_ret=-36.526 pursuer_target_distance=2.845 capture=0.008 cap=0.094 td_loss=2.1699 q_tot=+16.791 tgt=+16.794 gnorm=249.63 w_min=2.98e-08 eps=0.050 buf=100000 upd=41094 seed=1
+step= 1340000 ep_ret=-23.198 eval_ret=-26.106 pursuer_target_distance=2.729 capture=0.013 cap=0.094 td_loss=2.2323 q_tot=+17.112 tgt=+17.111 gnorm=259.29 w_min=6.33e-08 eps=0.050 buf=100000 upd=41719 seed=1
+step= 1360000 ep_ret=-18.800 eval_ret=-33.182 pursuer_target_distance=2.692 capture=0.015 cap=0.129 td_loss=2.3423 q_tot=+18.537 tgt=+18.542 gnorm=276.19 w_min=1.49e-08 eps=0.050 buf=100000 upd=42344 seed=1
+step= 1380000 ep_ret=-24.317 eval_ret=-29.114 pursuer_target_distance=2.962 capture=0.012 cap=0.130 td_loss=2.4131 q_tot=+19.704 tgt=+19.708 gnorm=284.50 w_min=4.47e-08 eps=0.050 buf=100000 upd=42969 seed=1
+step= 1400000 ep_ret=-19.614 eval_ret=+40.148 pursuer_target_distance=2.791 capture=0.023 cap=0.167 td_loss=2.5242 q_tot=+20.755 tgt=+20.762 gnorm=277.83 w_min=2.24e-08 eps=0.050 buf=100000 upd=43594 seed=1
+step= 1420000 ep_ret=-27.977 eval_ret=-33.593 pursuer_target_distance=2.940 capture=0.021 cap=0.135 td_loss=2.8445 q_tot=+21.544 tgt=+21.547 gnorm=306.71 w_min=3.35e-08 eps=0.050 buf=100000 upd=44219 seed=1
+step= 1440000 ep_ret=-23.414 eval_ret=-29.585 pursuer_target_distance=2.997 capture=0.010 cap=0.094 td_loss=2.9013 q_tot=+21.877 tgt=+21.884 gnorm=322.19 w_min=8.94e-08 eps=0.050 buf=100000 upd=44844 seed=1
+step= 1460000 ep_ret=-33.826 eval_ret=-26.709 pursuer_target_distance=3.107 capture=0.009 cap=0.062 td_loss=2.9710 q_tot=+23.071 tgt=+23.068 gnorm=330.33 w_min=2.98e-08 eps=0.050 buf=100000 upd=45469 seed=1
+step= 1480000 ep_ret=-9.662 eval_ret=-26.092 pursuer_target_distance=2.846 capture=0.013 cap=0.094 td_loss=2.9221 q_tot=+23.572 tgt=+23.572 gnorm=354.69 w_min=2.98e-08 eps=0.050 buf=100000 upd=46094 seed=1
+step= 1500000 ep_ret=-30.060 eval_ret=-30.996 pursuer_target_distance=2.901 capture=0.010 cap=0.062 td_loss=2.9557 q_tot=+24.484 tgt=+24.487 gnorm=374.86 w_min=7.82e-08 eps=0.050 buf=100000 upd=46719 seed=1
+step= 1520000 ep_ret=-25.598 eval_ret=-30.638 pursuer_target_distance=2.707 capture=0.014 cap=0.098 td_loss=2.8269 q_tot=+24.276 tgt=+24.269 gnorm=362.73 w_min=2.24e-08 eps=0.050 buf=100000 upd=47344 seed=1
+step= 1540000 ep_ret=-28.821 eval_ret=-25.312 pursuer_target_distance=3.061 capture=0.013 cap=0.130 td_loss=2.7287 q_tot=+23.900 tgt=+23.894 gnorm=356.06 w_min=0.00e+00 eps=0.050 buf=100000 upd=47969 seed=1
+step= 1560000 ep_ret=-24.630 eval_ret=-30.993 pursuer_target_distance=2.964 capture=0.011 cap=0.099 td_loss=2.8756 q_tot=+24.408 tgt=+24.409 gnorm=375.59 w_min=4.47e-08 eps=0.050 buf=100000 upd=48594 seed=1
+step= 1580000 ep_ret=-39.755 eval_ret=-26.498 pursuer_target_distance=3.240 capture=0.011 cap=0.104 td_loss=2.9750 q_tot=+24.866 tgt=+24.881 gnorm=394.13 w_min=0.00e+00 eps=0.050 buf=100000 upd=49219 seed=1
+step= 1600000 ep_ret=-6.373 eval_ret=+271.562 pursuer_target_distance=3.008 capture=0.017 cap=0.112 td_loss=2.9776 q_tot=+24.680 tgt=+24.681 gnorm=399.54 w_min=7.45e-08 eps=0.050 buf=100000 upd=49844 seed=1
+step= 1620000 ep_ret=-11.788 eval_ret=-32.338 pursuer_target_distance=2.938 capture=0.018 cap=0.151 td_loss=3.3299 q_tot=+27.521 tgt=+27.525 gnorm=476.38 w_min=2.05e-07 eps=0.050 buf=100000 upd=50469 seed=1
+step= 1640000 ep_ret=-21.009 eval_ret=-24.709 pursuer_target_distance=3.085 capture=0.012 cap=0.130 td_loss=3.3364 q_tot=+29.730 tgt=+29.731 gnorm=484.40 w_min=2.98e-08 eps=0.050 buf=100000 upd=51094 seed=1
+step= 1660000 ep_ret=-30.801 eval_ret=-27.376 pursuer_target_distance=3.004 capture=0.021 cap=0.151 td_loss=3.4675 q_tot=+31.699 tgt=+31.705 gnorm=512.95 w_min=3.35e-08 eps=0.050 buf=100000 upd=51719 seed=1
+step= 1680000 ep_ret=-23.931 eval_ret=-58.190 pursuer_target_distance=2.797 capture=0.023 cap=0.196 td_loss=3.8835 q_tot=+33.313 tgt=+33.321 gnorm=576.96 w_min=1.68e-08 eps=0.050 buf=100000 upd=52344 seed=1
+step= 1700000 ep_ret=-8.695 eval_ret=-29.461 pursuer_target_distance=2.885 capture=0.022 cap=0.219 td_loss=4.1416 q_tot=+35.969 tgt=+35.978 gnorm=623.47 w_min=1.68e-08 eps=0.050 buf=100000 upd=52969 seed=1
+step= 1720000 ep_ret=-12.440 eval_ret=-28.901 pursuer_target_distance=3.026 capture=0.019 cap=0.203 td_loss=4.5115 q_tot=+35.606 tgt=+35.615 gnorm=626.69 w_min=5.96e-08 eps=0.050 buf=100000 upd=53594 seed=1
+step= 1740000 ep_ret=-5.987 eval_ret=+18.420 pursuer_target_distance=2.999 capture=0.035 cap=0.203 td_loss=4.3234 q_tot=+37.234 tgt=+37.235 gnorm=554.61 w_min=1.49e-08 eps=0.050 buf=100000 upd=54219 seed=1
+step= 1760000 ep_ret=-16.065 eval_ret=-32.826 pursuer_target_distance=2.844 capture=0.030 cap=0.174 td_loss=4.5953 q_tot=+38.372 tgt=+38.385 gnorm=554.27 w_min=8.94e-08 eps=0.050 buf=100000 upd=54844 seed=1
+step= 1780000 ep_ret=+4.848 eval_ret=-27.694 pursuer_target_distance=2.806 capture=0.026 cap=0.198 td_loss=5.0035 q_tot=+38.611 tgt=+38.623 gnorm=599.94 w_min=5.96e-08 eps=0.050 buf=100000 upd=55469 seed=1
+step= 1800000 ep_ret=+5.385 eval_ret=-42.910 pursuer_target_distance=2.517 capture=0.027 cap=0.156 td_loss=5.0724 q_tot=+42.067 tgt=+42.076 gnorm=619.79 w_min=5.96e-08 eps=0.050 buf=100000 upd=56094 seed=1
+step= 1820000 ep_ret=-6.879 eval_ret=-34.674 pursuer_target_distance=2.789 capture=0.030 cap=0.188 td_loss=5.5517 q_tot=+44.962 tgt=+44.962 gnorm=707.40 w_min=2.98e-08 eps=0.050 buf=100000 upd=56719 seed=1
+step= 1840000 ep_ret=-26.966 eval_ret=-11.231 pursuer_target_distance=2.988 capture=0.030 cap=0.214 td_loss=5.5250 q_tot=+46.217 tgt=+46.225 gnorm=682.82 w_min=5.96e-08 eps=0.050 buf=100000 upd=57344 seed=1
+step= 1860000 ep_ret=+4.407 eval_ret=-31.288 pursuer_target_distance=2.945 capture=0.028 cap=0.219 td_loss=5.6067 q_tot=+47.805 tgt=+47.822 gnorm=744.39 w_min=1.49e-08 eps=0.050 buf=100000 upd=57969 seed=1
+step= 1880000 ep_ret=+2.663 eval_ret=-33.855 pursuer_target_distance=2.920 capture=0.031 cap=0.229 td_loss=5.7963 q_tot=+49.970 tgt=+49.977 gnorm=768.48 w_min=0.00e+00 eps=0.050 buf=100000 upd=58594 seed=1
+step= 1900000 ep_ret=-15.276 eval_ret=+105.706 pursuer_target_distance=2.705 capture=0.032 cap=0.245 td_loss=6.1839 q_tot=+50.451 tgt=+50.446 gnorm=812.73 w_min=0.00e+00 eps=0.050 buf=100000 upd=59219 seed=1
+step= 1920000 ep_ret=+6.430 eval_ret=-12.480 pursuer_target_distance=2.667 capture=0.062 cap=0.344 td_loss=6.6859 q_tot=+51.880 tgt=+51.888 gnorm=880.08 w_min=1.82e-07 eps=0.050 buf=100000 upd=59844 seed=1
+step= 1940000 ep_ret=-18.418 eval_ret=-42.498 pursuer_target_distance=2.957 capture=0.037 cap=0.276 td_loss=7.1859 q_tot=+54.485 tgt=+54.498 gnorm=874.23 w_min=0.00e+00 eps=0.050 buf=100000 upd=60469 seed=1
+step= 1960000 ep_ret=-6.871 eval_ret=-34.488 pursuer_target_distance=2.946 capture=0.029 cap=0.214 td_loss=7.4988 q_tot=+57.091 tgt=+57.106 gnorm=925.17 w_min=2.24e-08 eps=0.050 buf=100000 upd=61094 seed=1
+step= 1980000 ep_ret=+15.035 eval_ret=-29.949 pursuer_target_distance=2.851 capture=0.041 cap=0.276 td_loss=7.4874 q_tot=+57.615 tgt=+57.635 gnorm=931.43 w_min=8.94e-08 eps=0.050 buf=100000 upd=61719 seed=1
+step= 2000000 ep_ret=-7.745 eval_ret=-42.773 pursuer_target_distance=2.832 capture=0.029 cap=0.263 td_loss=7.8202 q_tot=+59.318 tgt=+59.331 gnorm=966.44 w_min=1.49e-08 eps=0.050 buf=100000 upd=62344 seed=1
+[train] Final checkpoint saved to runs/qmix_pcp_full_20260627_165504/broadcast/seed1/ckpt/final.pt
+[train] Run artifacts in runs/qmix_pcp_full_20260627_165504/broadcast/seed1
+=== done Sat Jun 27 17:04:03 EDT 2026 ===
